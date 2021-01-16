@@ -27,6 +27,7 @@ public extension Cornucopia.Core {
         }
 
         //MARK: - Debug
+
         public class func deleteAllItems() {
             let itemClasses = [
                 kSecClassInternetPassword,
@@ -94,7 +95,7 @@ public extension Cornucopia.Core {
             }
         }
 
-        //MARK: - Generic
+        //MARK: - Codable
 
         public func store<T: Encodable>(item: T, for key: ItemKey) {
             let encoded = try! JSONEncoder().encode(item)
