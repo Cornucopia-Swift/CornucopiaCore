@@ -3,7 +3,7 @@
 _:shell: The "horn of plenty" – a symbol of abundance._
 
 [![SwiftPM](https://img.shields.io/badge/SPM-Linux%20%7C%20iOS%20%7C%20macOS%20%7C%20watchOS%20%7C%20tvOS-success?logo=swift)](https://swift.org)
-[![Swift](https://github.com/Vanille-Media/CornucopiaCore/workflows/Swift/badge.svg)](https://github.com/Vanille-Media/CornucopiaCore/actions?query=workflow%3ASwift)
+[![Swift](https://github.com/Cornucopia-Swift/CornucopiaCore/workflows/Swift/badge.svg)](https://github.com/Cornucopia-Swift/CornucopiaCore/actions?query=workflow%3ASwift)
 
 ### Introduction
 
