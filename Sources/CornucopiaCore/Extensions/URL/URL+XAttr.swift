@@ -53,7 +53,7 @@ extension URL {
             guard length >= 0 else { throw errno.CC_posixError }
 
             var data = Data(count: length)
-            let result =  data.withUnsafeMutableBytes { [count = data.count] in
+            let result = data.withUnsafeMutableBytes { [count = data.count] in
                 getxattr(fileSystemPath, name, $0.baseAddress, count, 0, 0)
             }
             guard result >= 0 else { throw errno.CC_posixError }

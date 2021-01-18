@@ -12,7 +12,7 @@ This is a library with _essentials_ for Swift programmers. Although primarily mo
 ### History & Status
 
 This is pretty much an early work-in-progress. With a decade of Objective-C experience and a solid bunch of such frameworks, I have only recently started developing with Swift.
-Rather than blindly rewriting everything I once had in Swift, I'm going to add stuff on-demand when I need it in my projects.
+Rather than blindly rewriting everything, I'm going to add stuff on-demand when I need it in my projects.
 
 ### Contributions
 
