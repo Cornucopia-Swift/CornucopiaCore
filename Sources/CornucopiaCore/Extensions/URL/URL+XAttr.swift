@@ -1,10 +1,9 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
-
-// based on https://stackoverflow.com/a/38343753/415982
 import Foundation
 
+// based on https://stackoverflow.com/a/38343753/415982
 extension URL {
 
     public typealias ItemKey = String
