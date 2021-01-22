@@ -56,11 +56,15 @@ public extension Cornucopia.Core {
         case authorization = "Authorization"
         case contentLength = "Content-Length"
         case contentType = "Content-Type"
+        case range = "Range"
     }
 
     /// Well known HTTP content types
     enum HTTPContentType: String {
         case applicationJSON = "application/json"
+        case imageJPEG = "image/jpeg"
+        case imageHEIC = "image/heic"
+        case textPlain = "text/plain"
     }
 
 } // extension Cornucopia.Core
