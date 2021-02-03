@@ -14,8 +14,12 @@ extension Cornucopia.Core {
 
         var urlSession: URLSession
 
-        public init() {
-            urlSession = URLSession.shared
+        public init(with configuration: URLSessionConfiguration? = nil) {
+            guard let configuration = configuration else {
+                urlSession = URLSession.shared
+                return
+            }
+            urlSession = URLSession(configuration: configuration)
         }
 
         @discardableResult
