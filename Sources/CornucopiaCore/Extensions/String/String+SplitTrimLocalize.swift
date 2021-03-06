@@ -28,4 +28,13 @@ public extension String {
 
     /// Returns a string by trimming whitespaces and newline characters, i.e. `\t`, `\r`, `\n`, etc.
     func CC_trimmed() -> String { self.trimmingCharacters(in: .whitespacesAndNewlines) }
+
+    /// Returns an array of lines, reducing consecutive newline characters and skipping empty lines.
+    func CC_asLines() -> [String] {
+        var array: [String] = []
+        self.enumerateLines() { line, _ in
+            array.append(line)
+        }
+        return array
+    }
 }

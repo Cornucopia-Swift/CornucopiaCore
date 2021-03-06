@@ -13,6 +13,7 @@ public extension String {
     ]
 
     var CC_hexDecodedData: Data {
+        precondition(self.count % 2 == 0, "This works only for strings with an even number of characters")
         let chars = Array(self.utf8)
         var bytes = [UInt8]()
         bytes.reserveCapacity(count / 2)
