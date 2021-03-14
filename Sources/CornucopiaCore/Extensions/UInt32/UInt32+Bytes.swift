@@ -3,7 +3,7 @@
 //
 public extension UInt32 {
 
-    // Returns the corresponding tuple of UInt8
+    /// Returns the corresponding tuple of UInt8
     var CC_UInt8tuple: (mswHi: UInt8, mswLo: UInt8, lswHi: UInt8, lswLo: UInt8) {
         let mswHi: UInt8 = UInt8(self >> 24 & 0xFF)
         let mswLo: UInt8 = UInt8(self >> 16 & 0xFF)
@@ -12,7 +12,7 @@ public extension UInt32 {
         return (mswHi, mswLo, lswHi, lswLo)
     }
 
-    // Returns the corresponding array of UInt8
+    /// Returns the corresponding array of UInt8
     var CC_UInt8array: [UInt8] {
         let mswHi: UInt8 = UInt8(self >> 24 & 0xFF)
         let mswLo: UInt8 = UInt8(self >> 16 & 0xFF)
