@@ -12,9 +12,13 @@ public extension String {
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  // HIJKLMNO
     ]
 
+    /// Returns the equivalent data of bytes when interpreting `self` as sequence of hexadecimal characters with an optional `0x` prefix.
+    /// Odd lengths are interpretated as if the upper nibble of the first byte was set to `0`.
     var CC_hexDecodedData: Data {
-        precondition(self.count % 2 == 0, "This works only for strings with an even number of characters")
-        let string = self.starts(with: "0x") ? self.dropFirst(2) : self.dropFirst(0)
+        var string = self.starts(with: "0x") ? self.dropFirst(2) : self.dropFirst(0)
+        if string.count % 2 == 1 {
+            string.insert("0", at: string.startIndex)
+        }
         let chars = Array(string.utf8)
         var bytes = [UInt8]()
         bytes.reserveCapacity(count / 2)
@@ -27,9 +31,13 @@ public extension String {
         return Data(bytes)
     }
 
+    /// Returns the equivalent array of bytes when interpreting `self` as sequence of hexadecimal characters with an optional `0x` prefix.
+    /// Odd lengths are interpretated as if the upper nibble of the first byte was set to `0`.
     var CC_hexDecodedUInt8Array: [UInt8] {
-        precondition(self.count % 2 == 0, "This works only for strings with an even number of characters")
-        let string = self.starts(with: "0x") ? self.dropFirst(2) : self.dropFirst(0)
+        var string = self.starts(with: "0x") ? self.dropFirst(2) : self.dropFirst(0)
+        if string.count % 2 == 1 {
+            string.insert("0", at: string.startIndex)
+        }
         let chars = Array(string.utf8)
         var bytes = [UInt8]()
         bytes.reserveCapacity(count / 2)
@@ -43,23 +51,20 @@ public extension String {
     }
 
     /// Creates the `UInt32` from a hexadecimal string representation, optionally including the `0x` prefix
-    var CC_hexDecoded32: UInt32 {
+    var CC_hexDecoded32: UInt32? {
         let string = self.starts(with: "0x") ? self.dropFirst(2) : self.dropFirst(0)
-        guard let uint32 = UInt32.init(string, radix: 16) else { preconditionFailure("Not a valid hex string") }
-        return uint32
+        return UInt32.init(string, radix: 16)
     }
 
     /// Creates the `UInt16` from a hexadecimal string representation, optionally including the `0x` prefix
-    var CC_hexDecoded16: UInt16 {
+    var CC_hexDecoded16: UInt16? {
         let string = self.starts(with: "0x") ? self.dropFirst(2) : self.dropFirst(0)
-        guard let uint16 = UInt16.init(string, radix: 16) else { preconditionFailure("Not a valid hex string") }
-        return uint16
+        return UInt16.init(string, radix: 16)
     }
 
     /// Creates the `UInt8` from a hexadecimal string representation, optionally including the `0x` prefix
-    var CC_hexDecoded8: UInt8 {
+    var CC_hexDecoded8: UInt8? {
         let string = self.starts(with: "0x") ? self.dropFirst(2) : self.dropFirst(0)
-        guard let uint8 = UInt8.init(string, radix: 16) else { preconditionFailure("Not a valid hex string") }
-        return uint8
+        return UInt8.init(string, radix: 16)
     }
 }
