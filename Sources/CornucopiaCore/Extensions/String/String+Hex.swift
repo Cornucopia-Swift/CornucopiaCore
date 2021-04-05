@@ -45,18 +45,21 @@ public extension String {
     /// Creates the `UInt32` from a hexadecimal string representation, optionally including the `0x` prefix
     var CC_hexDecoded32: UInt32 {
         let string = self.starts(with: "0x") ? self.dropFirst(2) : self.dropFirst(0)
-        return .init(string, radix: 16)! // hard failure, if the string contains illegal characters
+        guard let uint32 = UInt32.init(string, radix: 16) else { preconditionFailure("Not a valid hex string") }
+        return uint32
     }
 
     /// Creates the `UInt16` from a hexadecimal string representation, optionally including the `0x` prefix
     var CC_hexDecoded16: UInt16 {
         let string = self.starts(with: "0x") ? self.dropFirst(2) : self.dropFirst(0)
-        return .init(string, radix: 16)! // hard failure, if the string contains illegal characters
+        guard let uint16 = UInt16.init(string, radix: 16) else { preconditionFailure("Not a valid hex string") }
+        return uint16
     }
 
     /// Creates the `UInt8` from a hexadecimal string representation, optionally including the `0x` prefix
     var CC_hexDecoded8: UInt8 {
         let string = self.starts(with: "0x") ? self.dropFirst(2) : self.dropFirst(0)
-        return .init(string, radix: 16)! // hard failure, if the string contains illegal characters
+        guard let uint8 = UInt8.init(string, radix: 16) else { preconditionFailure("Not a valid hex string") }
+        return uint8
     }
 }
