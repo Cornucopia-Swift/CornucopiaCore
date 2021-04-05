@@ -14,7 +14,8 @@ public extension String {
 
     var CC_hexDecodedData: Data {
         precondition(self.count % 2 == 0, "This works only for strings with an even number of characters")
-        let chars = Array(self.utf8)
+        let string = self.starts(with: "0x") ? self.dropFirst(2) : self.dropFirst(0)
+        let chars = Array(string.utf8)
         var bytes = [UInt8]()
         bytes.reserveCapacity(count / 2)
 
@@ -26,9 +27,10 @@ public extension String {
         return Data(bytes)
     }
 
-    var CC_hexDecodedUInt8: [UInt8] {
+    var CC_hexDecodedUInt8Array: [UInt8] {
         precondition(self.count % 2 == 0, "This works only for strings with an even number of characters")
-        let chars = Array(self.utf8)
+        let string = self.starts(with: "0x") ? self.dropFirst(2) : self.dropFirst(0)
+        let chars = Array(string.utf8)
         var bytes = [UInt8]()
         bytes.reserveCapacity(count / 2)
 
@@ -38,5 +40,23 @@ public extension String {
             bytes.append(Self.map[index1] << 4 | Self.map[index2])
         }
         return bytes
+    }
+
+    /// Creates the `UInt32` from a hexadecimal string representation, optionally including the `0x` prefix
+    var CC_hexDecoded32: UInt32 {
+        let string = self.starts(with: "0x") ? self.dropFirst(2) : self.dropFirst(0)
+        return .init(string, radix: 16)! // hard failure, if the string contains illegal characters
+    }
+
+    /// Creates the `UInt16` from a hexadecimal string representation, optionally including the `0x` prefix
+    var CC_hexDecoded16: UInt16 {
+        let string = self.starts(with: "0x") ? self.dropFirst(2) : self.dropFirst(0)
+        return .init(string, radix: 16)! // hard failure, if the string contains illegal characters
+    }
+
+    /// Creates the `UInt8` from a hexadecimal string representation, optionally including the `0x` prefix
+    var CC_hexDecoded8: UInt8 {
+        let string = self.starts(with: "0x") ? self.dropFirst(2) : self.dropFirst(0)
+        return .init(string, radix: 16)! // hard failure, if the string contains illegal characters
     }
 }
