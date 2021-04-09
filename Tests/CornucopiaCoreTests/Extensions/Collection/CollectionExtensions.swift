@@ -49,7 +49,6 @@ class CollectionExtensions: XCTestCase {
 
         var count = 0
         for expected in when {
-            print("chunk: \(expected)")
             XCTAssertEqual(expected.count, expectedChunkSize)
             count += 1
         }

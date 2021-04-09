@@ -26,4 +26,9 @@ public extension URLRequest {
     mutating func CC_setBearerAuthorizationHeader(base64: String) {
         setValue(AuthorizationBearerToken + base64, forHTTPHeaderField: Cornucopia.Core.HTTPHeaderField.authorization.rawValue)
     }
+
+    /// Add JWT authorization token.
+    mutating func CC_setBearerAuthorizationHeader(token: Cornucopia.Core.JWT.Token<Cornucopia.Core.JWT.Payload>) {
+        setValue(AuthorizationBearerToken + token.base64, forHTTPHeaderField: Cornucopia.Core.HTTPHeaderField.authorization.rawValue)
+    }
 }
