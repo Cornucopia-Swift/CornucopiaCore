@@ -3,6 +3,8 @@
 //
 import Foundation
 
+private var logger = Cornucopia.Core.Logger(category: "JWT")
+
 public extension Cornucopia.Core {
 
     enum JWT: Int {
@@ -36,6 +38,7 @@ public extension Cornucopia.Core {
             public let base64: String
 
             public init?(from base64: String) {
+                self.base64 = base64
 
                 let components = base64.components(separatedBy: ".")
                 guard components.count == 3 else { return nil }
@@ -46,10 +49,12 @@ public extension Cornucopia.Core {
                 self.header = header
 
                 guard let payloadData = components[JWT.payload.rawValue].CC_base64UrlDecodedData else { return nil }
-                guard let payload = try? JSONDecoder().decode(PAYLOAD_TYPE.self, from: payloadData) else { return nil }
+                guard let payload = try? JSONDecoder().decode(PAYLOAD_TYPE.self, from: payloadData) else {
+                    logger.notice("Can't decode JWT payload into \(PAYLOAD_TYPE.self)")
+                    self.payload = nil
+                    return
+                }
                 self.payload = payload
-
-                self.base64 = base64
             }
         }
     }
