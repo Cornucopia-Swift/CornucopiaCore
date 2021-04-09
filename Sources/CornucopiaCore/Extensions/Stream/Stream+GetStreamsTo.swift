@@ -1,6 +1,7 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
+#if !os(watchOS)
 import Foundation
 
 public extension Stream {
@@ -46,3 +47,5 @@ public extension Stream {
         }
     }
 }
+#endif
+
