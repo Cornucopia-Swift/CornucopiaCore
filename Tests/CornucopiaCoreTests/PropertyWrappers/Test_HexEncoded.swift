@@ -25,6 +25,11 @@ class HexEncoded: XCTestCase {
         var i: [UInt8]
     }
 
+    struct BufferStruct: Codable, Equatable {
+        @Cornucopia.Core.HexEncodedBytes
+        var a: [UInt8]
+    }
+
     func testDecoding() {
 
         let given: String = """
@@ -104,11 +109,6 @@ class HexEncoded: XCTestCase {
 
     func testBufferDecodingFlexibility() {
 
-        struct BufferStruct: Codable, Equatable {
-            @Cornucopia.Core.HexEncodedBytes
-            var a: [UInt8]
-        }
-
         let given1: String = """
             { "a": [ "0xaa", "0xbb", "0xcc" ] }
         """
@@ -132,5 +132,32 @@ class HexEncoded: XCTestCase {
         XCTAssertEqual(when1!, when2!)
         XCTAssertEqual(when1!, when3!)
         XCTAssertEqual(when2!, when3!)
+    }
+
+    func testBufferDecodingInvalidCharacter() {
+
+        let given: String = """
+            { "a": [ "0xzz", "0xbb", "0xcc" ] }
+        """
+
+        XCTAssertThrowsError(try JSONDecoder().decode(BufferStruct.self, from: given.data(using: .utf8)!))
+    }
+
+    func testBufferDecodingNoPrefix() {
+
+        let given: String = """
+            { "a": [ "0x33", "bb", "0xcc" ] }
+        """
+
+        XCTAssertThrowsError(try JSONDecoder().decode(BufferStruct.self, from: given.data(using: .utf8)!))
+    }
+
+    func testBufferDecodingIsEmptyAfterPrefix() {
+
+        let given: String = """
+            { "a": [ "0x33", "0x", "0xcc" ] }
+        """
+
+        XCTAssertThrowsError(try JSONDecoder().decode(BufferStruct.self, from: given.data(using: .utf8)!))
     }
 }

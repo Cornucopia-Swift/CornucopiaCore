@@ -34,7 +34,7 @@ public extension Cornucopia.Core {
             var container = encoder.singleValueContainer()
             let string = String(self.wrappedValue, radix: 16, uppercase: true)
             try container.encode(Prefix + string)
-            print("encoded \(self) as \(Prefix + string)")
+            //print("encoded \(self) as \(Prefix + string)")
         }
 
         public init(wrappedValue: T) {
@@ -56,6 +56,12 @@ public extension Cornucopia.Core {
                     throw DecodingError.dataCorruptedError(in: container, debugDescription: "HexEncoded STRING is missing prefix \(Prefix)")
                 }
                 var string = string.dropFirst(2)
+                guard !string.isEmpty else {
+                    throw DecodingError.dataCorruptedError(in: container, debugDescription: "HexEncoded STRING is empty after prefix")
+                }
+                guard string.allSatisfy(\Character.isHexDigit) else {
+                    throw DecodingError.dataCorruptedError(in: container, debugDescription: "HexEncoded STRING has an invalid character")
+                }
                 if string.count % 2 == 1 {
                     string.insert("0", at: string.startIndex)
                 }
@@ -74,7 +80,7 @@ public extension Cornucopia.Core {
             var container = encoder.singleValueContainer()
             let strings = self.wrappedValue.map { Prefix + String($0, radix: 16, uppercase: true) }
             try container.encode(strings)
-            print("encoded \(self) as \(strings)")
+            //print("encoded \(self) as \(strings)")
         }
 
         public init(wrappedValue: [UInt8]) {
