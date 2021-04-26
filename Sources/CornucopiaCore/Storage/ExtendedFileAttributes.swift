@@ -1,6 +1,7 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
+#if !os(Linux)
 import Foundation
 
 extension URL: _CornucopiaCoreStorageBackend {
@@ -13,3 +14,4 @@ extension URL: _CornucopiaCoreStorageBackend {
         self.CC_storeAsExtendedAttribute(item: value, for: defaultName)
     }
 }
+#endif

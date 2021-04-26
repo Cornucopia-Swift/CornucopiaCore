@@ -1,6 +1,7 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
+import CoreFoundation
 import Foundation
 
 public extension OSStatus {

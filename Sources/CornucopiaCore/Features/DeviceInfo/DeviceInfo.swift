@@ -1,6 +1,7 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
+#if !os(Linux)
 import Foundation
 
 public extension Cornucopia.Core {
@@ -27,3 +28,4 @@ public extension Cornucopia.Core {
     }
 
 }
+#endif

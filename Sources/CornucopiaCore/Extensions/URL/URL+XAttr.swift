@@ -1,6 +1,7 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
+#if !os(Linux)
 import Foundation
 
 // based on https://stackoverflow.com/a/38343753/415982
@@ -84,3 +85,4 @@ extension URL {
         return try! JSONDecoder().decode(T.self, from: data)
     }
 }
+#endif

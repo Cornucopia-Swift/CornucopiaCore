@@ -22,6 +22,6 @@ extension UserDefaults: Cornucopia.Core.StorageBackend {
     }
 
     public func set<T: Encodable>(_ value: T?, forKey defaultName: String) {
-        self.setValue(value, forKey: defaultName)
+        self.set(value, forKey: defaultName)
     }
 }
