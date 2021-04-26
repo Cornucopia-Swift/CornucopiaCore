@@ -26,4 +26,14 @@ public extension String.StringInterpolation {
         }
         appendInterpolation(string)
     }
+
+    mutating func appendInterpolation<I: BinaryInteger>(_ array: [I], radix: Radix, prefix: Bool = false, toWidth width: Int = 0, separator: String = "") {
+
+        for (idx, element) in array.enumerated() {
+            appendInterpolation(element, radix: radix, prefix: prefix, toWidth: width)
+            if idx < array.endIndex - 1 {
+                appendInterpolation(separator)
+            }
+        }
+    }
 }
