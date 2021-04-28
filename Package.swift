@@ -20,7 +20,7 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/apple/swift-crypto.git", .upToNextMajor(from: "1.1.0"))
+        .package(url: "https://github.com/apple/swift-crypto.git", .upToNextMajor(from: "1.1.6"))
 
     ],
     targets: [
