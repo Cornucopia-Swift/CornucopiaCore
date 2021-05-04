@@ -3,10 +3,11 @@
 //
 import Foundation
 
-#if !os(Linux)
+#if !os(Linux) // There is no #selector on Linux. Might want to refactor this to using closure-style notifications.
 
 public extension Cornucopia.Core {
 
+    /// Every write access to the wrapped value triggers a `NotificationCenter` notification.
     @propertyWrapper
     struct NotifiedOnSet<T> {
 

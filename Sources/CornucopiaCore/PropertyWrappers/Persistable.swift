@@ -3,11 +3,11 @@
 //
 import Foundation
 
-private let logger = Cornucopia.Core.Logger(category: "Persisted")
+fileprivate let logger = Cornucopia.Core.Logger(category: "@Persisted")
 
-// The actual property wrapper
 public extension Cornucopia.Core {
 
+    /// Persists the wrapped value using the specified storage backend.
     @propertyWrapper
     struct Persisted<T: Codable> {
 
