@@ -22,6 +22,8 @@ extension UserDefaults: Cornucopia.Core.StorageBackend {
     }
 
     public func set<T: Encodable>(_ value: T?, forKey defaultName: String) {
+#if canImport(os)
         self.setValue(value, forKey: defaultName)
+#endif
     }
 }
