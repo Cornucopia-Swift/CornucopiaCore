@@ -35,7 +35,7 @@ public extension Cornucopia.Core {
     }
 #else
     @propertyWrapper
-    struct Logged<T> {
+    struct DebugLogged<T> {
         public var wrappedValue: T
         public init(wrappedValue: T, name: String, logger: Logger? = nil, level: Logger.Level = .debug) {
             self.wrappedValue = wrappedValue
