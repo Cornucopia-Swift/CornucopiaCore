@@ -6,12 +6,12 @@ import Foundation
 
 extension URL: _CornucopiaCoreStorageBackend {
 
-    public func object<T: Decodable>(forKey defaultName: String) -> T? {
-        self.CC_queryExtendedAttribute(for: defaultName)
+    public func object<T: Decodable>(for key: String) -> T? {
+        self.CC_queryExtendedAttribute(for: key)
     }
 
-    public func set<T: Encodable>(_ value: T?, forKey defaultName: String) {
-        self.CC_storeAsExtendedAttribute(item: value, for: defaultName)
+    public func set<T: Encodable>(_ value: T?, for key: String) {
+        self.CC_storeAsExtendedAttribute(item: value, for: key)
     }
 }
 #endif

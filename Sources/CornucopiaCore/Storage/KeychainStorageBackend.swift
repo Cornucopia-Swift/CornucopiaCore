@@ -4,12 +4,12 @@
 #if canImport(Security)
 extension Cornucopia.Core.Keychain: _CornucopiaCoreStorageBackend {
 
-    public func object<T: Decodable>(forKey defaultName: String) -> T? {
-        self.query(for: defaultName)
+    public func object<T: Decodable>(for key: String) -> T? {
+        self.query(for: key)
     }
 
-    public func set<T: Encodable>(_ value: T?, forKey defaultName: String) {
-        self.store(item: value, for: defaultName)
+    public func set<T: Encodable>(_ value: T?, for key: String) {
+        self.store(item: value, for: key)
     }
 }
 #endif

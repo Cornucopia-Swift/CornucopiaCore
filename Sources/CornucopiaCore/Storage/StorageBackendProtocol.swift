@@ -6,8 +6,8 @@ import Foundation
 // The formal storage backend protocol
 public protocol _CornucopiaCoreStorageBackend {
 
-    func object<T: Decodable>(forKey defaultName: String) -> T?
-    func set<T: Encodable>(_ value: T?, forKey defaultName: String)
+    func object<T: Decodable>(for key: String) -> T?
+    func set<T: Encodable>(_ value: T?, for key: String)
 
 }
 
@@ -17,13 +17,11 @@ public extension Cornucopia.Core { typealias StorageBackend = _CornucopiaCoreSto
 // UserDefaults already confirm to this protocol
 extension UserDefaults: Cornucopia.Core.StorageBackend {
 
-    public func object<T: Decodable>(forKey defaultName: String) -> T? {
-        self.object(forKey: defaultName) as! T?
+    public func object<T: Decodable>(for key: String) -> T? {
+        self.object(forKey: key) as! T?
     }
 
-    public func set<T: Encodable>(_ value: T?, forKey defaultName: String) {
-#if canImport(os)
-        self.setValue(value, forKey: defaultName)
-#endif
+    public func set<T: Encodable>(_ value: T?, for key: String) {
+        self.set(value, forKey: key)
     }
 }

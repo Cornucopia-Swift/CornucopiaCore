@@ -17,7 +17,7 @@ public extension Cornucopia.Core {
 
         public var wrappedValue: T {
             get {
-                guard let data: Data = storage.object(forKey: self.key) else {
+                guard let data: Data = storage.object(for: self.key) else {
                     return self.defaultValue
                 }
                 var value: T?
@@ -35,7 +35,7 @@ public extension Cornucopia.Core {
             set {
                 do {
                     let data = try Foundation.JSONEncoder().encode(newValue)
-                    storage.set(data, forKey: self.key)
+                    storage.set(data, for: self.key)
                 } catch {
                     logger.error("Can't encode \(newValue): \(error.localizedDescription)")
                     logger.debug("\(error)")
