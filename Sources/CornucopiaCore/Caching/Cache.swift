@@ -14,6 +14,7 @@ public protocol _CornucopiaCoreUrlCache {
     typealias DataCompletionHandler = (Data?) -> ()
 
     func loadDataFor(url: URL, then: @escaping(DataCompletionHandler))
+    func loadDataFor(urlRequest: URLRequest, then: @escaping(DataCompletionHandler))
 }
 
 public extension Cornucopia.Core {
