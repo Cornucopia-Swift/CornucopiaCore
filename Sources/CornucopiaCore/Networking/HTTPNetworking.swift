@@ -156,6 +156,35 @@ extension Cornucopia.Core {
             task.resume()
             return task
         }
+
+        @discardableResult
+        public func DELETE(with request: URLRequest, then: @escaping((HTTPStatusCode) -> Void)) -> URLSessionDataTask? {
+            var request = request
+            request.httpMethod = HTTPMethod.DELETE.rawValue
+            let task = self.urlSession.dataTask(with: request) { url, urlResponse, error in
+
+                guard error == nil else { // an error occured
+                    guard let urlError = error as? URLError, urlError.code == .cancelled else { // the task has not just been cancelled
+
+                        logger.notice("\(request.httpMethod!) \(request) => FAIL '\(error!.localizedDescription)'")
+                        then(.Unspecified)
+                        return
+                    }
+                    logger.debug( "\(request.httpMethod!) \(request) => CANCELLED" )
+                    then(.Cancelled)
+                    return
+                }
+                guard let response = urlResponse as? HTTPURLResponse else {
+                    then(.Unspecified)
+                    return
+                }
+                let statusCode = HTTPStatusCode(rawValue: response.statusCode) ?? .Unknown
+                logger.notice( "\(request.httpMethod!) \(request) => \(statusCode.rawValue)." )
+                then(statusCode)
+            }
+            task.resume()
+            return task
+        }
     }
 
 } // extension Cornucopia.Core
