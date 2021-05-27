@@ -6,6 +6,7 @@ public extension Cornucopia.Core {
     /// Well known HTTP methods
     enum HTTPMethod: String {
         case CONNECT
+        case DELETE
         case GET
         case HEAD
         case OPTIONS
