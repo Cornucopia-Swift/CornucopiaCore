@@ -10,6 +10,8 @@ public enum HTTPStatusCode: Int, Error {
     case MalformedUrl = -1
     case Unspecified = -2
     case Cancelled = -3
+    case EncodingError = -4
+    case DecodingError = -5
 
     // 1xx Informational
     case Continue = 100
