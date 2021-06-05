@@ -158,6 +158,58 @@ extension Cornucopia.Core {
         }
 
         @discardableResult
+        public func PUT<T: Codable>(item: T, with request: URLRequest, then: @escaping((HTTPResponse<T>) -> Void)) -> URLSessionDataTask? {
+            var request = request
+            request.httpMethod = HTTPMethod.PUT.rawValue
+            request.setValue(HTTPContentType.applicationJSON.rawValue, forHTTPHeaderField: HTTPHeaderField.contentType.rawValue)
+            do {
+                request.httpBody = try Cornucopia.Core.JSONEncoder().encode(item)
+            } catch {
+                logger.error("Can't encode \(item): \(error.localizedDescription)")
+                let response = Cornucopia.Core.HTTPResponse<T>.failure(error: error)
+                then(response)
+                return nil
+            }
+            logger.debug( "\(request.httpMethod!) \(request) with type \(T.self)" )
+
+            #if DEBUG
+            let string = String(data: request.httpBody!, encoding: .utf8) ?? "<invalid charset>"
+            logger.debug("↑ Sent \(string)")
+            #endif
+
+            let handler = self.createDataTaskHandler(request: request, then: then)
+            let task = urlSession.dataTask(with: request, completionHandler: handler)
+            task.resume()
+            return task
+        }
+
+        @discardableResult
+        public func PUT<UP: Encodable, DOWN: Decodable>(item: UP, with request: URLRequest, then: @escaping((HTTPResponse<DOWN>) -> Void)) -> URLSessionDataTask? {
+            var request = request
+            request.httpMethod = HTTPMethod.PUT.rawValue
+            request.setValue(HTTPContentType.applicationJSON.rawValue, forHTTPHeaderField: HTTPHeaderField.contentType.rawValue)
+            do {
+                request.httpBody = try Cornucopia.Core.JSONEncoder().encode(item)
+            } catch {
+                logger.error("Can't encode \(item): \(error.localizedDescription)")
+                let response = Cornucopia.Core.HTTPResponse<DOWN>.failure(error: error)
+                then(response)
+                return nil
+            }
+            logger.debug( "\(request.httpMethod!) \(request) with a \(UP.self), expecting to receive a \(DOWN.self)" )
+
+            #if DEBUG
+            let string = String(data: request.httpBody!, encoding: .utf8) ?? "<invalid charset>"
+            logger.debug("↑ Sent \(string)")
+            #endif
+
+            let handler = self.createDataTaskHandler(request: request, then: then)
+            let task = urlSession.dataTask(with: request, completionHandler: handler)
+            task.resume()
+            return task
+        }
+
+        @discardableResult
         public func DELETE(with request: URLRequest, then: @escaping((HTTPStatusCode) -> Void)) -> URLSessionDataTask? {
             var request = request
             request.httpMethod = HTTPMethod.DELETE.rawValue
