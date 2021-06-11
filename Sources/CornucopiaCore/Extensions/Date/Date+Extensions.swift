@@ -17,6 +17,12 @@ public extension Date {
     /// Returns true, if `self` is today.
     var CC_isToday: Bool { CC_isOnSameDayAs() }
 
+    /// Returns true, if `self` has already gone by.
+    var CC_isPast: Bool { self < Date() }
+
+    /// Returns true, if `self` is to come.
+    var CC_isFuture: Bool { self > Date() }
+
     /// Returns a date, rounding to the nearest amount of `minutes`.
     func CC_round(minutes: Int) -> Date { process(minutes: minutes, function: round) }
 
