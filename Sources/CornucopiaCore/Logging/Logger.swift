@@ -15,6 +15,9 @@ public extension Cornucopia.Core {
     /// with loads of #if/#else/#endif – which is non-negotiable in my opinion.
     struct Logger {
 
+        public static let includeDebug: Bool = ProcessInfo.processInfo.environment["LOGLEVEL"] == "DEBUG" || Self.includeTrace
+        public static let includeTrace: Bool = ProcessInfo.processInfo.environment["LOGLEVEL"] == "TRACE"
+
         /// The log level.
         public enum Level: String {
             case trace
@@ -72,14 +75,14 @@ public extension Cornucopia.Core {
         /// Log a trace message. Trace messages are only processed, if the preprocessor symbols DEBUG and TRACE are set.
         @inlinable
         public func trace(_ message: @autoclosure ()->String ) {
-            #if DEBUG && TRACE
+            guard Self.includeTrace else { return }
             os_log("%s", log: oslog, type: .debug, message())
-            #endif
         }
 
         /// Log a debug message.
         @inlinable
         public func debug(_ message: @autoclosure () -> String) {
+            guard Self.includeDebug else { return }
             os_log("%s", log: oslog, type: .debug, message())
         }
 
