@@ -5,6 +5,7 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
+import SWCompression
 
 fileprivate let logger = Cornucopia.Core.Logger(subsystem: "networking", category: "HTTP")
 
@@ -12,6 +13,8 @@ extension Cornucopia.Core {
 
     public class HTTPNetworking {
 
+        /// Some servers do not support compressed uploads
+        public static var enableCompressedUploads: Bool = true
         var urlSession: URLSession
 
         public init(with configuration: URLSessionConfiguration? = nil) {
@@ -111,7 +114,7 @@ extension Cornucopia.Core {
             request.httpMethod = HTTPMethod.POST.rawValue
             request.setValue(HTTPContentType.applicationJSON.rawValue, forHTTPHeaderField: HTTPHeaderField.contentType.rawValue)
             do {
-                request.httpBody = try Cornucopia.Core.JSONEncoder().encode(item)
+                try self.prepareBody(item: item, in: &request)
             } catch {
                 logger.error("Can't encode \(item): \(error.localizedDescription)")
                 let response = Cornucopia.Core.HTTPResponse<DOWN>.failure(error: error)
@@ -137,7 +140,7 @@ extension Cornucopia.Core {
             request.httpMethod = HTTPMethod.POST.rawValue
             request.setValue(HTTPContentType.applicationJSON.rawValue, forHTTPHeaderField: HTTPHeaderField.contentType.rawValue)
             do {
-                request.httpBody = try Cornucopia.Core.JSONEncoder().encode(item)
+                try self.prepareBody(item: item, in: &request)
             } catch {
                 logger.error("Can't encode \(item): \(error.localizedDescription)")
                 let response = Cornucopia.Core.HTTPResponse<T>.failure(error: error)
@@ -163,7 +166,7 @@ extension Cornucopia.Core {
             request.httpMethod = HTTPMethod.PUT.rawValue
             request.setValue(HTTPContentType.applicationJSON.rawValue, forHTTPHeaderField: HTTPHeaderField.contentType.rawValue)
             do {
-                request.httpBody = try Cornucopia.Core.JSONEncoder().encode(item)
+                try self.prepareBody(item: item, in: &request)
             } catch {
                 logger.error("Can't encode \(item): \(error.localizedDescription)")
                 let response = Cornucopia.Core.HTTPResponse<T>.failure(error: error)
@@ -189,14 +192,14 @@ extension Cornucopia.Core {
             request.httpMethod = HTTPMethod.PUT.rawValue
             request.setValue(HTTPContentType.applicationJSON.rawValue, forHTTPHeaderField: HTTPHeaderField.contentType.rawValue)
             do {
-                request.httpBody = try Cornucopia.Core.JSONEncoder().encode(item)
+                try self.prepareBody(item: item, in: &request)
             } catch {
                 logger.error("Can't encode \(item): \(error.localizedDescription)")
                 let response = Cornucopia.Core.HTTPResponse<DOWN>.failure(error: error)
                 then(response)
                 return nil
             }
-            logger.debug( "\(request.httpMethod!) \(request) with a \(UP.self), expecting to receive a \(DOWN.self)" )
+            logger.debug("\(request.httpMethod!) \(request) with a \(UP.self), expecting to receive a \(DOWN.self)")
 
             #if DEBUG
             let string = String(data: request.httpBody!, encoding: .utf8) ?? "<invalid charset>"
@@ -222,7 +225,7 @@ extension Cornucopia.Core {
                         then(.Unspecified)
                         return
                     }
-                    logger.debug( "\(request.httpMethod!) \(request) => CANCELLED" )
+                    logger.debug("\(request.httpMethod!) \(request) => CANCELLED")
                     then(.Cancelled)
                     return
                 }
@@ -243,6 +246,21 @@ extension Cornucopia.Core {
 
 private extension Cornucopia.Core.HTTPNetworking {
 
+    func prepareBody<T: Encodable>(item: T, in request: inout URLRequest) throws {
+        let uncompressed = try Cornucopia.Core.JSONEncoder().encode(item)
+        request.httpBody = uncompressed
+        guard Self.enableCompressedUploads else { return }
+        do {
+            let compressed = try GzipArchive.archive(data: uncompressed)
+            guard compressed.count < uncompressed.count else { return }
+            request.httpBody = compressed
+            request.addValue("gzip", forHTTPHeaderField: "Content-Encoding")
+        } catch {
+            logger.notice("Can't compress: \(error), sending uncompressed")
+            request.httpBody = uncompressed
+        }
+    }
+
     func createDataTaskHandler<T>(request: URLRequest, then: @escaping((Cornucopia.Core.HTTPResponse<T>) -> Void)) -> URLSessionTask.CompletionHandler {
 
         let time = Date().timeIntervalSince1970
@@ -252,7 +270,7 @@ private extension Cornucopia.Core.HTTPNetworking {
             guard let data = data, error == nil else { // an error occured
                 guard let urlError = error as? URLError, urlError.code == .cancelled else { // the task has not just been cancelled
 
-                    logger.notice( "\(request.httpMethod!) \(request) => FAIL '\(error!.localizedDescription)'" )
+                    logger.notice("\(request.httpMethod!) \(request) => FAIL '\(error!.localizedDescription)'")
                     let response = Cornucopia.Core.HTTPResponse<T>.failure(error: error!)
                     then(response)
                     return
@@ -269,7 +287,7 @@ private extension Cornucopia.Core.HTTPNetworking {
             let contentLength = httpResponse.CC_contentLength
             let timeProcessed = String(format: "%.02f", (Date().timeIntervalSince1970 - time))
 
-            logger.notice( "\(request.httpMethod!) \(request) => \(httpResponse.statusCode), '\(contentType)', \(contentLength) bytes announced, \(data.count) bytes received in \(timeProcessed) s." )
+            logger.notice("\(request.httpMethod!) \(request) => \(httpResponse.statusCode), '\(contentType)', \(contentLength) bytes announced, \(data.count) bytes received in \(timeProcessed) s.")
             guard httpStatusCode.responseType == .Success else {
                 if data.count > 0 {
                     let string = String(data: data, encoding: .utf8) ?? "<invalid charset>"
@@ -324,4 +342,3 @@ private extension Cornucopia.Core.HTTPNetworking {
         return handler
     }
 }
-

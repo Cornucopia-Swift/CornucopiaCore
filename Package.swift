@@ -13,27 +13,25 @@ let package = Package(
         //.linux
     ],
     products: [
-        // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "CornucopiaCore",
             targets: ["CornucopiaCore"]),
     ],
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/apple/swift-crypto.git", .upToNextMajor(from: "1.1.6"))
-
+        .package(url: "https://github.com/apple/swift-crypto.git", .upToNextMajor(from: "1.1.6")),
+        .package(url: "https://github.com/tsolomko/SWCompression", .upToNextMajor(from: "4.6.0"))
     ],
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "CornucopiaCore",
             dependencies: [
                 .product(name: "Crypto", package: "swift-crypto"),
+                .product(name: "SWCompression", package: "SWCompression"),
                 ]
             ),
         .testTarget(
             name: "CornucopiaCoreTests",
-            dependencies: ["CornucopiaCore"]),
+            dependencies: ["CornucopiaCore"]
+            ),
     ]
 )
