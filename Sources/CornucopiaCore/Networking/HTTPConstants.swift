@@ -40,7 +40,7 @@ public extension Cornucopia.Core {
         }
     }
 
-    /// An HTTP response for a request sent for to gather a `Decodable` payload
+    /// An HTTP response for a request sent to gather a `Decodable` payload
     enum HTTPResponse<T: Decodable> {
         /// The request has been cancelled
         case cancellation
@@ -50,6 +50,20 @@ public extension Cornucopia.Core {
         case empty(status: HTTPStatusCode)
         /// The HTTP request completed with the expected payload
         case success(status: HTTPStatusCode, payload: T)
+    }
+
+    /// An HTTP response for a request sent to gather a `Decodable` payload – depending on the status code
+    enum HTTPRequestResponse<EXPECTED: Decodable, ERROR: Decodable> {
+        /// The request has been cancelled
+        case cancelled
+        /// There has been a generic failure before the HTTP request could be completed
+        case prefailure(error: Error)
+        /// The HTTP request completed, but did not return an expected payload
+        case unexpected(status: HTTPStatusCode)
+        /// The HTTP request completed successful with the expected payload
+        case success(status: HTTPStatusCode, payload: EXPECTED)
+        /// THe HTTP request completed with a failure code, but an expected error payload
+        case failure(status: HTTPStatusCode, payload: ERROR)
     }
 
     /// Well known HTTP header fields

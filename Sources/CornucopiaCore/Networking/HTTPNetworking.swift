@@ -108,6 +108,16 @@ extension Cornucopia.Core {
             return task
         }
 
+        /// GETs a (decodable) resource (or a decodable error)
+        @discardableResult
+        public func GET<DOWN: Decodable, ERROR: Decodable>(with request: URLRequest, then: @escaping((HTTPRequestResponse<DOWN, ERROR>) -> Void)) -> URLSessionDataTask {
+            logger.debug( "\(request.httpMethod!) \(request) with type \(DOWN.self) – or \(ERROR.self)" )
+            let handler = self.createDataTaskRequestHandler(request: request, then: then)
+            let task = urlSession.dataTask(with: request, completionHandler: handler)
+            task.resume()
+            return task
+        }
+
         @discardableResult
         public func POST<UP: Encodable, DOWN: Decodable>(item: UP, with request: URLRequest, then: @escaping((HTTPResponse<DOWN>) -> Void)) -> URLSessionDataTask? {
             var request = request
@@ -129,6 +139,27 @@ extension Cornucopia.Core {
             #endif
 
             let handler = self.createDataTaskHandler(request: request, then: then)
+            let task = urlSession.dataTask(with: request, completionHandler: handler)
+            task.resume()
+            return task
+        }
+
+        @discardableResult
+        public func POST<UP: Encodable, DOWN: Decodable, ERROR: Decodable>(item: UP, with request: URLRequest, then: @escaping((HTTPRequestResponse<DOWN, ERROR>) -> Void)) -> URLSessionDataTask? {
+            var request = request
+            request.httpMethod = HTTPMethod.POST.rawValue
+            request.setValue(HTTPContentType.applicationJSON.rawValue, forHTTPHeaderField: HTTPHeaderField.contentType.rawValue)
+            do {
+                try self.prepareBody(item: item, in: &request)
+            } catch {
+                logger.error("Can't encode \(item): \(error.localizedDescription)")
+                let response = Cornucopia.Core.HTTPRequestResponse<DOWN, ERROR>.prefailure(error: error)
+                then(response)
+                return nil
+            }
+            logger.debug( "\(request.httpMethod!) \(request) with a \(UP.self), expecting to receive a \(DOWN.self) on success, or an \(ERROR.self) on failure." )
+
+            let handler = self.createDataTaskRequestHandler(request: request, then: then)
             let task = urlSession.dataTask(with: request, completionHandler: handler)
             task.resume()
             return task
@@ -341,4 +372,101 @@ private extension Cornucopia.Core.HTTPNetworking {
         }
         return handler
     }
+
+    func createDataTaskRequestHandler<DOWN, ERROR>(request: URLRequest, then: @escaping((Cornucopia.Core.HTTPRequestResponse<DOWN, ERROR>) -> Void)) -> URLSessionTask.CompletionHandler {
+
+        let time = Date().timeIntervalSince1970
+
+        let handler: (Data?, URLResponse?, Error?) -> Void = { data, urlResponse, error in
+
+            guard let data = data, error == nil else { // an error occured
+                guard let urlError = error as? URLError, urlError.code == .cancelled else { // the task has not just been cancelled
+
+                    logger.notice("\(request.httpMethod!) \(request) => FAIL '\(error!.localizedDescription)'")
+                    let response = Cornucopia.Core.HTTPRequestResponse<DOWN, ERROR>.prefailure(error: error!)
+                    then(response)
+                    return
+                }
+                logger.debug( "\(request.httpMethod!) \(request) => CANCELLED" )
+                let response = Cornucopia.Core.HTTPRequestResponse<DOWN, ERROR>.cancelled
+                then(response)
+                return
+            }
+
+            let httpResponse = urlResponse as! HTTPURLResponse
+            let httpStatusCode = httpResponse.CC_statusCode
+            let contentType = httpResponse.CC_contentType
+            let contentLength = httpResponse.CC_contentLength
+            let timeProcessed = String(format: "%.02f", (Date().timeIntervalSince1970 - time))
+
+            logger.notice("\(request.httpMethod!) \(request) => \(httpResponse.statusCode), '\(contentType)', \(contentLength) bytes announced, \(data.count) bytes received in \(timeProcessed) s.")
+            guard httpStatusCode.responseType == .Success else {
+
+                guard data.count > 0 else {
+                    let response = Cornucopia.Core.HTTPRequestResponse<DOWN, ERROR>.unexpected(status: httpStatusCode)
+                    then(response)
+                    return
+                }
+
+                switch contentType {
+                    case Cornucopia.Core.HTTPContentType.applicationJSON.rawValue:
+                        do {
+                            let decoder = Cornucopia.Core.JSONDecoder() // configured for relaxed parsing of ISO8601 dates
+                            let object = try decoder.decode(ERROR.self, from: data)
+                            let response = Cornucopia.Core.HTTPRequestResponse<DOWN, ERROR>.failure(status: httpStatusCode, payload: object)
+                            then(response)
+
+                        } catch let error {
+                            logger.notice("Could not decode as \(ERROR.self): \(error.localizedDescription) \(error)")
+                            let response = Cornucopia.Core.HTTPRequestResponse<DOWN, ERROR>.unexpected(status: httpStatusCode)
+                            then(response)
+                        }
+                    default:
+                        let string = String(data: data, encoding: .utf8) ?? "<invalid charset>"
+                        logger.notice("\(request.httpMethod!) request failed with the following response: \(string)")
+                        let response = Cornucopia.Core.HTTPRequestResponse<DOWN, ERROR>.unexpected(status: httpStatusCode)
+                        then(response)
+                }
+                return
+            }
+            if DOWN.self == Data.self {
+                // requested target type is Data, no need to process further
+                let response = Cornucopia.Core.HTTPRequestResponse<DOWN, ERROR>.success(status: httpStatusCode, payload: data as! DOWN)
+                then(response)
+                return
+            }
+
+            switch contentType {
+                case Cornucopia.Core.HTTPContentType.applicationJSON.rawValue:
+                    do {
+                        let decoder = Cornucopia.Core.JSONDecoder() // configured for relaxed parsing of ISO8601 dates
+                        let object = try decoder.decode(DOWN.self, from: data)
+                        let response = Cornucopia.Core.HTTPRequestResponse<DOWN, ERROR>.success(status: httpStatusCode, payload: object)
+                        then(response)
+
+                    } catch let error {
+                        logger.notice("Could not decode as \(DOWN.self): \(error.localizedDescription) \(error)")
+                        let response = Cornucopia.Core.HTTPRequestResponse<DOWN, ERROR>.unexpected(status: httpStatusCode)
+                        then(response)
+                    }
+                case _ where contentType.hasPrefix("text/"):
+                    guard DOWN.self == String.self else {
+                        logger.notice("Don't know how to unpack content-type \(contentType) to a \(DOWN.self)")
+                        let response = Cornucopia.Core.HTTPRequestResponse<DOWN, ERROR>.unexpected(status: httpStatusCode)
+                        then(response)
+                        return
+                    }
+                    //TODO: We're forcing UTF8 here without actually inspecting a possible charset specification in the content-type such as 'text/plain;charset=UTF-8'. Should be rewritten to not hardcode .utf8 and rather parse the charset specification.
+                    let response = Cornucopia.Core.HTTPRequestResponse<DOWN, ERROR>.success(status: httpStatusCode, payload: String(data: data, encoding: .utf8) as! DOWN)
+                    then(response)
+
+                default:
+                    logger.notice("Don't know how to unpack content-type \(contentType) to a \(DOWN.self)")
+                    let response = Cornucopia.Core.HTTPRequestResponse<DOWN, ERROR>.unexpected(status: httpStatusCode)
+                    then(response)
+            }
+        }
+        return handler
+    }
+
 }
