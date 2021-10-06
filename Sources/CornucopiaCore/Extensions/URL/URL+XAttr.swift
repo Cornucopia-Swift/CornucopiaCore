@@ -1,7 +1,7 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
-#if !os(Linux)
+#if !os(Linux) && !os(Windows)
 import Foundation
 
 // based on https://stackoverflow.com/a/38343753/415982

@@ -1,7 +1,7 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
-#if !os(Linux)
+#if canImport(ObjectiveC)
 import Foundation
 
 public extension Cornucopia.Core {

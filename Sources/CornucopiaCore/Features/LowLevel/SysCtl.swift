@@ -1,7 +1,7 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
-#if !(os(Windows) || os(Linux))
+#if canImport(ObjectiveC) // only available on Apple platforms
 import Foundation
 
 public extension Cornucopia.Core {

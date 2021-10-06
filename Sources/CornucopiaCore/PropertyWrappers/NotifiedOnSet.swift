@@ -1,9 +1,8 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
+#if canImport(ObjectiveC) // #selector is only available on platforms that have an Objective-C implementation. Might want to refactor this to using closure-style notifications.
 import Foundation
-
-#if !os(Linux) // There is no #selector on Linux. Might want to refactor this to using closure-style notifications.
 
 public extension Cornucopia.Core {
 
@@ -41,5 +40,4 @@ public extension Cornucopia.Core {
     }
     
 }
-
 #endif

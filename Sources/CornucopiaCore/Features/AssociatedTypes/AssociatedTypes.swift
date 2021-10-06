@@ -1,7 +1,7 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
-#if !os(Linux)
+#if canImport(ObjectiveC) // this does not work on non-Apple platforms
 import Foundation
 
 /**
