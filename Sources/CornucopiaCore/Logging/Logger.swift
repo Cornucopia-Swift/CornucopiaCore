@@ -11,37 +11,22 @@ public extension Cornucopia.Core {
     /// of the os_log (and os.Logger) output.
     /// Eventually this will gain another environment variable for specifying the log message target (stderr, udp, tcp, etc.)
     struct Logger {
-
+        
         public static let includeDebug: Bool = ProcessInfo.processInfo.environment["LOGLEVEL"] == "DEBUG" || Self.includeTrace
         public static let includeTrace: Bool = ProcessInfo.processInfo.environment["LOGLEVEL"] == "TRACE"
-        public static let timeFormatter: DateFormatter = {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
-            return formatter
+        public static let destination: LogSink = {
+            #if os(watchOS) // no BSD sockets on WatchOS
+            return PrintLogger()
+            #endif
+            guard let destination = ProcessInfo.processInfo.environment["LOGSINK"] else { return PrintLogger() }
+            let components = destination.components(separatedBy: ":")
+            guard components.count == 2 else { return PrintLogger() }
+            let host = components.first!
+            let port = UInt16(components[1]) ?? 5514
+            return UDPLogger(listener: host, port: port)
         }()
 
-        /// The log level.
-        public enum Level: String {
-            case trace
-            case debug
-            case info
-            case notice
-            case error
-            case fault
-            case `default`
-
-            public var character: String {
-                switch self {
-                    case .trace:   return "T"
-                    case .debug:   return "D"
-                    case .info:    return "I"
-                    case .notice:  return "N"
-                    case .error:   return "E"
-                    case .fault:   return "F"
-                    case .default: return "?"
-                }
-            }
-        }
+        public typealias Level = Cornucopia.Core.LogLevel
 
         public let subsystem: String
         public let category: String
@@ -55,14 +40,7 @@ public extension Cornucopia.Core {
 
         @_transparent
         public func log(_ message: String, level: Level) {
-            //NOTE: On Apple platforms, we use a private API to gather the thread number, on Linux we can only show 1 (main) or 0 (secondary).
-            #if canImport(ObjectiveC)
-            let threadNumber = (Thread.current.value(forKeyPath: "private.seqNum") as? NSNumber)?.intValue ?? 0
-            #else
-            let threadNumber = Thread.current.isMainThread ? 1 : 0
-            #endif
-            let timestamp = Self.timeFormatter.string(from: Date())
-            print("\(timestamp) [\(self.subsystem):\(self.category)] <\(threadNumber)> (\(level.character)) \(message)")
+            Self.destination.log(message, level: level, subsystem: self.subsystem, category: self.category)
         }
 
         /// Log a trace message. Trace messages are only processed, if the environment variable LOGLEVEL is TRACE
