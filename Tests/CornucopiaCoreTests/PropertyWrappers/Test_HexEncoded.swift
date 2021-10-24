@@ -23,6 +23,8 @@ class HexEncoded: XCTestCase {
         var h: UInt32
         @Cornucopia.Core.HexEncodedBytes
         var i: [UInt8]
+        @Cornucopia.Core.HexEncodedBytes
+        var j: [UInt8]
     }
 
     struct BufferStruct: Codable, Equatable {
@@ -46,7 +48,8 @@ class HexEncoded: XCTestCase {
                     "0xaa",
                     "0xbb",
                     "0xcc"
-                ]
+                ],
+                "j": "0xd1e2f3"
             }
         """
 
@@ -60,19 +63,24 @@ class HexEncoded: XCTestCase {
         XCTAssertEqual(when!.f, 0x427789)
         XCTAssertEqual(when!.g, 0x427789a)
         XCTAssertEqual(when!.h, 0x427789ab)
+        XCTAssertEqual(when!.i, [0xaa, 0xbb, 0xcc])
+        XCTAssertEqual(when!.j, [0xd1, 0xe2, 0xf3])
     }
 
     func testEncoding() {
 
-        let given: SomeStruct = .init(a: 0x4,
-                                      b: 0x42,
-                                      c: 0x109,
-                                      d: 0xf109,
-                                      e: 0x42778,
-                                      f: 0x427789,
-                                      g: 0x427789a,
-                                      h: 0x427789ab,
-                                      i: [0xaa, 0xbb, 0xcc])
+        let given: SomeStruct = .init(
+            a: 0x4,
+            b: 0x42,
+            c: 0x109,
+            d: 0xf109,
+            e: 0x42778,
+            f: 0x427789,
+            g: 0x427789a,
+            h: 0x427789ab,
+            i: [0xaa, 0xbb, 0xcc],
+            j: [0xf1, 0xe2, 0xf3]
+        )
 
         let when = try? JSONEncoder().encode(given)
         // The JSONDecoder output is probably not stable enough to do a string comparison, hence lets just do a complete encoding/decoding pass instead
@@ -86,15 +94,18 @@ class HexEncoded: XCTestCase {
 
     func testInitialization() {
 
-        let given: SomeStruct = .init(a: 0x4,
-                                      b: 0x42,
-                                      c: 0x109,
-                                      d: 0xf109,
-                                      e: 0x42778,
-                                      f: 0x427789,
-                                      g: 0x427789a,
-                                      h: 0x427789ab,
-                                      i: [0xaa, 0xbb, 0xcc])
+        let given: SomeStruct = .init(
+            a: 0x4,
+            b: 0x42,
+            c: 0x109,
+            d: 0xf109,
+            e: 0x42778,
+            f: 0x427789,
+            g: 0x427789a,
+            h: 0x427789ab,
+            i: [0xaa, 0xbb, 0xcc],
+            j: [0xd1, 0xe2, 0xf3]
+        )
 
         XCTAssertEqual(given.a, 0x4)
         XCTAssertEqual(given.b, 0x42)
