@@ -32,7 +32,7 @@ public extension Cornucopia.Core {
         public let category: String
 
         /// Create the logger with the given `subsystem` and `category`.
-        public init(subsystem: String = Bundle.main.bundleIdentifier ?? ProcessInfo().processName, category: String = #fileID) {
+        public init(subsystem: String = Bundle.main.bundleIdentifier ?? ProcessInfo.processInfo.processName, category: String = #fileID) {
             let category = category.hasSuffix(".swift") ? category.split(separator: "/").last!.replacingOccurrences(of: ".swift", with: "") : category
             self.subsystem = subsystem
             self.category = category

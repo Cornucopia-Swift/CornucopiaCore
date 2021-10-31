@@ -14,14 +14,20 @@ extension Cornucopia.Core {
             return formatter
         }()
 
+        #if os(Linux)
+        private lazy var sockFd = socket(PF_INET, Int32(SOCK_DGRAM.rawValue), Int32(IPPROTO_UDP))
+        #else
         private lazy var sockFd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)
+        #endif
         
         var addr: sockaddr_in
         
         init(listener: String, port: UInt16) {
             self.addr = sockaddr_in()
             let addr_len = UInt8(MemoryLayout.size(ofValue: addr))
+            #if !os(Linux)
             addr.sin_len = addr_len
+            #endif
             addr.sin_port = in_port_t(port.bigEndian)
             addr.sin_family = sa_family_t(AF_INET)
             addr.sin_addr.s_addr = inet_addr(listener)
