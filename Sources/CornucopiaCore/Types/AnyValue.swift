@@ -16,7 +16,7 @@ public extension Cornucopia.Core {
         case array([AnyValue])
         case null
 
-        var anyValue: Any {
+        public var anyValue: Any {
             switch self {
                 case .string(let string): return string
                 case .bool(let bool): return bool
