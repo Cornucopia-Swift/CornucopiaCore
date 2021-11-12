@@ -122,4 +122,46 @@ public extension Cornucopia.Core {
             self.wrappedValue = wrappedValue
         }
     }
+
+    /// Allows an array of `UInt32` to be described by an array of hexadecimal-encoded strings.
+    @propertyWrapper
+    struct HexEncodedArrayOfUInt32: Codable, Equatable {
+        
+        public let wrappedValue: [UInt32]
+        
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            var values: [UInt32] = []
+
+            let strings = try container.decode([String].self)
+            try strings.forEach { string in
+                guard string.starts(with: Prefix) else {
+                    throw DecodingError.dataCorruptedError(in: container, debugDescription: "@HexEncodedBytes STRING is missing prefix \(Prefix)")
+                }
+                var string = string.dropFirst(Prefix.count)
+                guard !string.isEmpty else {
+                    throw DecodingError.dataCorruptedError(in: container, debugDescription: "@HexEncodedBytes STRING is empty after prefix")
+                }
+                guard string.allSatisfy(\Character.isHexDigit) else {
+                    throw DecodingError.dataCorruptedError(in: container, debugDescription: "@HexEncodedBytes STRING contains an invalid character")
+                }
+                if string.count % 2 == 1 {
+                    string.insert("0", at: string.startIndex)
+                }
+                let uint32 = UInt32(string, radix: 16) ?? 0
+                values.append(uint32)
+            }
+            self.wrappedValue = values
+        }
+        
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.singleValueContainer()
+            let strings = self.wrappedValue.map { Prefix + String($0, radix: 16, uppercase: true) }
+            try container.encode(strings)
+        }
+        
+        public init(wrappedValue: [UInt32]) {
+            self.wrappedValue = wrappedValue
+        }
+    }
 }
