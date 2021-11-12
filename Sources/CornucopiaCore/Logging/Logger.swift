@@ -66,7 +66,7 @@ public extension Cornucopia.Core {
         /// Log a notice (warning) message.
         @inlinable
         public func notice(_ message: String) {
-            log(message, level: .default)
+            log(message, level: .notice)
         }
 
         /// Log an error message.
