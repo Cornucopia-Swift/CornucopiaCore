@@ -164,4 +164,93 @@ public extension Cornucopia.Core {
             self.wrappedValue = wrappedValue
         }
     }
+
+    /// Allows an array of a `FixedWidthInteger` type to be described by an array of hexadecimal-encoded strings.
+    @propertyWrapper
+    struct HexEncodedArray<T: FixedWidthInteger>: Codable, Equatable {
+
+        public let wrappedValue: [T]
+
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            var values: [T] = []
+
+            let strings = try container.decode([String].self)
+            try strings.forEach { string in
+                guard string.starts(with: Prefix) else {
+                    throw DecodingError.dataCorruptedError(in: container, debugDescription: "@HexEncodedBytes STRING is missing prefix \(Prefix)")
+                }
+                var string = string.dropFirst(Prefix.count)
+                guard !string.isEmpty else {
+                    throw DecodingError.dataCorruptedError(in: container, debugDescription: "@HexEncodedBytes STRING is empty after prefix")
+                }
+                guard string.allSatisfy(\Character.isHexDigit) else {
+                    throw DecodingError.dataCorruptedError(in: container, debugDescription: "@HexEncodedBytes STRING contains an invalid character")
+                }
+                if string.count % 2 == 1 {
+                    string.insert("0", at: string.startIndex)
+                }
+                let value = T(string, radix: 16) ?? 0
+                values.append(value)
+            }
+            self.wrappedValue = values
+        }
+
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.singleValueContainer()
+            let strings = self.wrappedValue.map { Prefix + String($0, radix: 16, uppercase: true) }
+            try container.encode(strings)
+        }
+
+        public init(wrappedValue: [T]) {
+            self.wrappedValue = wrappedValue
+        }
+    }
+
+    /// Allows an optional array of a `FixedWidthInteger` type to be described by an array of hexadecimal-encoded strings.
+    @propertyWrapper
+    struct HexEncodedOptionalArray<T: FixedWidthInteger>: _CornucopiaCoreOptionalCodingWrapper, Codable, Equatable {
+
+        public let wrappedValue: [T]?
+
+        public init(from decoder: Decoder) throws {
+
+            let container = try decoder.singleValueContainer()
+            var values: [T] = []
+
+            let strings = try container.decode([String].self)
+            try strings.forEach { string in
+                guard string.starts(with: Prefix) else {
+                    throw DecodingError.dataCorruptedError(in: container, debugDescription: "@HexEncodedBytes STRING is missing prefix \(Prefix)")
+                }
+                var string = string.dropFirst(Prefix.count)
+                guard !string.isEmpty else {
+                    throw DecodingError.dataCorruptedError(in: container, debugDescription: "@HexEncodedBytes STRING is empty after prefix")
+                }
+                guard string.allSatisfy(\Character.isHexDigit) else {
+                    throw DecodingError.dataCorruptedError(in: container, debugDescription: "@HexEncodedBytes STRING contains an invalid character")
+                }
+                if string.count % 2 == 1 {
+                    string.insert("0", at: string.startIndex)
+                }
+                let value = T(string, radix: 16) ?? 0
+                values.append(value)
+            }
+            self.wrappedValue = values
+        }
+
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.singleValueContainer()
+            guard let wrappedValue = self.wrappedValue else {
+                try container.encodeNil()
+                return
+            }
+            let strings = wrappedValue.map { Prefix + String($0, radix: 16, uppercase: true) }
+            try container.encode(strings)
+        }
+
+        public init(wrappedValue: [T]?) {
+            self.wrappedValue = wrappedValue
+        }
+    }
 }
