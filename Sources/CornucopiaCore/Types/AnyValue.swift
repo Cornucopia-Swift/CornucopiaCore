@@ -50,16 +50,23 @@ public extension Cornucopia.Core {
                     guard case let .int(int) = self else { throw Error.typeMismatch(info: "Expected \(T.self), got \(self) instead") }
                     guard 0...255 ~= int else { throw Error.outOfBounds(info: "\(self) can't be represented as \(T.self)") }
                     return UInt8(int) as! T
+                case is UInt32.Type:
+                    guard case let .int(int) = self else { throw Error.typeMismatch(info: "Expected \(T.self), got \(self) instead") }
+                    guard 0...255 ~= int else { throw Error.outOfBounds(info: "\(self) can't be represented as \(T.self)") }
+                    return UInt32(int) as! T
                 // array cases
                 case is Array<Int>.Type:
                     guard case let .array(array) = self else { throw Error.typeMismatch(info: "Expected \(T.self), got \(self) instead") }
                     return try (array.map { try $0.value() as Int }) as! T
-                case is Array<UInt8>.Type:
-                    guard case let .array(array) = self else { throw Error.typeMismatch(info: "Expected \(T.self), got \(self) instead") }
-                    return try (array.map { try $0.value() as UInt8 }) as! T
                 case is Array<Int32>.Type:
                     guard case let .array(array) = self else { throw Error.typeMismatch(info: "Expected \(T.self), got \(self) instead") }
                     return try (array.map { try $0.value() as Int32 }) as! T
+                case is Array<UInt8>.Type:
+                    guard case let .array(array) = self else { throw Error.typeMismatch(info: "Expected \(T.self), got \(self) instead") }
+                    return try (array.map { try $0.value() as UInt8 }) as! T
+                case is Array<UInt32>.Type:
+                    guard case let .array(array) = self else { throw Error.typeMismatch(info: "Expected \(T.self), got \(self) instead") }
+                    return try (array.map { try $0.value() as UInt32 }) as! T
                 // array of array cases
                 case is Array<Array<Int>>.Type:
                     guard case let .array(array) = self else { throw Error.typeMismatch(info: "Expected \(T.self), got \(self) instead") }
