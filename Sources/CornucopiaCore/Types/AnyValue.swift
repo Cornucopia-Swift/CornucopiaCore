@@ -52,7 +52,6 @@ public extension Cornucopia.Core {
                     return UInt8(int) as! T
                 case is UInt32.Type:
                     guard case let .int(int) = self else { throw Error.typeMismatch(info: "Expected \(T.self), got \(self) instead") }
-                    guard 0...255 ~= int else { throw Error.outOfBounds(info: "\(self) can't be represented as \(T.self)") }
                     return UInt32(int) as! T
                 // array cases
                 case is Array<Int>.Type:
