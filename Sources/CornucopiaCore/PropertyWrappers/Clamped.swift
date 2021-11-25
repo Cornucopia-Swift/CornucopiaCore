@@ -3,7 +3,7 @@
 //
 
 // [3RDPARTY] (C) CypherPoet, MIT-licensed, based on https://github.com/CypherPoet/ClampedPropertyWrapper
-public extension Cornucopia.Core {
+extension Cornucopia.Core {
     @propertyWrapper public struct Clamped<Value: Comparable> {
         private var value: Value
         private var range: ClosedRange<Value>
@@ -15,7 +15,7 @@ public extension Cornucopia.Core {
     }
 }
 
-public extension Cornucopia.Core.Clamped {
+extension Cornucopia.Core.Clamped {
 
     public init(wrappedValue defaultValue: Value, to range: ClosedRange<Value>) {
         precondition(range.contains(defaultValue),"`\(defaultValue)` is not contained by this property's range of `\(range)`.")
