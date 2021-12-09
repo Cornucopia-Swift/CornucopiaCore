@@ -29,6 +29,33 @@ lines
             "lines"
         ]
 
-        XCTAssert(when == expected)
+        XCTAssertEqual(when, expected)
+    }
+    
+    func testCC_isValidPhoneNumber() {
+        
+        let given = "+4961093820606"
+        let when = given.CC_isValidPhoneNumber
+        let expected = true
+        
+        XCTAssertEqual(when, expected)
+    }
+
+    func testCC_isValidPhoneNumber2() {
+        
+        let given = "+49"
+        let when = given.CC_isValidPhoneNumber
+        let expected = false
+        
+        XCTAssertEqual(when, expected)
+    }
+
+    func testCC_isValidPhoneNumber3() {
+        
+        let given = "Hallo Welt"
+        let when = given.CC_isValidPhoneNumber
+        let expected = false
+        
+        XCTAssertEqual(when, expected)
     }
 }
