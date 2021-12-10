@@ -7,7 +7,11 @@ extension Thread {
 
     private static var lock: NSLock = .init()
     private static var threadNumber: Int = 1
+    #if canImport(ObjectiveC)
+    private static let key: NSString = "dev.cornucopia.core.thread-number"
+    #else
     private static let key: String = "dev.cornucopia.core.thread-number"
+    #endif
 
     /// Returns an associated number for the current thread.
     /// NOTE: This number gets assigned the first time it is being queried, hence the order
