@@ -3,7 +3,7 @@
 //
 import Foundation
 
-extension String {
+public extension String {
     
     /// The corresponding string with certain control characters escaped.
     var CC_escaped: String {
