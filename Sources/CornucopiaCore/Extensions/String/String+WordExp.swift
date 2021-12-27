@@ -3,6 +3,8 @@
 //
 import Foundation
 
+#if os(Linux) || os(macOS)
+
 public extension String {
 
     /// Returns the receiver after applying wordexp(3).
@@ -19,3 +21,4 @@ public extension String {
         return components.joined(separator: " ")
     }
 }
+#endif
