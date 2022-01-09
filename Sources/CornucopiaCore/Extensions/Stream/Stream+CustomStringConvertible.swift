@@ -15,7 +15,6 @@ extension Stream.Status: CustomStringConvertible {
             case .atEnd:   return "eof"
             case .closed:  return "closed"
             case .error:   return "error"
-            @unknown default: return "???"
         }
     }
 }
