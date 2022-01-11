@@ -15,6 +15,10 @@ extension Stream.Status: CustomStringConvertible {
             case .atEnd:   return "eof"
             case .closed:  return "closed"
             case .error:   return "error"
+            // Conditionally to fix an "unreachable" warning on Linux.
+            #if canImport(ObjectiveC)
+            @unknown default: return "unknown"
+            #endif
         }
     }
 }
