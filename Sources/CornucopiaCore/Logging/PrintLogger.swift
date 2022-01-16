@@ -13,14 +13,10 @@ extension Cornucopia.Core {
             formatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
             return formatter
         }()
-        
-        func log(_ message: String, level: Cornucopia.Core.LogLevel, subsystem: String, category: String) {
-            let threadNumber = Thread.current.isMainThread ? 1 : 0
-            let timestamp = Self.timeFormatter.string(from: Date())
-            print("\(timestamp) [\(subsystem):\(category)] <\(threadNumber)> (\(level.character)) \(message)")
+
+        func log(_ entry: LogEntry) {
+            let timestamp = Self.timeFormatter.string(from: entry.timestamp)
+            print("\(timestamp) [\(entry.subsystem):\(entry.category)] <\(entry.thread)> (\(entry.level.character)) \(entry.message)")
         }
-        
-        
-    }
-    
+    }    
 }

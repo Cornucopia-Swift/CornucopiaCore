@@ -18,12 +18,18 @@ public extension Cornucopia.Core {
             #if os(watchOS) // no BSD sockets on WatchOS
             return PrintLogger()
             #endif
-            guard let destination = ProcessInfo.processInfo.environment["LOGSINK"] else { return PrintLogger() }
-            let components = destination.components(separatedBy: ":")
-            guard components.count == 2 else { return PrintLogger() }
-            let host = components.first!
-            let port = UInt16(components[1]) ?? 5514
-            return UDPLogger(listener: host, port: port)
+            guard let logsink = ProcessInfo.processInfo.environment["LOGSINK"],
+                  let sinkurl = URL(string: logsink),
+                  let host = sinkurl.host else { return PrintLogger() }
+            switch sinkurl.scheme {
+                case "udp.plain":
+                    return UDPLogger(binary: true, listener: host, port: UInt16(sinkurl.port ?? 5515))
+                case "udp":
+                    return UDPLogger(binary: true, listener: host, port: UInt16(sinkurl.port ?? 5514))
+                default:
+                    print("Can't parse LOGSINK url: \(logsink). Using print logger.")
+                    return PrintLogger()
+            }
         }()
 
         public typealias Level = Cornucopia.Core.LogLevel
@@ -40,7 +46,8 @@ public extension Cornucopia.Core {
 
         @_transparent
         public func log(_ message: String, level: Level) {
-            Self.destination.log(message, level: level, subsystem: self.subsystem, category: self.category)
+            let entry = LogEntry(level: level, subsystem: self.subsystem, category: self.category, thread: Thread.current.CC_number, message: message)
+            Self.destination.log(entry)
         }
 
         /// Log a trace message. Trace messages are only processed, if the environment variable LOGLEVEL is TRACE
