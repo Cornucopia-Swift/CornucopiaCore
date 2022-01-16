@@ -6,14 +6,14 @@ import Foundation
 /// A sink for log output.
 public protocol _CornucopiaCoreLogSink {
 
-    /// Log the specified `message` given the severity `level`, a `subsystem` and a `category`.
-    func log(_ message: String, level: Cornucopia.Core.LogLevel, subsystem: String, category: String)
+    /// Log the specified entry.
+    func log(_ entry: Cornucopia.Core.LogEntry)
 }
 
 extension Cornucopia.Core {
     
     /// The log level.
-    public enum LogLevel: String {
+    public enum LogLevel: Codable {
         case trace
         case debug
         case info
@@ -32,6 +32,28 @@ extension Cornucopia.Core {
                 case .fault:   return "F"
                 case .default: return "?"
             }
+        }
+    }
+
+    /// A log entry.
+    public struct LogEntry: Codable {
+
+        public let timestamp: Date
+        public let level: LogLevel
+        public let app: String
+        public let subsystem: String
+        public let category: String
+        public let thread: Int
+        public let message: String
+
+        public init(level: LogLevel, subsystem: String, category: String, thread: Int, message: String) {
+            self.timestamp = Date()
+            self.level = level
+            self.app = Bundle.main.CC_cfBundleName
+            self.subsystem = subsystem
+            self.category = category
+            self.thread = thread
+            self.message = message
         }
     }
     
