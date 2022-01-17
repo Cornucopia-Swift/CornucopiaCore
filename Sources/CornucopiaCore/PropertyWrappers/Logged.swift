@@ -14,23 +14,21 @@ public extension Cornucopia.Core {
 
         private(set) var value: T
         public var name: String
-        public var level: Logger.Level
         public var logger: Logger
 
         public var wrappedValue: T {
             get { value }
             set {
                 value = newValue
-                self.logger.log("Property \(self.name) has been set to \(self.value)", level: self.level)
+                self.logger.debug("Property \(self.name) has been set to \(self.value)")
             }
         }
 
         public init(wrappedValue: T, name: String, logger: Logger? = nil, level: Logger.Level = .debug) {
             self.value = wrappedValue
             self.name = name
-            self.level = level
             self.logger = logger ?? defaultLogger
-            self.logger.log("Property \(self.name) has been initialized with \(self.value)", level: self.level)
+            self.logger.debug("Property \(self.name) has been initialized with \(self.value)")
         }
     }
 #else
@@ -49,23 +47,21 @@ public extension Cornucopia.Core {
 
         private(set) var value: T
         public var name: String
-        public var level: Logger.Level
         public var logger: Logger
 
         public var wrappedValue: T {
             get { value }
             set {
                 value = newValue
-                self.logger.log("Property \(self.name) has been set to \(self.value)", level: self.level)
+                self.logger.debug("Property \(self.name) has been set to \(self.value)")
             }
         }
 
-        public init(wrappedValue: T, name: String, logger: Logger? = nil, level: Logger.Level = .debug) {
+        public init(wrappedValue: T, name: String, logger: Logger? = nil) {
             self.value = wrappedValue
             self.name = name
-            self.level = level
             self.logger = logger ?? defaultLogger
-            self.logger.log("Property \(self.name) has been initialized with \(self.value)", level: self.level)
+            self.logger.debug("Property \(self.name) has been initialized with \(self.value)")
         }
     }
 }
