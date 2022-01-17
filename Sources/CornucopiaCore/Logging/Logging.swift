@@ -36,7 +36,7 @@ extension Cornucopia.Core {
     }
 
     /// A log entry.
-    public struct LogEntry: Codable {
+    public struct LogEntry: Codable, Equatable, Hashable {
 
         public let timestamp: Date
         public let level: LogLevel
@@ -46,10 +46,10 @@ extension Cornucopia.Core {
         public let thread: Int
         public let message: String
 
-        public init(level: LogLevel, subsystem: String, category: String, thread: Int, message: String) {
+        public init(level: LogLevel, app: String, subsystem: String, category: String, thread: Int, message: String) {
             self.timestamp = Date()
             self.level = level
-            self.app = Bundle.main.CC_cfBundleName
+            self.app = app
             self.subsystem = subsystem
             self.category = category
             self.thread = thread
