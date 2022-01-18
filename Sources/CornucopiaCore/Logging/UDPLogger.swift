@@ -48,7 +48,7 @@ extension Cornucopia.Core {
                     _ = withUnsafePointer(to: &self.addr) { addrPointer in
                         addrPointer.withMemoryRebound(to: sockaddr.self, capacity: 1) { sockAddrPointer in
                             data.withUnsafeBytes { dataPointer in
-                                sendto(self.sockFd, dataPointer, data.count, 0, sockAddrPointer, self.len)
+                                sendto(self.sockFd, dataPointer.baseAddress, data.count, 0, sockAddrPointer, self.len)
                             }
                         }
                     }
