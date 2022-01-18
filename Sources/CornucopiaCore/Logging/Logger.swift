@@ -38,7 +38,7 @@ public extension Cornucopia.Core {
                   let host = sinkurl.host else { return sink }
             switch sinkurl.scheme {
                 case "udp.plain":
-                    sink = UDPLogger(binary: true, listener: host, port: UInt16(sinkurl.port ?? 5515))
+                    sink = UDPLogger(binary: false, listener: host, port: UInt16(sinkurl.port ?? 5515))
                 case "udp":
                     sink = UDPLogger(binary: true, listener: host, port: UInt16(sinkurl.port ?? 5514))
                 case "print":
