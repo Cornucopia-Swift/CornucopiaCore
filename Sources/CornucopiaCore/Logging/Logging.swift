@@ -20,8 +20,7 @@ extension Cornucopia.Core {
         case notice
         case error
         case fault
-        case `default`
-        
+
         public var character: String {
             switch self {
                 case .trace:   return "T"
@@ -30,7 +29,6 @@ extension Cornucopia.Core {
                 case .notice:  return "N"
                 case .error:   return "E"
                 case .fault:   return "F"
-                case .default: return "?"
             }
         }
     }
