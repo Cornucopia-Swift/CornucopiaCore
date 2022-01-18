@@ -49,4 +49,20 @@ class VIN: XCTestCase {
         let vin: Cornucopia.Core.VIN = "MMBJJKL10LH016787"
         XCTAssertEqual("\(vin)", string)
     }
+
+    func testEquality() {
+
+        let vin1: Cornucopia.Core.VIN = "1FADP3F20DL237413"
+        let vin2: Cornucopia.Core.VIN = "1FADP3F20DL237413"
+
+        XCTAssertEqual(vin1, vin2)
+    }
+
+    func testInequality() {
+
+        let vin1: Cornucopia.Core.VIN = "WP1ZZZ9PZ8LA33027"
+        let vin2: Cornucopia.Core.VIN = "1FADP3F20DL237413"
+
+        XCTAssertNotEqual(vin1, vin2)
+    }
 }

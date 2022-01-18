@@ -6,7 +6,7 @@ import Foundation
 extension Cornucopia.Core {
 
     /// The Vehicle Identification Number, as standardized in ISO 3779.
-    public struct VIN {
+    public struct VIN: Equatable {
 
         public static let NumberOfCharacters: Int = 17
         public static let AllowedCharacters: CharacterSet = .init(charactersIn: "ABCDEFGHJKLMNPRSTUVWXYZ0123456789")
@@ -17,7 +17,16 @@ extension Cornucopia.Core {
             guard self.content.rangeOfCharacter(from: Self.AllowedCharacters.inverted) == nil else { return false }
             return true
         }
+
+        public init(content: String) {
+            self.content = content
+        }
     }
+}
+
+extension Cornucopia.Core.VIN: Identifiable {
+
+    public var id: String { self.content }
 }
 
 extension Cornucopia.Core.VIN: CustomStringConvertible {
