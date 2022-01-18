@@ -35,7 +35,7 @@ public extension Cornucopia.Core {
 #endif
             guard let logsink = ProcessInfo.processInfo.environment["LOGSINK"],
                   let sinkurl = URL(string: logsink),
-                  let host = sinkurl.host else { return PrintLogger() }
+                  let host = sinkurl.host else { return sink }
             switch sinkurl.scheme {
                 case "udp.plain":
                     sink = UDPLogger(binary: true, listener: host, port: UInt16(sinkurl.port ?? 5515))
