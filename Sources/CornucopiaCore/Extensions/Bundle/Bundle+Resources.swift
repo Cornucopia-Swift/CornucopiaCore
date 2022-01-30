@@ -18,8 +18,12 @@ public extension Bundle {
             Bundle.main.bundleURL.path.CC_dirname + "/share/\(name)"
         ]
         for searchDirectory in searchDirectories {
-            let searchPath = "\(searchDirectory)/\(name)_\(name).bundle"
-            //print("Looking for \(searchPath)...")
+            #if canImport(ObjectiveC)
+            let ext = "bundle"
+            #else
+            let ext = "resources"
+            #endif
+            let searchPath = "\(searchDirectory)/\(name)_\(name).\(ext)"
             if let bundle = Bundle(path: searchPath) {
                 Self.BundleResourcesPathsByModuleName[name] = bundle
                 return bundle
