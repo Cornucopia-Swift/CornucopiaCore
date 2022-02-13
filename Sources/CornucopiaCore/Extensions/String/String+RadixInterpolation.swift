@@ -5,20 +5,20 @@
 public extension String.StringInterpolation {
 
     /// The desired base. Use it, like e.g. "\(0xdeadbeef, radix: .hex, .prefix: true, .width = 4)"
-    enum Radix: Int {
+    @frozen enum Radix: Int {
         case binary = 2
         case octal = 8
         case decimal = 10
         case hex = 16
 
         /// The base's prefix.
-        var prefix: String {
+        public var prefix: String {
             return [.binary: "0b", .octal: "0o", .hex: "0x"][self, default: ""]
         }
     }
 
-    /// Formatting a `BinaryInteger`.
-    mutating func appendInterpolation<I: BinaryInteger>(_ value: I, radix: Radix, prefix: Bool = false, toWidth width: Int = 0) {
+    /// Formatting a ``BinaryInteger``.
+    @inlinable mutating func appendInterpolation<I: BinaryInteger>(_ value: I, radix: Radix, prefix: Bool = false, toWidth width: Int = 0) {
 
         var string = String(value, radix: radix.rawValue).uppercased()
         if string.count < width {
@@ -30,14 +30,17 @@ public extension String.StringInterpolation {
         appendInterpolation(string)
     }
     
-    /// Formatting a `[BinaryInteger]`.
-    mutating func appendInterpolation<I: BinaryInteger>(_ array: [I], radix: Radix, prefix: Bool = false, toWidth width: Int = 0, separator: String = "") {
+    /// Formatting a collection of ``BinaryInteger``.
+    @inlinable mutating func appendInterpolation<C>(_ elements: C, radix: Radix, prefix: Bool = false, toWidth width: Int = 0, separator: String = "") where C: Collection, C.Element: BinaryInteger {
 
-        for (idx, element) in array.enumerated() {
+        var n = 0
+        let end = elements.count
+
+        for element in elements {
             appendInterpolation(element, radix: radix, prefix: prefix, toWidth: width)
-            if idx < array.endIndex - 1 {
-                appendInterpolation(separator)
-            }
+            n += 1
+            guard n < end else { return }
+            appendInterpolation(separator)
         }
     }
 }
