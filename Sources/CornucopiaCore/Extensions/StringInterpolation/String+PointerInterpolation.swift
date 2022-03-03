@@ -1,7 +1,7 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
-extension String.StringInterpolation {
+public extension String.StringInterpolation {
 
     @inlinable mutating func appendInterpolation<OBJ: AnyObject>(_ value: OBJ, pointerWithPrefix: Bool) {
 
