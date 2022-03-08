@@ -7,32 +7,30 @@ import Foundation
 extension Date: @unchecked Sendable {}
 
 @available(iOS 15, tvOS 15, watchOS 8, macOS 12, *)
-extension Cornucopia.Core {
+extension Cornucopia.Core { public struct AsyncWithTimeoutError: Error, Equatable {} }
 
-    public struct AsyncWithTimeoutError: Error, Equatable {}
+@available(iOS 15, tvOS 15, watchOS 8, macOS 12, *)
+public func CC_asyncWithTimeout<ResultType: Sendable>(seconds: TimeInterval, body: @escaping @Sendable () async throws -> ResultType) async throws -> ResultType {
 
-    public func asyncWithTimeout<ResultType: Sendable>(seconds: TimeInterval, body: @escaping @Sendable () async throws -> ResultType) async throws -> ResultType {
+    try await withThrowingTaskGroup(of: ResultType.self) { group in
 
-        try await withThrowingTaskGroup(of: ResultType.self) { group in
+        let deadline = Date(timeIntervalSinceNow: seconds)
 
-            let deadline = Date(timeIntervalSinceNow: seconds)
+        // add actual work
+        group.addTask { try await body() }
 
-            // add actual work
-            group.addTask { try await body() }
-
-            // add timeout
-            group.addTask {
-                let interval = deadline.timeIntervalSinceNow
-                if interval > 0 {
-                    try await Task.CC_sleep(seconds: interval)
-                }
-                try Task.checkCancellation()
-                throw AsyncWithTimeoutError()
+        // add timeout
+        group.addTask {
+            let interval = deadline.timeIntervalSinceNow
+            if interval > 0 {
+                try await Task.CC_sleep(seconds: interval)
             }
-            let result = try await group.next()!
-            group.cancelAll()
-            return result
+            try Task.checkCancellation()
+            throw Cornucopia.Core.AsyncWithTimeoutError()
         }
+        let result = try await group.next()!
+        group.cancelAll()
+        return result
     }
 }
 #endif
