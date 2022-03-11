@@ -4,6 +4,20 @@ import CornucopiaCore
 
 class RadixInterpolation: XCTestCase {
 
+    func testDecNormal() {
+
+        let given: UInt8 = 1
+        let when = "\(given, radix: .decimal)"
+        XCTAssertEqual(when, "1")
+    }
+
+    func testDecToWidth() {
+
+        let given: UInt8 = 1
+        let when = "\(given, radix: .decimal, toWidth: 3)"
+        XCTAssertEqual(when, "001")
+    }
+
     func testHexArray() {
 
         let given: [UInt8] = [1, 2, 3, 4]
