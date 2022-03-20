@@ -65,4 +65,13 @@ class VIN: XCTestCase {
 
         XCTAssertNotEqual(vin1, vin2)
     }
+
+    func testCodable() throws {
+
+        let vin1: Cornucopia.Core.VIN = "WP1ZZZ9PZ8LA33027"
+        let data = try JSONEncoder().encode(vin1)
+        let vin2: Cornucopia.Core.VIN = try JSONDecoder().decode(Cornucopia.Core.VIN.self, from: data)
+
+        XCTAssertEqual(vin1, vin2)
+    }
 }

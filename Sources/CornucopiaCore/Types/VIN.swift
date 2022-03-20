@@ -41,3 +41,19 @@ extension Cornucopia.Core.VIN: ExpressibleByStringLiteral {
         self = Self.init(content: value)
     }
 }
+
+extension Cornucopia.Core.VIN: Decodable {
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        self.content = try container.decode(String.self)
+    }
+}
+
+extension Cornucopia.Core.VIN: Encodable {
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(self.content)
+    }
+}
