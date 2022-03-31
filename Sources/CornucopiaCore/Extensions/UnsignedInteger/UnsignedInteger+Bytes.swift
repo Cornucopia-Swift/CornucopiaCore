@@ -3,6 +3,7 @@
 //
 public extension UnsignedInteger {
 
+    @available(*, deprecated, message: "Use CC_fromBytes() instead.")
     init<T: Collection>(fromUInt8Collection bytes: T) where T.Element == UInt8 {
         precondition(bytes.count <= MemoryLayout<Self>.size)
 

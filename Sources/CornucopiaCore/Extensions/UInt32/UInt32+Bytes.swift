@@ -4,6 +4,7 @@
 public extension UInt32 {
 
     /// Creates the `UInt32` from an array of (exactly) four octets
+    @available(*, deprecated, message: "Use CC_fromBytes() instead.")
     init(_ array: [UInt8]) {
         precondition(array.count == 4, "The source array needs to have exactly 4 octets to build an UInt32")
         let mswHi = UInt32(array[0]) << 24
@@ -14,6 +15,7 @@ public extension UInt32 {
     }
 
     /// Creates the `UInt32` from an array slice of (exactly) four octets
+    @available(*, deprecated, message: "Use CC_fromBytes() instead.")
     init(_ array: ArraySlice<UInt8>) {
         precondition(array.count == 4, "The source array slice needs to have exactly 4 octets to build an UInt32")
         let mswHi = UInt32(array[array.startIndex + 0]) << 24
