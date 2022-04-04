@@ -42,6 +42,39 @@ public extension Cornucopia.Core {
         }
     }
 
+    /// Same as ``HexEncoded``, but with an optional value.
+    @propertyWrapper
+    struct HexEncodedOptional<T: FixedWidthInteger & UnsignedInteger>: Codable, Equatable, _CornucopiaCoreOptionalCodingWrapper {
+
+        public let wrappedValue: T?
+
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            let string = try container.decode(String.self)
+            guard string.starts(with: Prefix) else {
+                throw DecodingError.dataCorruptedError(in: container, debugDescription: "HexEncoded STRING is missing prefix \(Prefix)")
+            }
+            guard let value = T(string.dropFirst(Prefix.count), radix: 16) else {
+                throw DecodingError.dataCorruptedError(in: container, debugDescription: "HexEncoded STRING does not represent a \(T.self)")
+            }
+            self.wrappedValue = value
+        }
+
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.singleValueContainer()
+            guard let wrappedValue = self.wrappedValue else {
+                try container.encodeNil()
+                return
+            }
+            let string = String(wrappedValue, radix: 16, uppercase: true)
+            try container.encode(Prefix + string)
+        }
+
+        public init(wrappedValue: T?) {
+            self.wrappedValue = wrappedValue
+        }
+    }
+
     /// Allows an array of `UInt8` to be described by either a hexadecimal-encoded string, starting with prefix `0x`,
     /// or, alternatively, an array of such hexadecimal-encoded strings.
     /// Note: When encoding, the array will always be represented as UInt8 strings.
