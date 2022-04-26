@@ -11,4 +11,13 @@ public extension String {
     var CC_isValidPhoneNumber: Bool {
         Self.PhoneRegex.firstMatch(in: self, options: [], range: self.CC_nsRange) != nil
     }
+
+    var CC_isValidEmailAddress: Bool {
+        let link = "mailto:" + self
+        guard let emailDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) else { return false }
+        let matches = emailDetector.matches(in: link, options: NSRegularExpression.MatchingOptions.anchored, range: NSRange(location: 0, length: link.count))
+        guard matches.count == 1 else { return false }
+        return matches[0].url?.scheme == "mailto"
+    }
 }
+
