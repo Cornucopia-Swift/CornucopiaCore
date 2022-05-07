@@ -21,10 +21,10 @@ public extension String {
         return matches[0].url?.scheme == "mailto"
         #else
         guard self.count > 3 else { return false }
-        guard self.characters.filter { $0 == "@" }.count == 1 else { return false }
-        guard self.characters.filter { $0 == "." }.count == 1 else { return false }
-        let components = self.split(".")
-        guard components[1].count > 1 else { return false }
+        let componentsAroundAtSign = self.split(separator: "@")
+        guard componentsAroundAtSign.count == 2 else { return false }
+        let componentsAroundDomainDot = componentsAroundAtSign[1].split(separator: ".")
+        guard componentsAroundDomainDot.count >= 2 else { return false }
         return true
         #endif
     }
