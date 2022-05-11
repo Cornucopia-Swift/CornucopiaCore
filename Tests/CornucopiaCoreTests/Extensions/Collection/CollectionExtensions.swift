@@ -71,4 +71,32 @@ class CollectionExtensions: XCTestCase {
         let expected = [1, 2, 3, 42, 42, 42, 42, 42, 42, 42]
         XCTAssertEqual(flattened, expected)
     }
+    
+    func testCC_reverseChunkedSequence() {
+        
+        let given: [Int] = [
+            1, 2, 3,
+            4, 5, 6,
+            7, 8, 9,
+        ]
+        let when = given.CC_reverseChunked(size: 3)
+        when.forEach { XCTAssertEqual($0.count, 3)}
+        let flat = when.flatMap { $0 }
+        let expected = [7, 8, 9, 4, 5, 6, 1, 2, 3]
+        XCTAssertEqual(flat, expected)
+    }
+
+    func testCC_reverseChunkedSequencePadding() {
+        
+        let given: [Int] = [
+                  1,
+            4, 5, 6,
+            7, 8, 9,
+        ]
+        let when = given.CC_reverseChunked(size: 3, pad: 0)
+        when.forEach { XCTAssertEqual($0.count, 3)}
+        let flat = when.flatMap { $0 }
+        let expected = [7, 8, 9, 4, 5, 6, 0, 0, 1]
+        XCTAssertEqual(flat, expected)
+    }
 }
