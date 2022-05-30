@@ -27,7 +27,7 @@ extension Cornucopia.Core {
         /// Create the log file at the given `path` with the given `header`.
         /// The header will not be augmented, you are responsible for line endings.
         /// The default behavior is _lazy_, i.e. the file will not be created before the first actual
-        /// logging happens. Submit `lazy: true` to change that.
+        /// logging happens. Submit `lazy: false` to change that.
         public init(path: String, header: String? = nil, lazy: Bool = true) throws {
             self.path = path
             self.header = header != nil ? header!.data(using: .utf8) : nil
