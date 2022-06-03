@@ -19,10 +19,21 @@ public extension Cornucopia.Core {
     /// - The default LOGSINK is empty, i.e. nothing will be emitted.
     struct Logger {
 
+        fileprivate static var overrideSink: LogSink? = nil
+        fileprivate static var overrideLevel: String? = nil
+
         public static let dispatchQueue: DispatchQueue = .init(label: "dev.cornucopia.Logger", qos: .background)
-        public static let includeDebug: Bool = ProcessInfo.processInfo.environment["LOGLEVEL"] == "DEBUG" || Self.includeTrace
-        public static let includeTrace: Bool = ProcessInfo.processInfo.environment["LOGLEVEL"] == "TRACE"
+        public static let includeDebug: Bool = {
+            if let overrideLevel = Self.overrideLevel { return overrideLevel == "DEBUG" || Self.includeTrace }
+            return ProcessInfo.processInfo.environment["LOGLEVEL"] == "DEBUG" || Self.includeTrace
+        }()
+        public static let includeTrace: Bool = {
+            if let overrideLevel = Self.overrideLevel { return overrideLevel == "TRACE" }
+            return ProcessInfo.processInfo.environment["LOGLEVEL"] == "TRACE"
+        }()
         public static let destination: LogSink? = {
+
+            if let overrideSink = Self.overrideSink { return overrideSink }
 
             #if DEBUG
             var sink: LogSink? = PrintLogger()
@@ -35,8 +46,9 @@ public extension Cornucopia.Core {
 #endif
             guard let logsink = ProcessInfo.processInfo.environment["LOGSINK"],
                   let sinkurl = URL(string: logsink),
-                  let host = sinkurl.host else { return sink }
-            switch sinkurl.scheme {
+                  let host = sinkurl.host,
+                  let scheme = sinkurl.scheme else { return sink }
+            switch scheme {
                 case "udp.plain":
                     sink = UDPLogger(binary: false, listener: host, port: UInt16(sinkurl.port ?? 5515))
                 case "udp":
@@ -109,5 +121,13 @@ public extension Cornucopia.Core {
             guard let sink = Self.destination else { return }
             log(message(), level: .fault, sink: sink)
         }
+    }
+}
+
+extension Cornucopia.Core.Logger {
+
+    public static func overrideSink(_ logSink: Cornucopia.Core.LogSink, level: String) {
+        Self.overrideSink = logSink
+        Self.overrideLevel = level
     }
 }

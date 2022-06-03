@@ -53,6 +53,8 @@ extension Cornucopia.Core {
             self.thread = thread
             self.message = message
         }
+
+        public var oneliner: String { "\(subsystem).\(category) [\(thread)] \(message)" }
     }
     
     /// The protocol

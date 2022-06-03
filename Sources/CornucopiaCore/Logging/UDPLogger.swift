@@ -26,7 +26,7 @@ extension Cornucopia.Core {
         var addr: sockaddr_in
         var len: socklen_t
         var binary: Bool
-        
+
         init(binary: Bool, listener: String, port: UInt16) {
             self.binary = binary
             self.addr = sockaddr_in()
