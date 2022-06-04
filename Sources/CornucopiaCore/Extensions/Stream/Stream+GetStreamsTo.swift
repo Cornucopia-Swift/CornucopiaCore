@@ -14,7 +14,7 @@ public extension Stream {
 
     /// Returns a pair of input and output streams for accessing a service indicated by the `hostname` and `port`.
     static func CC_getStreamsToHost(_ hostname: String, port: Int) throws -> (inputStream: InputStream, outputStream: OutputStream) {
-        #if os(Linux)
+        #if !canImport(ObjectiveC)
         throw StreamError.notImplemented
         #else
         var inputStream: InputStream?
@@ -53,7 +53,9 @@ public extension Stream {
     }
 
     static func CC_getStreamsToHost(_ hostname: String, port: Int, via interface: String) throws -> (inputStream: InputStream, outputStream: OutputStream) {
-
+        #if !canImport(ObjectiveC)
+        throw StreamError.notImplemented
+        #else
         var sockaddress = sockaddr_in()
         let sockaddress_size = socklen_t(MemoryLayout<sockaddr_in>.size)
 
@@ -85,6 +87,7 @@ public extension Stream {
         ostream.setProperty(kCFBooleanTrue, forKey: Stream.PropertyKey(kCFStreamPropertyShouldCloseNativeSocket as String))
 
         return (istream, ostream)
+        #endif
     }
 }
 #endif
