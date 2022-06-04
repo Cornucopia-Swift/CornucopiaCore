@@ -8,6 +8,8 @@ extension Cornucopia.Core {
     /// A `LogSink` that sends all logs to `stdout` via print.
     struct PrintLogger: LogSink {
 
+        init(url: URL = "print://") { }
+
         public static let timeFormatter: DateFormatter = {
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"

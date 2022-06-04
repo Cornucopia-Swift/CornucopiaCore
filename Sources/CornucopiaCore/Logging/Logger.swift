@@ -11,10 +11,10 @@ public extension Cornucopia.Core {
     /// Xcode spoils this with its incredible amount of spam. Setting OS_ACTIVITY_MODE=disable not only mutes the spam, but _all_
     /// of the os_log (and os.Logger) output.
     ///
-    /// Two environment variables control the behavior: `LOGLEVEL` and `LOGSINK`.
+    /// Two environment variables control the behavior: `LOGLEVEL` (string) and `LOGSINK` (url).
     /// For a debug build, the following rules apply:
     /// - The default LOGLEVEL is `.info`.
-    /// - The default LOGSINK is `print`.
+    /// - The default LOGSINK is `print://`.
     /// If this is a release build:
     /// - The default LOGSINK is empty, i.e. nothing will be emitted.
     struct Logger {
@@ -49,10 +49,8 @@ public extension Cornucopia.Core {
                   let host = sinkurl.host,
                   let scheme = sinkurl.scheme else { return sink }
             switch scheme {
-                case "udp.plain":
-                    sink = UDPLogger(binary: false, listener: host, port: UInt16(sinkurl.port ?? 5515))
-                case "udp":
-                    sink = UDPLogger(binary: true, listener: host, port: UInt16(sinkurl.port ?? 5514))
+                case "syslog-udp", "syslog-tcp":
+                    sink = SysLogger(url: sinkurl)
                 case "print":
                     sink = PrintLogger()
                 default:

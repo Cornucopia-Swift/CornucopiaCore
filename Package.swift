@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "CornucopiaCore",
     platforms: [
-        .iOS("13.4"),
+        .iOS(.v13),
         .macOS(.v11),
         .tvOS(.v13),
         .watchOS(.v6),
@@ -19,7 +19,6 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-crypto", .upToNextMajor(from: "1.1.6")),
-        .package(url: "https://github.com/hirotakan/MessagePacker.git", .upToNextMajor(from: "0.4.6")),
         .package(url: "https://github.com/tsolomko/SWCompression", .upToNextMajor(from: "4.6.0")),
     ],
     targets: [
@@ -28,7 +27,6 @@ let package = Package(
             dependencies: [
                 .product(name: "Crypto", package: "swift-crypto"),
                 .product(name: "SWCompression", package: "SWCompression"),
-                .product(name: "MessagePacker", package: "MessagePacker"),
                 ]
             ),
         .testTarget(

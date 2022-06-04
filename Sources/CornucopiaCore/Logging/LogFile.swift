@@ -91,7 +91,11 @@ private extension Cornucopia.Core.LogFile {
         guard let fileHandle = self.fileHandle else { return }
         guard let data = message.data(using: .utf8) else { return }
         do {
-            try fileHandle.write(contentsOf: data)
+            if #available(iOS 13.4, *) {
+                try fileHandle.write(contentsOf: data)
+            } else {
+                fileHandle.write(data)
+            }
         } catch {
             logger.notice("Can't write to log file at \(self.path): \(error) – giving up.")
             self.giveUp = true

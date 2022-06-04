@@ -6,6 +6,9 @@ import Foundation
 /// A sink for log output.
 public protocol _CornucopiaCoreLogSink {
 
+    /// Create with the specified URL.
+    init(url: URL)
+
     /// Log the specified entry.
     func log(_ entry: Cornucopia.Core.LogEntry)
 }
