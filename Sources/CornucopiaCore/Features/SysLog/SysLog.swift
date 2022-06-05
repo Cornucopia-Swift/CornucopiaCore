@@ -10,22 +10,22 @@ public extension Cornucopia.Core {
     struct SysLogEntry {
 
         enum Facility: UInt8, RawRepresentable {
-            case kernelMessages
-            case userLevelMessages
-            case mailSystem
-            case systemDaemons
-            case securityMessages
-            case intermalMessages
-            case linePrinterSubsystem
-            case networkNewsSubsystem
-            case uucpSubsystem
-            case clockDaemon
-            case authorizationMessages
-            case ftpDaemon
-            case ntpSubsystem
-            case audit
-            case alert
-            case clockDaemon2
+            case kernel
+            case user
+            case mail
+            case daemon
+            case auth
+            case syslog
+            case lpr
+            case news
+            case uucp
+            case cron
+            case security
+            case ftp
+            case ntp
+            case logaudit
+            case logalert
+            case clock
             case local0
             case local1
             case local2

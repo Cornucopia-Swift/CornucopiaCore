@@ -12,7 +12,7 @@ extension Cornucopia.Core {
         var udp: Bool
         var addr: sockaddr_in
         var len: socklen_t
-        lazy var hostname = "hostname-to-be-done"
+        lazy var hostname = Device.current.uuid.uuidString
         lazy var appname = "\(Bundle.main.CC_cfBundleName)/\(Bundle.main.CC_cfBundleShortVersion).\(Bundle.main.CC_cfBundleVersion)"
 
         init(url: URL) {
@@ -71,15 +71,15 @@ extension Cornucopia.Core {
                     case .trace:
                         return .debug
                     case .debug:
-                        return .informational
+                        return .debug
                     case .info:
-                        return .notice
+                        return .informational
                     case .notice:
                         return .warning
                     case .error:
                         return .error
                     case .fault:
-                        return .critical
+                        return .error
                 }
             }()
 
