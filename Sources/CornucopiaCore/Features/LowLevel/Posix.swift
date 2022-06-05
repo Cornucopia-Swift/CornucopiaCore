@@ -18,7 +18,11 @@ public extension Cornucopia.Core {
             while host.pointee.h_addr_list[index] != nil {
 
                 var addr: in_addr = in_addr()
+                #if canImport(ObjectiveC)
                 memcpy(&addr.s_addr, host.pointee.h_addr_list[index], Int(host.pointee.h_length))
+                #else
+                memcpy(&addr.s_addr, host.pointee.h_addr_list[index]!, Int(host.pointee.h_length))
+                #endif
 
                 guard let remoteIPAsC = inet_ntoa(addr) else {
                     return ipList
