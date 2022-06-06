@@ -11,8 +11,11 @@ public extension Cornucopia.Core {
     /// Xcode spoils this with its incredible amount of spam. Setting OS_ACTIVITY_MODE=disable not only mutes the spam, but _all_
     /// of the os_log (and os.Logger) output.
     ///
-    /// Two environment variables control the behavior: `LOGLEVEL` (string) and `LOGSINK` (url).
-    /// For a debug build, the following rules apply:
+    /// Two variables control the behavior: `LOGLEVEL` (string) and `LOGSINK` (url), which are gathered using the following order:
+    /// 1.) If `overrideSink` and `overrideLevel` have been specified, they will always take precedence.
+    /// 2.) If they are present in `UserDefaults`, they will be used.
+    /// 3.) If they are present in the process' environment, they will be used.
+    /// 4.) If they are not specified, for a debug build, the following rules apply:
     /// - The default LOGLEVEL is `.info`.
     /// - The default LOGSINK is `print://`.
     /// If this is a release build:
@@ -25,10 +28,12 @@ public extension Cornucopia.Core {
         public static let dispatchQueue: DispatchQueue = .init(label: "dev.cornucopia.Logger", qos: .background)
         public static let includeDebug: Bool = {
             if let overrideLevel = Self.overrideLevel { return overrideLevel == "DEBUG" || Self.includeTrace }
+            if let userDefaultsLevel = UserDefaults.standard.string(forKey: "LOGLEVEL") { return userDefaultsLevel == "DEBUG" || Self.includeTrace }
             return ProcessInfo.processInfo.environment["LOGLEVEL"] == "DEBUG" || Self.includeTrace
         }()
         public static let includeTrace: Bool = {
             if let overrideLevel = Self.overrideLevel { return overrideLevel == "TRACE" }
+            if let userDefaultsLevel = UserDefaults.standard.string(forKey: "LOGLEVEL") { return userDefaultsLevel == "TRACE" }
             return ProcessInfo.processInfo.environment["LOGLEVEL"] == "TRACE"
         }()
         public static let destination: LogSink? = {
@@ -44,7 +49,7 @@ public extension Cornucopia.Core {
 #if os(watchOS) // no BSD sockets on WatchOS
             return PrintLogger()
 #endif
-            guard let logsink = ProcessInfo.processInfo.environment["LOGSINK"],
+            guard let logsink = UserDefaults.standard.string(forKey: "LOGSINK") ?? ProcessInfo.processInfo.environment["LOGSINK"],
                   let sinkurl = URL(string: logsink),
                   let host = sinkurl.host,
                   let scheme = sinkurl.scheme else { return sink }
