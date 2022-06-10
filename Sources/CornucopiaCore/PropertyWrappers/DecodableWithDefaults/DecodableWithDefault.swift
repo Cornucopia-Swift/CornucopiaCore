@@ -32,7 +32,7 @@ public extension Cornucopia.Core {
     }
 }
 
-extension Cornucopia.Core.Default: Equatable where Provider.Value: Equatable {}
+extension Cornucopia.Core.Default: Equatable {}
 
 public extension KeyedDecodingContainer {
     func decode<P>(_: Cornucopia.Core.Default<P>.Type, forKey key: Key) throws -> Cornucopia.Core.Default<P> {
