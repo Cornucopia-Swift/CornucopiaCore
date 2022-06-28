@@ -26,13 +26,15 @@ extension Stream.Status: CustomStringConvertible {
 extension Stream.Event: CustomStringConvertible {
 
     @inlinable public var description: String {
+        var events: [String] = []
         switch self {
-            case .openCompleted:     return "open completed"
-            case .endEncountered:    return "end encountered"
-            case .errorOccurred:     return "error occurred"
-            case .hasBytesAvailable: return "has bytes available"
-            case .hasSpaceAvailable: return "has space available"
-            default:                 return "unknown event"
+            case .openCompleted:     events.append("open completed")
+            case .endEncountered:    events.append("end encountered")
+            case .errorOccurred:     events.append("error occurred")
+            case .hasBytesAvailable: events.append("has bytes available")
+            case .hasSpaceAvailable: events.append("has space available")
+            default:                 events.append("unknown event")
         }
+        return "[\(events.joined(separator: ", "))]"
     }
 }
