@@ -19,14 +19,14 @@ extension Foundation.JSONEncoder: Cornucopia.Core.AnyEncoder {}
 
 
 // MARK: - Decoding
-public protocol _CornucopiaCoreAndyDecoder {
+public protocol _CornucopiaCoreAnyDecoder {
     /// Returns an instance of `T` created by decoding binary data.
     func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T
 }
 
 public extension Cornucopia.Core {
 
-    typealias AnyDecoder = _CornucopiaCoreAndyDecoder
+    typealias AnyDecoder = _CornucopiaCoreAnyDecoder
 
 }
 
