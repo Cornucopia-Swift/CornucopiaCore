@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "AnyCodable",
+        "repositoryURL": "https://github.com/zmian/AnyCodable",
+        "state": {
+          "branch": "master",
+          "revision": "ca1a7d64fd7584fb0e3d4de521c76e2969b8ded6",
+          "version": null
+        }
+      },
+      {
         "package": "BitByteData",
         "repositoryURL": "https://github.com/tsolomko/BitByteData",
         "state": {

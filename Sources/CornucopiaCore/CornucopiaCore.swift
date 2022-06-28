@@ -2,6 +2,7 @@
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
 import CoreFoundation
+@_exported import AnyCodable
 
 /// The "horn of plenty" – a symbol of abundance.
 public enum Cornucopia {
