@@ -1,8 +1,7 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
-
-// (C) Guille Gonzalez, MIT-licensed, based on https://github.com/gonzalezreal/DefaultCodable
+// based on https://github.com/gonzalezreal/DefaultCodable (C) Guille Gonzalez
 
 import Foundation
 
@@ -56,6 +55,11 @@ public extension Cornucopia.Core {
     /// `default: EnumType = .lastCase`
     enum LastCase<A>: DefaultValueProvider where A: Codable & Equatable & CaseIterable & RawRepresentable, A.AllCases: BidirectionalCollection {
         public static var `default`: A { A.allCases.last! }
+    }
+
+    /// `default: Date = .now`
+    enum Now: DefaultValueProvider {
+        public static let `default`: Date = .init()
     }
 
     /// `default: BinaryInteger = 0`
