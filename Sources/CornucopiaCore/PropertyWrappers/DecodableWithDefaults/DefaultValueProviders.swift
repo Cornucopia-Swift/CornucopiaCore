@@ -42,6 +42,11 @@ public extension Cornucopia.Core {
         public static var `default`: A { A() }
     }
 
+    /// `default: [A:B] = [:]`
+    enum EmptyDictionary<K, V>: DefaultValueProvider where K: Hashable & Codable, V: Equatable & Codable {
+        public static var `default`: [K: V] { Dictionary() }
+    }
+
     /// `default: EnumType = .firstCase`
     enum FirstCase<A>: DefaultValueProvider where A: Codable & Equatable & CaseIterable {
         public static var `default`: A { A.allCases.first! }
