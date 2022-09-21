@@ -11,12 +11,13 @@ fileprivate final class UncheckedBox<ResultType: Sendable>: @unchecked Sendable 
 }
 
 @available(*, deprecated, message: "Migrate to structured concurrency")
-public func CC_withBlockingWait<ResultType: Sendable>(_ f: @escaping () async throws -> ResultType) throws -> ResultType {
+/// Runs the `body` in an asynchronous task, waits _synchronously_ for its completion, and returns the result.
+public func CC_withBlockingWait<ResultType: Sendable>(_ body: @escaping () async throws -> ResultType) throws -> ResultType {
     let box = UncheckedBox<ResultType>()
     let sema = DispatchSemaphore(value: 0)
     Task {
         do {
-            let val = try await f()
+            let val = try await body()
             box.result = .success(val)
         } catch {
             box.result = .failure(error)
