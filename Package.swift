@@ -20,7 +20,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-crypto", .upToNextMajor(from: "1.1.6")),
         .package(url: "https://github.com/tsolomko/SWCompression", .upToNextMajor(from: "4.6.0")),
-        .package(url: "https://github.com/zmian/AnyCodable", branch: "master"),
+        .package(url: "https://github.com/mickeyl/AnyCodable", .upToNextMajor(from: "0.6.6")),
     ],
     targets: [
         .target(
