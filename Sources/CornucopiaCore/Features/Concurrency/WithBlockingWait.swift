@@ -1,7 +1,7 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
-//  This has been written by Yoni Hemi, taken from https://forums.swift.org/t/using-async-functions-from-synchronous-functions-and-breaking-all-the-rules/59782/4
+//  [3RDPARTY] (C) Yoni Hemi, taken from https://forums.swift.org/t/using-async-functions-from-synchronous-functions-and-breaking-all-the-rules/59782/4
 //  incorporating the comments from Konrad Malawski as per https://forums.swift.org/t/using-async-functions-from-synchronous-functions-and-breaking-all-the-rules/59782/5
 #if compiler(>=5.5) && canImport(_Concurrency)
 import Foundation
