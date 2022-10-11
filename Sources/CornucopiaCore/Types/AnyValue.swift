@@ -16,6 +16,23 @@ public extension Cornucopia.Core {
         case array([AnyValue])
         case null
 
+        public init?(any: Any) {
+            switch any {
+                case is String: self = .string(any as! String)
+                case is Bool: self = .bool(any as! Bool)
+                case is Int: self = .int(any as! Int)
+                case is Double: self = .double(any as! Double)
+                case is Array<Any>:
+                    let anyArray = (any as! Array<Any>).compactMap { AnyValue.init(any: $0) }
+                    self = .array(anyArray)
+                case is Dictionary<String, Any>:
+                    let stringAnyDict = (any as! Dictionary<String, Any>).compactMapValues { AnyValue.init(any: $0) }
+                    self = .dictionary(stringAnyDict)
+                default:
+                    return nil
+            }
+        }
+
         public init(string: String) { self = .string(string) }
         public init(bool: Bool) { self = .bool(bool) }
         public init(int: Int) { self = .int(int) }
