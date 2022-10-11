@@ -16,6 +16,12 @@ public extension Cornucopia.Core {
         case array([AnyValue])
         case null
 
+        public init(string: String) { self = .string(string) }
+        public init(bool: Bool) { self = .bool(bool) }
+        public init(int: Int) { self = .int(int) }
+        public init(double: Double) { self = .double(double) }
+        public init() { self = .null }
+
         public var anyValue: Any {
             switch self {
                 case .string(let string): return string
