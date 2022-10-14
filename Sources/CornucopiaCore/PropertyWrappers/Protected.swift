@@ -1,6 +1,7 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
+import Foundation
 
 // [3RDPARTY] (C) Alamofire Software Foundation, MIT-licensed, based on https://github.com/Alamofire/Alamofire/blob/master/Source/Protected.swift
 
