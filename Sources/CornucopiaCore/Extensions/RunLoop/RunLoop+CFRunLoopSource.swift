@@ -2,6 +2,7 @@
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
 import Foundation
+import CoreFoundation
 
 public extension RunLoop {
 
