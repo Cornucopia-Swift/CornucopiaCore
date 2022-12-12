@@ -4,7 +4,7 @@
 extension Cornucopia.Core {
 
     /// A sequence number that can be incremented and, when overshooting, resets to a base value.
-    public struct CyclicSequenceNumber<T: BinaryInteger> {
+    @frozen public struct CyclicSequenceNumber<T: BinaryInteger> {
         
         public private(set) var value: T
         public var next: T {

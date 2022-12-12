@@ -1,10 +1,10 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
-public extension Cornucopia.Core {
+extension Cornucopia.Core {
 
     /// Chunks a sequence into slices of a given size, optionally padding the last chunk.
-    struct ChunkedSequence<T: Collection>: Sequence, IteratorProtocol {
+    @frozen public struct ChunkedSequence<T: Collection>: Sequence, IteratorProtocol {
 
         private var baseIterator: T.Iterator
         private let size: Int
