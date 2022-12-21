@@ -8,12 +8,12 @@ extension Task where Success == Never, Failure == Never {
 
     /// Sleeps for the specified number of `milliseconds`.
     @inlinable public static func CC_sleep(milliseconds: UInt32) async throws {
-        try await Self.sleep(nanoseconds: 1000000 * UInt64(milliseconds))
+        try await Self.sleep(nanoseconds: 1_000_000 * UInt64(milliseconds))
     }
 
     /// Sleeps for the specified number of `seconds`.
     @inlinable public static func CC_sleep(seconds: Double) async throws {
-        try await Self.sleep(nanoseconds: 1000000000 * UInt64(seconds))
+        try await Self.sleep(nanoseconds: 1_000_000_000 * UInt64(seconds))
     }
 }
 
