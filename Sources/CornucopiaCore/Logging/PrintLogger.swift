@@ -5,7 +5,7 @@ import Foundation
 
 extension Cornucopia.Core {
     
-    /// A `LogSink` that sends all logs to `stdout` via print.
+    /// A `LogSink` that sends all logs to `stderr` via print.
     struct PrintLogger: LogSink {
 
         init(url: URL = "print://") { }
@@ -18,7 +18,8 @@ extension Cornucopia.Core {
 
         func log(_ entry: LogEntry) {
             let timestamp = Self.timeFormatter.string(from: entry.timestamp)
-            print("\(timestamp) [\(entry.subsystem):\(entry.category)] <\(entry.thread)> (\(entry.level.character)) \(entry.message)")
+            let string = "\(timestamp) [\(entry.subsystem):\(entry.category)] <\(entry.thread)> (\(entry.level.character)) \(entry.message)\n"
+            FileHandle.standardError.write(string)
         }
     }    
 }
