@@ -1,6 +1,7 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
+import Foundation
 import CoreFoundation
 @_exported import AnyCodable
 
@@ -9,5 +10,6 @@ public enum Cornucopia {
     /// Core Subsystem
     public enum Core {
         static let Subsystem = "de.vanille.Cornucopia.Core"
+        static var stderr = FileHandle.standardError
     }
 }
