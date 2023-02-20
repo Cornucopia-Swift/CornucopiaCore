@@ -3,14 +3,21 @@
 //
 import CoreFoundation
 
-public enum Benchmarking {
+extension Cornucopia.Core {
 
-    public static func CC_measureSyncBlock(_ title: String = "", block: @escaping( () -> ())) {
+    public static func CC_measureBlock(_ title: String = "", body: @escaping( () -> ())) {
 
         let startTime = CFAbsoluteTimeGetCurrent()
-        block()
+        body()
         let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
         print("\(title):: Time: \(timeElapsed)")
     }
 
+    public static func CC_measureBlock(_ title: String = "", body: @escaping @Sendable () async -> Void) async {
+
+        let startTime = CFAbsoluteTimeGetCurrent()
+        await body()
+        let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
+        print("\(title):: Time: \(timeElapsed)")
+    }
 }
