@@ -1,6 +1,8 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
+import Foundation
+
 public extension String {
 
     /// Returns the basename, if interpreting the contents as a path.
@@ -16,5 +18,12 @@ public extension String {
         let components = self.split(separator: "/")
         guard components.count > 1 else { return "/" }
         return "/" + components.dropLast().joined(separator: "/")
+    }
+
+    /// Returns the absolute path, if relative path is existing.
+    var CC_realpath: String? {
+        guard let path = realpath(self, nil) else { return nil }
+        defer { free(path) }
+        return String(cString: path)
     }
 }
