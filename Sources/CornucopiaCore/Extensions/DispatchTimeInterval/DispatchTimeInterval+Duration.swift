@@ -3,22 +3,23 @@
 //
 import Foundation
 
+@available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
 public extension DispatchTimeInterval {
 
-    /// Returns a matching ``TimeInterval``.
-    var CC_timeInterval: TimeInterval {
+    /// Returns a matching ``Duration``.
+    var CC_duration: Duration {
 
         switch self {
             case .seconds(let value):
-                return Double(value)
+                return Duration.seconds(value)
             case .milliseconds(let value):
-                return Double(value) / 1_000
+                return Duration.milliseconds(value)
             case .microseconds(let value):
-                return Double(value) / 1_000_000
+                return Duration.microseconds(value)
             case .nanoseconds(let value):
-                return Double(value) / 1_000_000_000
+                return Duration.nanoseconds(value)
             case .never:
-                return 0.0
+                return Duration.zero
             @unknown default:
                 fatalError("not yet implemented")
         }
