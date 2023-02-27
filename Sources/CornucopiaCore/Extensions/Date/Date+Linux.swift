@@ -6,6 +6,6 @@ import Foundation
 
 extension Date {
 
-    static var now: Date { Date() }
+    public static var now: Date { Date() }
 }
 #endif
