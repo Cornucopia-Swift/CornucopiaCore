@@ -7,8 +7,11 @@ private var logger = Cornucopia.Core.Logger()
 
 extension Cornucopia.Core {
 
-    /// A (textual) log file.
-    /// All operations happen on a (serial) background queue.
+    /// A (textual) log file without any formatting.
+    ///
+    /// In an attempt to not disturb the runtime behavior at the calling site, all logging happen on a (serial) background queue.
+    /// This ­– naturally ­– renders any timestamps obsolete, hence this class does not offer automatic timestamps. If you need
+    /// some, provide them prerendered in the text.
     public class LogFile {
 
         let q: OperationQueue = {
