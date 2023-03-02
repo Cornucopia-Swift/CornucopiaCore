@@ -23,6 +23,7 @@ extension Cornucopia.Core {
         }()
 
         public let path: String
+        public var timestamp: RollingTimestamp
         let header: Data?
         private var fileHandle: FileHandle? = nil
         private var giveUp: Bool = false
@@ -31,13 +32,14 @@ extension Cornucopia.Core {
         /// The header will not be augmented, you are responsible for line endings.
         /// The default behavior is _lazy_, i.e. the file will not be created before the first actual
         /// logging happens. Submit `lazy: false` to change that.
-        public init(path: String, header: String? = nil, lazy: Bool = true) throws {
+        public init(path: String, header: String? = nil, lazy: Bool = true, timestamp: RollingTimestamp? = nil) throws {
             self.path = path
             self.header = header != nil ? header!.data(using: .utf8) : nil
             let dirname = self.path.CC_dirname
             if !FileManager.default.fileExists(atPath: dirname) {
                 try FileManager.default.createDirectory(atPath: self.path.CC_dirname, withIntermediateDirectories: true, attributes: nil)
             }
+            self.timestamp = timestamp ?? RollingTimestamp(mode: .relative)
 
             guard lazy else {
                 self.q.addOperation { self.createFile() }
