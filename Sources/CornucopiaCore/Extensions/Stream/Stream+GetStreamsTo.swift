@@ -9,6 +9,8 @@ public extension Stream {
     enum StreamError: Error {
         case connectionFailed(details: NSError)
         case unableToConnect
+        case hostNotFound(String)
+        case interfaceNotFound(String)
         case notImplemented
     }
 
@@ -52,14 +54,17 @@ public extension Stream {
         }
     }
 
-    static func CC_getStreamsToHost(_ hostname: String, port: Int, via interface: String) throws -> (inputStream: InputStream, outputStream: OutputStream) {
+    static func CC_getStreamsToHost(_ hostOrIP: String, port: Int, via interface: String) throws -> (inputStream: InputStream, outputStream: OutputStream) {
         #if !canImport(ObjectiveC)
         throw StreamError.notImplemented
         #else
+        let addresses = Cornucopia.Core.Posix.getHostByName(hostOrIP)
+        guard let ip = addresses.first else { throw StreamError.hostNotFound(hostOrIP) }
+
         var sockaddress = sockaddr_in()
         let sockaddress_size = socklen_t(MemoryLayout<sockaddr_in>.size)
 
-        guard inet_pton(PF_INET, hostname.cString(using: .utf8), &sockaddress.sin_addr) != -1 else { throw StreamError.connectionFailed(details: errno.CC_posixError) }
+        guard inet_pton(PF_INET, ip.cString(using: .utf8), &sockaddress.sin_addr) != -1 else { throw StreamError.connectionFailed(details: errno.CC_posixError) }
         sockaddress.sin_port = UInt16(port).bigEndian
         sockaddress.sin_family = sa_family_t(AF_INET)
         // Create native socket handle, if sockhandle < 0, error occurred, (check errno)
@@ -67,6 +72,7 @@ public extension Stream {
         guard sockHandle >= 0 else { throw StreamError.connectionFailed(details: errno.CC_posixError) }
 
         var interfaceIndex = if_nametoindex(interface.cString(using: .utf8))
+        guard interfaceIndex > 0 else { throw StreamError.interfaceNotFound(interface) }
         guard setsockopt(sockHandle, IPPROTO_IP, IP_BOUND_IF, &interfaceIndex, socklen_t(MemoryLayout<UInt32>.size)) >= 0 else { throw StreamError.connectionFailed(details: errno.CC_posixError) }
 
         let connectResult = withUnsafePointer(to: &sockaddress) { pointer in
