@@ -18,7 +18,7 @@ public extension DispatchTimeInterval {
             case .nanoseconds(let value):
                 return Double(value) / 1_000_000_000
             case .never:
-                return 0.0
+                return Double.greatestFiniteMagnitude
             @unknown default:
                 fatalError("not yet implemented")
         }
