@@ -10,7 +10,7 @@ public extension Cornucopia.Core {
     final class UnfairLock: Lockable {
         private let unfairLock: os_unfair_lock_t
 
-        init() {
+        public init() {
             self.unfairLock = .allocate(capacity: 1)
             self.unfairLock.initialize(to: os_unfair_lock())
         }
