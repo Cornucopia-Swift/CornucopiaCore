@@ -14,22 +14,7 @@ public extension String {
 
     /// Returns the equivalent data of bytes when interpreting `self` as sequence of hexadecimal characters with an optional `0x` prefix.
     /// Odd lengths are interpretated as if the upper nibble of the first byte was set to `0`.
-    var CC_hexDecodedData: Data {
-        var string = self.starts(with: "0x") ? self.dropFirst(2) : self.dropFirst(0)
-        if string.count % 2 == 1 {
-            string.insert("0", at: string.startIndex)
-        }
-        let chars = Array(string.utf8)
-        var bytes = [UInt8]()
-        bytes.reserveCapacity(count / 2)
-
-        for i in stride(from: 0, to: count, by: 2) {
-            let index1 = Int(chars[i] & 0x1F ^ 0x10)
-            let index2 = Int(chars[i + 1] & 0x1F ^ 0x10)
-            bytes.append(Self.map[index1] << 4 | Self.map[index2])
-        }
-        return Data(bytes)
-    }
+    var CC_hexDecodedData: Data { Data(self.CC_hexDecodedUInt8Array) }
 
     /// Returns the equivalent array of bytes when interpreting `self` as sequence of hexadecimal characters with an optional `0x` prefix.
     /// Odd lengths are interpretated as if the upper nibble of the first byte was set to `0`.
