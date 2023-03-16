@@ -7,25 +7,57 @@ extension Collection where Element == UInt8 {
     /// ```
     /// 00000000  30 33 20 37 46 20 31 30 20 37 38 0D               03 7F 10 78.
     /// ```
-    public func CC_hexdump(width: Int = 16) -> String {
+    public func CC_hexdump(width: Int = 16, separators: Bool = false) -> String {
 
         var str = ""
         var address: Int = 0
 
+        if separators {
+            str += "╭"
+            str += String(repeating: "─", count: 8)
+            str += "┬┬"
+            str += String(repeating: "─", count: width * 3 - 1)
+            str += "┬┬"
+            str += String(repeating: "─", count: width)
+            str += "╮\n"
+        }
+
         for chunk in self.CC_chunked(size: width) {
+
+            if separators {
+                str += "│"
+            }
+
             let addressString = "\(address, radix: .hex, toWidth: 8)"
 
             var hexChunk = "\(chunk, radix: .hex, toWidth: 2, separator: " ")"
-            while hexChunk.count < width * 3 { hexChunk += " " }
+            while hexChunk.count < width * 3 - 1 { hexChunk += " " }
 
             var asciiChunk = ""
             for byte in chunk {
                 asciiChunk += (byte > 0x1F && byte < 0x80) ? String(UnicodeScalar(byte)) : "."
             }
+            while asciiChunk.count < width { asciiChunk += " " }
 
-            str += "\(addressString)  \(hexChunk)  \(asciiChunk)"
+            let spacer = separators ? "││" : "  "
+
+            str += "\(addressString)\(spacer)\(hexChunk)\(spacer)\(asciiChunk)"
             address += chunk.count
+
+            if separators {
+                str += "│"
+            }
+
             if address < self.count { str += "\n" }
+        }
+        if separators {
+            str += "\n╰"
+            str += String(repeating: "─", count: 8)
+            str += "┴┴"
+            str += String(repeating: "─", count: width * 3 - 1)
+            str += "┴┴"
+            str += String(repeating: "─", count: width)
+            str += "╯"
         }
         return str
     }
