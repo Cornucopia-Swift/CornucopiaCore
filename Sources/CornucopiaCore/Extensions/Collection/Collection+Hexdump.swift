@@ -7,12 +7,20 @@ extension Collection where Element == UInt8 {
     /// ```
     /// 00000000  30 33 20 37 46 20 31 30 20 37 38 0D               03 7F 10 78.
     /// ```
-    public func CC_hexdump(width: Int = 16, separators: Bool = false) -> String {
+    /// When `frameDecoration` is `true`, it may look nicer. Note that you'll need a font that has the
+    /// Box Drawing Unicode block populated:
+    /// ```
+    /// ╭────────┬┬───────────────────────────────────────────────┬┬────────────────╮
+    /// │00000000││00 00 00 16 00 01 10 F4 62 F1 90 57 42 41 38 46││........b..WBA8F│
+    /// │00000010││35 31 30 30 30 4B 35 35 37 31 36 35            ││51000K557165    │
+    /// ╰────────┴┴───────────────────────────────────────────────┴┴────────────────╯
+    /// ```
+    public func CC_hexdump(width: Int = 16, frameDecoration: Bool = false) -> String {
 
         var str = ""
         var address: Int = 0
 
-        if separators {
+        if frameDecoration {
             str += "╭"
             str += String(repeating: "─", count: 8)
             str += "┬┬"
@@ -24,7 +32,7 @@ extension Collection where Element == UInt8 {
 
         for chunk in self.CC_chunked(size: width) {
 
-            if separators {
+            if frameDecoration {
                 str += "│"
             }
 
@@ -39,18 +47,18 @@ extension Collection where Element == UInt8 {
             }
             while asciiChunk.count < width { asciiChunk += " " }
 
-            let spacer = separators ? "││" : "  "
+            let spacer = frameDecoration ? "││" : "  "
 
             str += "\(addressString)\(spacer)\(hexChunk)\(spacer)\(asciiChunk)"
             address += chunk.count
 
-            if separators {
+            if frameDecoration {
                 str += "│"
             }
 
             if address < self.count { str += "\n" }
         }
-        if separators {
+        if frameDecoration {
             str += "\n╰"
             str += String(repeating: "─", count: 8)
             str += "┴┴"
