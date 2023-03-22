@@ -43,7 +43,7 @@ extension Collection where Element == UInt8 {
 
             var asciiChunk = ""
             for byte in chunk {
-                asciiChunk += (byte > 0x1F && byte < 0x80) ? String(UnicodeScalar(byte)) : "."
+                asciiChunk += (byte > 0x1F && byte < 0x7F) ? String(UnicodeScalar(byte)) : "."
             }
             while asciiChunk.count < width { asciiChunk += " " }
 
