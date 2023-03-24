@@ -10,4 +10,4 @@ public protocol _CornucopiaCoreBusynessObserver {
 }
 
 /// Put it into our namespace.
-extension Cornucopia.Core { public typealias BusynessObvserver = _CornucopiaCoreBusynessObserver }
+extension Cornucopia.Core { public typealias BusynessObserver = _CornucopiaCoreBusynessObserver }
