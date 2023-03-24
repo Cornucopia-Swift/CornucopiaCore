@@ -9,4 +9,5 @@ public protocol _CornucopiaCoreBusynessObserver {
     func leaveBusy()
 }
 
-extension Cornucopia.Core { typealias BusynessObvserver = _CornucopiaCoreBusynessObserver }
+/// Put it into our namespace.
+extension Cornucopia.Core { public typealias BusynessObvserver = _CornucopiaCoreBusynessObserver }
