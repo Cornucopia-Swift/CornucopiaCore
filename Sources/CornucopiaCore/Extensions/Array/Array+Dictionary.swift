@@ -1,8 +1,6 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
-import Foundation
-
 public extension Array {
 
     /// Returns a dictionary with the result of the closure as keys for the given elements
