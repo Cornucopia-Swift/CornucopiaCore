@@ -4,7 +4,9 @@ import XCTest
 extension XCTest {
 
     /// Fail, if the `expression` does not throw the specified `errorThrown`.
-    public func XCTAssertThrowsError<T: Sendable, R>(
+    /// NOTE: I tried to call this `XCTAssertThrowsError` and let the method resolution do its thing,
+    /// but apparantly this breaks on !APPLE platforms. *sigh*
+    public func CC_AssertThrowsError<T: Sendable, R>(
         _ expression: @autoclosure () async throws -> T,
         _ errorThrown: @autoclosure () -> R,
         _ message: @autoclosure () -> String = "This method should fail",
