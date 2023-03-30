@@ -6,14 +6,18 @@
 #if compiler(>=5.5) && canImport(_Concurrency)
 import Foundation
 
-fileprivate final class UncheckedBox<ResultType: Sendable>: @unchecked Sendable {
+fileprivate final class UncheckedResultBox<ResultType: Sendable>: @unchecked Sendable {
     var result: Result<ResultType, Error>? = nil
+}
+
+fileprivate final class UncheckedBox<T: Sendable>: @unchecked Sendable {
+    var result: T? = nil
 }
 
 @available(*, deprecated, message: "Migrate to structured concurrency")
 /// Runs the `body` in an asynchronous task, waits _synchronously_ for its completion, and returns the result.
 public func CC_withBlockingWait<ResultType: Sendable>(_ body: @escaping () async throws -> ResultType) throws -> ResultType {
-    let box = UncheckedBox<ResultType>()
+    let box = UncheckedResultBox<ResultType>()
     let sema = DispatchSemaphore(value: 0)
     Task {
         do {
@@ -26,5 +30,18 @@ public func CC_withBlockingWait<ResultType: Sendable>(_ body: @escaping () async
     }
     sema.wait()
     return try box.result!.get()
+}
+
+@available(*, deprecated, message: "Migrate to structured concurrency")
+/// Runs the `body` in an asynchronous task, waits _synchronously_ for its completion, and returns the result.
+public func CC_withBlockingWait<ResultType: Sendable>(_ body: @escaping () async -> ResultType) -> ResultType {
+    let box = UncheckedBox<ResultType>()
+    let sema = DispatchSemaphore(value: 0)
+    Task {
+        box.result = await body()
+        sema.signal()
+    }
+    sema.wait()
+    return box.result!
 }
 #endif
