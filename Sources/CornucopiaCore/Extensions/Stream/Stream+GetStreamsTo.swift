@@ -38,13 +38,13 @@ public extension Stream {
         return (inputStream: istream, outputStream: ostream)
     }
 
-    /// Returns a pair of input and output streams for communicating via a URL. Supported URL schemes are `ip` and `tty`.
+    /// Returns a pair of input and output streams for communicating via a URL. Supported URL schemes are `tcp` and `tty`.
     static func CC_getStreamsToURL(_ url: URL) throws -> (inputStream: InputStream, outputStream: OutputStream) {
-        precondition(url.scheme == "ip" || url.scheme == "tty", "Unsupported URL scheme \(url.scheme ?? "unknown"). Supported are 'ip' and 'tty'.")
+        precondition(url.scheme == "tcp" || url.scheme == "tty", "Unsupported URL scheme \(url.scheme ?? "unknown"). Supported are 'tcp' and 'tty'.")
 
         switch url.scheme {
 
-            case "ip":
+            case "tcp":
                 return try Self.CC_getStreamsToHost(url.host ?? "unknown", port: url.port ?? 0)
             case "tty":
                 return try Self.CC_getStreamsToFile(url.path)
