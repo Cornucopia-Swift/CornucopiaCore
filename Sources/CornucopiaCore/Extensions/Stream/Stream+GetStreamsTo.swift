@@ -54,6 +54,9 @@ public extension Stream {
         }
     }
 
+    /// Returns a pair of input and output streams for communicating via a TCP socket bound to a concrete `interface`.
+    /// This is a handy call to fix a race condition in some operating systems (macOS, i'm looking at you), where it
+    /// takes a while after a new interface appears to be effective in the routing table.
     static func CC_getStreamsToHost(_ hostOrIP: String, port: Int, via interface: String) throws -> (inputStream: InputStream, outputStream: OutputStream) {
         #if !canImport(ObjectiveC)
         throw StreamError.notImplemented
