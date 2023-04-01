@@ -5,7 +5,7 @@ import Foundation
 
 extension OutputStream {
 
-    public enum Error: Swift.Error {
+    public enum Exception: Swift.Error {
         case unknown
         case eof
     }
@@ -19,8 +19,8 @@ extension OutputStream {
         let nWritten = write(buffer, maxLength: len)
         guard nWritten > 0 else {
             switch nWritten {
-                case 0: throw Error.eof
-                default: throw self.streamError ?? Error.unknown
+                case 0: throw Exception.eof
+                default: throw self.streamError ?? Exception.unknown
             }
         }
         return nWritten

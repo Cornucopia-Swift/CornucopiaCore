@@ -5,7 +5,7 @@ import Foundation
 
 extension InputStream {
 
-    public enum Error: Swift.Error {
+    public enum Exception: Error {
         case unknown
         case eof
     }
@@ -20,8 +20,8 @@ extension InputStream {
         let nRead = self.read(buffer, maxLength: len)
         guard nRead > 0 else {
             switch nRead {
-                case 0: throw Error.eof
-                default: throw self.streamError ?? Error.unknown
+                case 0: throw Exception.eof
+                default: throw self.streamError ?? Exception.unknown
             }
         }
         return nRead
