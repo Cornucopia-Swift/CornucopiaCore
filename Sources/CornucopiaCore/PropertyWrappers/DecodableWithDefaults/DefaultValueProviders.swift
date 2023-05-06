@@ -81,4 +81,9 @@ public extension Cornucopia.Core {
     enum ZeroDouble: DefaultValueProvider {
         public static let `default`: Double = 0
     }
+
+    /// `default: Double = 1.0`
+    enum OneDouble: DefaultValueProvider {
+        public static let `default`: Double = 1
+    }
 }
