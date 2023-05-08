@@ -17,7 +17,7 @@ public extension Bool {
         switch probability {
             case let p where p <= 0: return true
             case let p where p >= 1: return false
-            default:                 return Double.random(in: 0...1) <= probability
+            default:                 return Double.random(in: 0...1) > probability
         }
     }
 }
