@@ -1,21 +1,23 @@
 //
-//  Cornucopia – (C) Dr. Lauer Information Technology
+//  Cornucopia – (C) Dr. Lauer Information Technology
 //
 public extension Bool {
 
-    /// Returns `true` with the specified `probabilty`, else `false`.
+    /// Returns `true` with the specified `probability`, else `false`.
     static func CC_true(withProbabilityOf probability: Double = 0.5) -> Self {
-        var probability = probability
-        if probability < 0 { probability = 0 }
-        else if probability > 1 { probability = 1 }
-        return Double.random(in: 0...1) <= probability
+        switch probability {
+            case let p where p <= 0: return false
+            case let p where p >= 1: return true
+            default:                 return Double.random(in: 0...1) <= probability
+        }
     }
 
-    /// Returns `false` with the specified `probabilty`, else `true`.
+    /// Returns `false` with the specified `probability`, else `true`.
     static func CC_false(withProbabilityOf probability: Double = 0.5) -> Self {
-        var probability = probability
-        if probability < 0 { probability = 0 }
-        else if probability > 1 { probability = 1 }
-        return Double.random(in: 0...1) <= probability
+        switch probability {
+            case let p where p <= 0: return true
+            case let p where p >= 1: return false
+            default:                 return Double.random(in: 0...1) <= probability
+        }
     }
 }
