@@ -9,7 +9,7 @@ let package = Package(
         .iOS(.v13),
         .macOS(.v11),
         .tvOS(.v13),
-        .watchOS(.v6),
+        .watchOS(.v7),
         //.linux
     ],
     products: [
@@ -21,6 +21,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-crypto", .upToNextMajor(from: "1.1.6")),
         .package(url: "https://github.com/tsolomko/SWCompression", .upToNextMajor(from: "4.6.0")),
         .package(url: "https://github.com/mickeyl/AnyCodable", .upToNextMajor(from: "0.6.6")),
+        //.package(path: "../misc/SWCompression"),
     ],
     targets: [
         .target(
