@@ -1,7 +1,6 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
-#if !os(watchOS)
 import Foundation
 
 public extension Stream {
@@ -16,7 +15,7 @@ public extension Stream {
 
     /// Returns a pair of input and output streams for accessing a service indicated by the `hostname` and `port`.
     static func CC_getStreamsToHost(_ hostname: String, port: Int) throws -> (inputStream: InputStream, outputStream: OutputStream) {
-        #if !canImport(ObjectiveC)
+        #if !canImport(ObjectiveC) || os(watchOS)
         throw StreamError.notImplemented
         #else
         var inputStream: InputStream?
@@ -58,7 +57,7 @@ public extension Stream {
     /// This is a handy call to fix a race condition in some operating systems (macOS, i'm looking at you), where it
     /// takes a while after a new interface appears to be effective in the routing table.
     static func CC_getStreamsToHost(_ hostOrIP: String, port: Int, via interface: String) throws -> (inputStream: InputStream, outputStream: OutputStream) {
-        #if !canImport(ObjectiveC)
+        #if !canImport(ObjectiveC) || os(watchOS)
         throw StreamError.notImplemented
         #else
         let addresses = Cornucopia.Core.Posix.getHostByName(hostOrIP)
@@ -99,4 +98,3 @@ public extension Stream {
         #endif
     }
 }
-#endif
