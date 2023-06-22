@@ -135,7 +135,7 @@ extension Cornucopia.Core {
 
             #if DEBUG
             let string = String(data: request.httpBody!, encoding: .utf8) ?? "<invalid charset>"
-            logger.debug("↑ Sent \(string)")
+            logger.trace("↑ Sent \(string)")
             #endif
 
             let handler = self.createDataTaskHandler(request: request, then: then)
@@ -182,7 +182,7 @@ extension Cornucopia.Core {
 
             #if DEBUG
             let string = String(data: request.httpBody!, encoding: .utf8) ?? "<invalid charset>"
-            logger.debug("↑ Sent \(string)")
+            logger.trace("↑ Sent \(string)")
             #endif
 
             let handler = self.createDataTaskHandler(request: request, then: then)
@@ -208,7 +208,7 @@ extension Cornucopia.Core {
 
             #if DEBUG
             let string = String(data: request.httpBody!, encoding: .utf8) ?? "<invalid charset>"
-            logger.debug("↑ Sent \(string)")
+            logger.trace("↑ Sent \(string)")
             #endif
 
             let handler = self.createDataTaskHandler(request: request, then: then)
@@ -234,7 +234,7 @@ extension Cornucopia.Core {
 
             #if DEBUG
             let string = String(data: request.httpBody!, encoding: .utf8) ?? "<invalid charset>"
-            logger.debug("↑ Sent \(string)")
+            logger.trace("↑ Sent \(string)")
             #endif
 
             let handler = self.createDataTaskHandler(request: request, then: then)
@@ -337,7 +337,7 @@ private extension Cornucopia.Core.HTTPNetworking {
 
             #if DEBUG
             let string = String(data: data, encoding: .utf8) ?? "<invalid charset>"
-            logger.debug("↓ Received \(string)")
+            logger.trace("↓ Received \(string)")
             #endif
 
             switch contentType {
