@@ -14,6 +14,15 @@ public extension Date {
         return true
     }
 
+    /// Returns true, if the `other` date is in the same year as `self`.
+    func CC_isInSameYearAs(_ other: Date = Date()) -> Bool {
+        let calendar = Calendar.current
+        return calendar.component(.year, from: self) == calendar.component(.year, from: other)
+    }
+
+    /// Returns true, ie `self` is a date in this year.
+    var CC_isThisYear: Bool { CC_isInSameYearAs() }
+
     /// Returns true, if `self` is today.
     var CC_isToday: Bool { CC_isOnSameDayAs() }
 
