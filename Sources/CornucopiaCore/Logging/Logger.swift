@@ -51,13 +51,15 @@ public extension Cornucopia.Core {
 #endif
             guard let logsink = UserDefaults.standard.string(forKey: "LOGSINK") ?? ProcessInfo.processInfo.environment["LOGSINK"],
                   let sinkurl = URL(string: logsink),
-                  let host = sinkurl.host,
                   let scheme = sinkurl.scheme else { return sink }
             switch scheme {
                 case "syslog-udp", "syslog-tcp":
+                    guard sinkurl.host != nil else { return sink }
                     sink = SysLogger(url: sinkurl)
                 case "print":
                     sink = PrintLogger()
+                case "file":
+                    sink = FileLogger(url: sinkurl)
                 default:
                     print("Can't parse LOGSINK url: \(logsink). Using default logger.")
             }
