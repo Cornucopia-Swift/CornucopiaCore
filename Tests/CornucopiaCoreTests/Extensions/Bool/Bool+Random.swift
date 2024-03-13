@@ -28,8 +28,12 @@ class BoolPlusRandom: XCTestCase {
             }
         }
         let expectedSuccesses = Double(runs) * probability
-        print("\(successes) successes, expected successes \(expectedSuccesses)")
-        XCTAssertTrue(Double(successes) >= expectedSuccesses)
+        let standardDeviation = sqrt(Double(runs) * probability * (1 - probability))
+        let confidenceInterval = 1.645 * standardDeviation // 90% confidence interval
+        let lowerBound = expectedSuccesses - confidenceInterval
+        let upperBound = expectedSuccesses + confidenceInterval
+        print("\(successes) successes, expected successes \(expectedSuccesses), confidence interval [\(lowerBound), \(upperBound)]")
+        XCTAssertTrue(Double(successes) >= lowerBound && Double(successes) <= upperBound)
     }
 
     func testCC_falseNever() {
@@ -54,7 +58,10 @@ class BoolPlusRandom: XCTestCase {
             }
         }
         let expectedSuccesses = Double(runs) * probability
-        print("\(successes) successes, expected successes \(expectedSuccesses)")
-        XCTAssertTrue(Double(successes) >= expectedSuccesses)
-    }
+        let standardDeviation = sqrt(Double(runs) * probability * (1 - probability))
+        let confidenceInterval = 1.645 * standardDeviation // 90% confidence interval
+        let lowerBound = expectedSuccesses - confidenceInterval
+        let upperBound = expectedSuccesses + confidenceInterval
+        print("\(successes) successes, expected successes \(expectedSuccesses), confidence interval [\(lowerBound), \(upperBound)]")
+        XCTAssertTrue(Double(successes) >= lowerBound && Double(successes) <= upperBound)    }
 }
