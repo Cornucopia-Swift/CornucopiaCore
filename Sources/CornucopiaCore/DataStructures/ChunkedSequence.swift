@@ -8,12 +8,14 @@ extension Cornucopia.Core {
 
         private var baseIterator: T.Iterator
         private let size: Int
+        private let numberOfChunks: Int
         private let pad: T.Element?
 
         init(over collection: T, chunkSize size: Int, pad: T.Element? = nil) {
             self.baseIterator = collection.lazy.makeIterator()
             self.size = size
             self.pad = pad
+            self.numberOfChunks = collection.count / size
         }
 
         mutating public func next() -> [T.Element]? {
@@ -33,5 +35,7 @@ extension Cornucopia.Core {
             }
             return chunk
         }
+
+        public var underestimatedCount: Int { self.numberOfChunks }
     }
 }
