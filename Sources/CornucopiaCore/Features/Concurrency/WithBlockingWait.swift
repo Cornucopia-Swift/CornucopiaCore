@@ -19,7 +19,7 @@ fileprivate final class UncheckedBox<T: Sendable>: @unchecked Sendable {
 public func CC_withBlockingWait<ResultType: Sendable>(_ body: @escaping () async throws -> ResultType) throws -> ResultType {
     let box = UncheckedResultBox<ResultType>()
     let sema = DispatchSemaphore(value: 0)
-    Task {
+    Task.detached {
         do {
             let val = try await body()
             box.result = .success(val)
@@ -37,7 +37,7 @@ public func CC_withBlockingWait<ResultType: Sendable>(_ body: @escaping () async
 public func CC_withBlockingWait<ResultType: Sendable>(_ body: @escaping () async -> ResultType) -> ResultType {
     let box = UncheckedBox<ResultType>()
     let sema = DispatchSemaphore(value: 0)
-    Task {
+    Task.detached {
         box.result = await body()
         sema.signal()
     }
