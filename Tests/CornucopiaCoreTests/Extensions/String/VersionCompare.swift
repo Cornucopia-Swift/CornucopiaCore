@@ -38,4 +38,12 @@ class VersionCompare: XCTestCase {
         let right = "1.9.0"
         XCTAssertEqual(left.CC_comparedAsVersion(to: right), .orderedSame)
     }
+
+    func testComparisons5() {
+
+        let targetVersion = "1.0"
+        XCTAssertTrue("1.1".CC_isAtLeastOfVersion(targetVersion))
+        XCTAssertTrue("1".CC_isAtLeastOfVersion(targetVersion))
+        XCTAssertFalse("0.9".CC_isAtLeastOfVersion(targetVersion))
+    }
 }

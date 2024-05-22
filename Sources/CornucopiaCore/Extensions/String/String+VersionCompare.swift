@@ -23,4 +23,9 @@ public extension String {
 
         return .orderedSame
     }
+
+    /// Returns `true`, if this String ­– if interpretated as a version ­– is at least of `version` (or newer).
+    @inlinable func CC_isAtLeastOfVersion(_ version: String, separator: String = ".") -> Bool {
+        version.CC_comparedAsVersion(to: self, separator: separator) != .orderedDescending
+    }
 }
