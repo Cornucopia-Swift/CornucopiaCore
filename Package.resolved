@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/tsolomko/BitByteData",
         "state": {
           "branch": null,
-          "revision": "36df26fe4586b4f23d76cfd8b47076998343a2b2",
-          "version": "2.0.3"
+          "revision": "cdcdc5177ad536cfb11b95c620f926a81014b7fe",
+          "version": "2.0.4"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/tsolomko/SWCompression",
         "state": {
           "branch": null,
-          "revision": "cd39ca0a3b269173bab06f68b182b72fa690765c",
-          "version": "4.8.5"
+          "revision": "390e0b0af8dd19a600005a242a89e570ff482e09",
+          "version": "4.8.6"
         }
       },
       {
