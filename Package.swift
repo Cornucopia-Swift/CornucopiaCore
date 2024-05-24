@@ -6,10 +6,10 @@ import PackageDescription
 let package = Package(
     name: "CornucopiaCore",
     platforms: [
-        .iOS(.v13),
-        .macOS(.v11),
-        .tvOS(.v13),
-        .watchOS(.v7),
+        .iOS(.v14),
+        .macOS(.v12),
+        .tvOS(.v14),
+        .watchOS(.v8),
         //.linux
     ],
     products: [

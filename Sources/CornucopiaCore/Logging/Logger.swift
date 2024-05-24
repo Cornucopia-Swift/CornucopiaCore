@@ -22,34 +22,40 @@ public extension Cornucopia.Core {
     /// - The default LOGSINK is empty, i.e. nothing will be emitted.
     struct Logger {
 
+        static let LogLevel: String = "LOGLEVEL"
+        static let LogSink: String = "LOGSINK"
+        static let LogLevelDebug: String = "DEBUG"
+        static let LogLevelTrace: String = "TRACE"
+        static let DotSwift: String = ".swift"
+
         fileprivate static var overrideSink: LogSink? = nil
         fileprivate static var overrideLevel: String? = nil
 
         public static let dispatchQueue: DispatchQueue = .init(label: "dev.cornucopia.Logger", qos: .background)
         public static let includeDebug: Bool = {
-            if let overrideLevel = Self.overrideLevel { return overrideLevel == "DEBUG" || Self.includeTrace }
-            if let userDefaultsLevel = UserDefaults.standard.string(forKey: "LOGLEVEL") { return userDefaultsLevel == "DEBUG" || Self.includeTrace }
-            return ProcessInfo.processInfo.environment["LOGLEVEL"] == "DEBUG" || Self.includeTrace
+            if let overrideLevel = Self.overrideLevel { return overrideLevel == Self.LogLevelDebug || Self.includeTrace }
+            if let userDefaultsLevel = UserDefaults.standard.string(forKey: Self.LogLevel) { return userDefaultsLevel == Self.LogLevelDebug || Self.includeTrace }
+            return ProcessInfo.processInfo.environment[Self.LogLevel] == Self.LogLevelDebug || Self.includeTrace
         }()
         public static let includeTrace: Bool = {
-            if let overrideLevel = Self.overrideLevel { return overrideLevel == "TRACE" }
-            if let userDefaultsLevel = UserDefaults.standard.string(forKey: "LOGLEVEL") { return userDefaultsLevel == "TRACE" }
-            return ProcessInfo.processInfo.environment["LOGLEVEL"] == "TRACE"
+            if let overrideLevel = Self.overrideLevel { return overrideLevel == Self.LogLevelTrace }
+            if let userDefaultsLevel = UserDefaults.standard.string(forKey: Self.LogLevel) { return userDefaultsLevel == Self.LogLevelTrace }
+            return ProcessInfo.processInfo.environment[Self.LogLevel] == Self.LogLevelTrace
         }()
         public static let destination: LogSink? = {
 
             if let overrideSink = Self.overrideSink { return overrideSink }
 
-            #if DEBUG
+#if DEBUG
             var sink: LogSink? = PrintLogger()
-            #else
+#else
             var sink: LogSink? = nil
-            #endif
+#endif
 
 #if os(watchOS) // no BSD sockets on WatchOS
             return PrintLogger()
 #endif
-            guard let logsink = UserDefaults.standard.string(forKey: "LOGSINK") ?? ProcessInfo.processInfo.environment["LOGSINK"],
+            guard let logsink = UserDefaults.standard.string(forKey: Self.LogSink) ?? ProcessInfo.processInfo.environment[Self.LogSink],
                   let sinkurl = URL(string: logsink),
                   let scheme = sinkurl.scheme else { return sink }
             switch scheme {
@@ -58,6 +64,10 @@ public extension Cornucopia.Core {
                     sink = SysLogger(url: sinkurl)
                 case "print":
                     sink = PrintLogger()
+#if canImport(OSLog)
+                case "os":
+                    sink = OSLogger()
+#endif
                 case "file":
                     sink = FileLogger(url: sinkurl)
                 default:
@@ -72,11 +82,23 @@ public extension Cornucopia.Core {
         public let category: String
 
         /// Create the logger with the given `subsystem` and `category`.
-        public init(subsystem: String = "none", category: String = #fileID) {
-            let category = category.hasSuffix(".swift") ? category.split(separator: "/").last!.replacingOccurrences(of: ".swift", with: "") : category
+        public init(subsystem: String = #fileID, category: String = #fileID) {
             self.app = Bundle.main.bundleIdentifier ?? ProcessInfo.processInfo.processName
-            self.subsystem = subsystem
-            self.category = category
+            if subsystem.hasSuffix(Self.DotSwift) {
+                let firstIndex = subsystem.firstIndex(where: { $0 == "/"} ) ?? subsystem.startIndex
+                self.subsystem = String(subsystem[..<firstIndex])
+            } else {
+                self.subsystem = subsystem
+            }
+            if category.hasSuffix(".swift") {
+                var lastIndex = category.lastIndex(where: { $0 == "/"} ) ?? category.startIndex
+                if lastIndex != category.startIndex {
+                    lastIndex = category.index(after: lastIndex)
+                }
+                self.category = String(category[lastIndex...])
+            } else {
+                self.category = category
+            }
         }
 
         @_transparent
