@@ -37,13 +37,13 @@ class BoolPlusRandom: XCTestCase {
     }
 
     func testCC_falseNever() {
-        for run in 0...runs {
+        for _ in 0...runs {
             XCTAssertTrue(Bool.CC_false(withProbabilityOf: 0))
         }
     }
 
     func testCC_falseAlways() {
-        for run in 0...runs {
+        for _ in 0...runs {
             XCTAssertFalse(Bool.CC_false(withProbabilityOf: 1))
         }
     }
