@@ -90,12 +90,13 @@ public extension Cornucopia.Core {
             } else {
                 self.subsystem = subsystem
             }
-            if category.hasSuffix(".swift") {
+            if category.hasSuffix(Self.DotSwift) {
+                let endIndexWithoutSuffix = category.index(category.endIndex, offsetBy: -Self.DotSwift.count)
                 var lastIndex = category.lastIndex(where: { $0 == "/"} ) ?? category.startIndex
                 if lastIndex != category.startIndex {
                     lastIndex = category.index(after: lastIndex)
                 }
-                self.category = String(category[lastIndex...])
+                self.category = String(category[lastIndex..<endIndexWithoutSuffix])
             } else {
                 self.category = category
             }
@@ -147,6 +148,14 @@ public extension Cornucopia.Core {
         public func fault(_ message: @autoclosure ()->String) {
             guard let sink = Self.destination else { return }
             log(message(), level: .fault, sink: sink)
+        }
+
+        /// Flush all pending log messages and wait until they're processed.
+        @inlinable
+        public func flush() {
+            let semaphore = DispatchSemaphore(value: 0)
+            Self.dispatchQueue.sync { _ = semaphore.signal() }
+            semaphore.wait()
         }
     }
 }
