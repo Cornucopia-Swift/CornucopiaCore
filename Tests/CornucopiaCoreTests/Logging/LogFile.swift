@@ -63,4 +63,56 @@ class Logging: XCTestCase {
         lf2.log("Let me log something…\n")
         lf2.shutdown()
     }
+
+    func testRollingTimestamp() throws {
+
+        let path = "/tmp/logging-test/timestamps.txt"
+        try? FileManager.default.removeItem(atPath: path)
+
+        let lf = try Cornucopia.Core.LogFile(path: path, lazy: true)
+        lf.log("\(lf.timestamp)> FIRST\n")
+        Thread.sleep(forTimeInterval: 0.100)
+        lf.log("\(lf.timestamp)> 0.100 later\n")
+        Thread.sleep(forTimeInterval: 0.005)
+        lf.log("\(lf.timestamp)> 0.005 later\n")
+        Thread.sleep(forTimeInterval: 0.050)
+        lf.log("\(lf.timestamp)> 0.050 later\n")
+        Thread.sleep(forTimeInterval: 0.500)
+        lf.log("\(lf.timestamp)> 0.500 later\n")
+        Thread.sleep(forTimeInterval: 1.0)
+        lf.log("\(lf.timestamp)> 1.0 later\n")
+        lf.shutdown() // flush
+
+        let data = try! Data(contentsOf: .init(fileURLWithPath: path))
+        let lines = data.CC_string.components(separatedBy: "\n")
+
+        var previousDate: Date?
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm:ss.SSS"
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+
+        var differencesInMs: [Double] = []
+
+        for line in lines {
+            let components = line.components(separatedBy: "> ")
+            if let timeString = components.first,
+               let date = dateFormatter.date(from: timeString) {
+                if let previousDate = previousDate {
+                    let difference = date.timeIntervalSince(previousDate) * 1000
+                    differencesInMs.append(difference)
+                }
+                previousDate = date
+            }
+        }
+
+        XCTAssertEqual(5, differencesInMs.count)
+        let expectedDifferences = [100, 5.0, 50.0, 500.0, 1000.0]
+        for (index, difference) in differencesInMs.enumerated() {
+            let expectedDifference = expectedDifferences[index]
+            let lowerBound = expectedDifference
+            let upperBound = expectedDifference * 1.5
+            XCTAssert(difference >= lowerBound && difference <= upperBound)
+        }
+    }
 }
