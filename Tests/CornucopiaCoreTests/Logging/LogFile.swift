@@ -115,4 +115,68 @@ class Logging: XCTestCase {
             XCTAssert(difference >= lowerBound && difference <= upperBound)
         }
     }
+
+    func testRollingTimestamp2() throws {
+
+        func sleep(forTimeInterval t: TimeInterval) {
+            let sema = DispatchSemaphore(value: 0)
+            let t = Timer(timeInterval: t, repeats: false) { _ in sema.signal() }
+            RunLoop.main.add(t, forMode: .common)
+            sema.wait()
+        }
+
+        let path = "/tmp/logging-test/timestamps2.txt"
+        try? FileManager.default.removeItem(atPath: path)
+
+        Thread.detachNewThread {
+
+            let lf = try! Cornucopia.Core.LogFile(path: path, lazy: true)
+            lf.log("\(lf.timestamp)> FIRST\n")
+            sleep(forTimeInterval: 0.100)
+            lf.log("\(lf.timestamp)> 0.100 later\n")
+            sleep(forTimeInterval: 0.005)
+            lf.log("\(lf.timestamp)> 0.005 later\n")
+            sleep(forTimeInterval: 0.050)
+            lf.log("\(lf.timestamp)> 0.050 later\n")
+            sleep(forTimeInterval: 0.500)
+            lf.log("\(lf.timestamp)> 0.500 later\n")
+            sleep(forTimeInterval: 1.0)
+            lf.log("\(lf.timestamp)> 1.0 later\n")
+            lf.shutdown() // flush
+        }
+
+        RunLoop.current.run(until: Date() + 2)
+
+        let data = try! Data(contentsOf: .init(fileURLWithPath: path))
+        let lines = data.CC_string.components(separatedBy: "\n")
+
+        var previousDate: Date?
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm:ss.SSS"
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+
+        var differencesInMs: [Double] = []
+
+        for line in lines {
+            let components = line.components(separatedBy: "> ")
+            if let timeString = components.first,
+               let date = dateFormatter.date(from: timeString) {
+                if let previousDate = previousDate {
+                    let difference = date.timeIntervalSince(previousDate) * 1000
+                    differencesInMs.append(difference)
+                }
+                previousDate = date
+            }
+        }
+
+        XCTAssertEqual(5, differencesInMs.count)
+        let expectedDifferences = [100, 5.0, 50.0, 500.0, 1000.0]
+        for (index, difference) in differencesInMs.enumerated() {
+            let expectedDifference = expectedDifferences[index]
+            let lowerBound = expectedDifference
+            let upperBound = expectedDifference * 1.6
+            XCTAssert(difference >= lowerBound && difference <= upperBound)
+        }
+    }
 }
