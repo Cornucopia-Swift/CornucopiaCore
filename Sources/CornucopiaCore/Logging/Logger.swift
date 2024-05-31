@@ -153,9 +153,9 @@ public extension Cornucopia.Core {
         /// Flush all pending log messages and wait until they're processed.
         @inlinable
         public func flush() {
-            let semaphore = DispatchSemaphore(value: 0)
-            Self.dispatchQueue.sync { _ = semaphore.signal() }
-            semaphore.wait()
+            // Append a synchronous (empty) block to our (serial) queue and wait until the block has passed.
+            // This is effectively the same as the higher level `OperationQueue.waitUntilAllOperationsAreFinished()`.
+            Self.dispatchQueue.sync {}
         }
     }
 }
