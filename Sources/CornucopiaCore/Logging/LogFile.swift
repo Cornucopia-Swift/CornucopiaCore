@@ -7,24 +7,27 @@ private var logger = Cornucopia.Core.Logger()
 
 extension Cornucopia.Core {
 
-    /// A (textual) log file without any formatting.
+    /// A plain text log file devoid of any formatting.
     ///
-    /// In an attempt to not disturb the runtime behavior at the calling site, all logging happen on a (serial) background queue.
-    /// This ­– naturally ­– renders any timestamps obsolete, hence this class does not offer automatic timestamps. If you need
-    /// some, provide them prerendered in the text.
-    public class LogFile {
+    /// To minimize interference with the runtime behavior at the call site, all logging operations are performed on a serial background queue.
+    /// This approach, while efficient, makes timestamps irrelevant as they do no longer reflect the actual event times.
+    /// Therefore, this class does not provide automatic timestamps.
+    /// If timestamps are required, they should be pre-formatted and included in the text.
+    public final class LogFile {
 
-        let q: OperationQueue = {
+        /// The path where the content of this file lives.
+        public let path: String
+        /// The rolling timestamp.
+        public let timestamp: RollingTimestamp
+
+        private let header: Data?
+        private lazy var q: OperationQueue = {
             let q = OperationQueue()
-            q.name = "dev.cornucopia.core.LogFile.BackgroundQueue"
+            q.name = "dev.cornucopia.core.LogFile.SerialBackgroundQueue"
             q.qualityOfService = .background
             q.maxConcurrentOperationCount = 1
             return q
         }()
-
-        public let path: String
-        public var timestamp: RollingTimestamp
-        let header: Data?
         private var fileHandle: FileHandle? = nil
         private var giveUp: Bool = false
 
