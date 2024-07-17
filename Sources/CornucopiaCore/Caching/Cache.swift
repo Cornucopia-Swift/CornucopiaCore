@@ -9,18 +9,15 @@ import FoundationNetworking
 
 private let logger = Cornucopia.Core.Logger(category: "Cache")
 
-public protocol _CornucopiaCoreUrlCache {
-
-    typealias DataCompletionHandler = (Data?) -> ()
-
-    func loadDataFor(url: URL, then: @escaping(DataCompletionHandler))
-    func loadDataFor(urlRequest: URLRequest, then: @escaping(DataCompletionHandler))
-}
-
 public extension Cornucopia.Core {
 
-    typealias UrlCache = _CornucopiaCoreUrlCache
+    protocol UrlCache {
 
+        typealias DataCompletionHandler = (Data?) -> ()
+
+        func loadDataFor(url: URL, then: @escaping(DataCompletionHandler))
+        func loadDataFor(urlRequest: URLRequest, then: @escaping(DataCompletionHandler))
+    }
     /// A simple cache for data gathered using a HTTP(s) GET call
     class Cache: UrlCache {
 

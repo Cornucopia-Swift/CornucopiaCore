@@ -2,7 +2,7 @@
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
 #if canImport(Security)
-extension Cornucopia.Core.Keychain: _CornucopiaCoreStorageBackend {
+extension Cornucopia.Core.Keychain: Cornucopia.Core.StorageBackend {
 
     public func object<T: Decodable>(for key: String) -> T? {
         self.query(for: key)

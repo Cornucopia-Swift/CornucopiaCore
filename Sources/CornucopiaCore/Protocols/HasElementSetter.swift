@@ -1,15 +1,11 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
+public extension Cornucopia.Core {
 
-/// Has an element setter of the specified type
-public protocol _CornucopiaCoreHasElementSetter {
-
-    associatedtype ELEMENT_TYPE
-
-    var element: ELEMENT_TYPE { get set }
-
+    /// Something that has an element setter of the specified type.
+    protocol _CornucopiaCoreHasElementSetter {
+        associatedtype ELEMENT_TYPE
+        var element: ELEMENT_TYPE { get set }
+    }
 }
-
-/// Namespace
-public extension Cornucopia.Core { typealias HasElementSetter = _CornucopiaCoreHasElementSetter }

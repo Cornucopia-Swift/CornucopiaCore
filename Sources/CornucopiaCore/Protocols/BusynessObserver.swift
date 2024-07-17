@@ -2,12 +2,12 @@
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
 
-/// An observer of busyness.
-public protocol _CornucopiaCoreBusynessObserver {
+public extension Cornucopia.Core {
 
-    func enterBusy()
-    func leaveBusy()
+    /// An observer of busyness.
+    protocol BusynessObserver {
+
+        func enterBusy()
+        func leaveBusy()
+    }
 }
-
-/// Put it into our namespace.
-extension Cornucopia.Core { public typealias BusynessObserver = _CornucopiaCoreBusynessObserver }

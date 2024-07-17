@@ -1,13 +1,11 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
+public extension Cornucopia.Core {
 
-/// Is Indexable via a readwrite property `index`
-public protocol _CornucopiaCoreIndexable {
+    /// Something that is indexable via a readwrite property `index`
+    protocol Indexable {
 
-    var index: Int { get set }
-
+        var index: Int { get set }
+    }
 }
-
-/// Namespace
-public extension Cornucopia.Core { typealias Indexable = _CornucopiaCoreIndexable }

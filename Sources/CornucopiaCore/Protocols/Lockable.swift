@@ -2,13 +2,15 @@
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
 
-/// For entities that can be used to protect something against concurrent access.
-public protocol _CornucopiaCoreLockable {
-    func lock()
-    func unlock()
+public extension Cornucopia.Core {
+    /// For entities that can be used to protect something against concurrent access.
+    protocol Lockable {
+        /// Lock the resource.
+        func lock()
+        /// Unlock the resource.
+        func unlock()
+    }
 }
-
-public extension Cornucopia.Core { typealias Lockable = _CornucopiaCoreLockable }
 
 public extension Cornucopia.Core.Lockable {
 

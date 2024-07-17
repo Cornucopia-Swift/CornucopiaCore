@@ -4,7 +4,7 @@
 #if !os(Linux)
 import Foundation
 
-extension URL: _CornucopiaCoreStorageBackend {
+extension URL: Cornucopia.Core.StorageBackend {
 
     public func object<T: Decodable>(for key: String) -> T? {
         self.CC_queryExtendedAttribute(for: key)

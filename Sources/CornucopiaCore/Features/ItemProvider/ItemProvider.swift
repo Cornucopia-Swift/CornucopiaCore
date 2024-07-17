@@ -4,22 +4,23 @@
 import Foundation
 
 /// A homogenous ItemProvider protocol
-public protocol _CornucopiaCoreItemProvider {
+public extension Cornucopia.Core {
+    
+    protocol ItemProvider {
 
-    associatedtype ELEMENT_TYPE
+        associatedtype ELEMENT_TYPE
 
-    var isEmpty: Bool { get }
-    var count: Int { get }
-    var numberOfSections: Int { get }
-    func numberOfItems(in section: Int) -> Int
-    func item(at indexPath: IndexPath) -> ELEMENT_TYPE?
-    func allItems() -> [ELEMENT_TYPE]
+        var isEmpty: Bool { get }
+        var count: Int { get }
+        var numberOfSections: Int { get }
+        func numberOfItems(in section: Int) -> Int
+        func item(at indexPath: IndexPath) -> ELEMENT_TYPE?
+        func allItems() -> [ELEMENT_TYPE]
+    }
 }
-/// Put the protocol into our namespace
-public extension Cornucopia.Core { typealias ItemProvider = _CornucopiaCoreItemProvider }
 
 /// Make Array conform to our protocol
-extension Array: _CornucopiaCoreItemProvider {
+extension Array: Cornucopia.Core.ItemProvider {
 
     public typealias ELEMENT_TYPE = Element
 
@@ -38,7 +39,7 @@ extension Array: _CornucopiaCoreItemProvider {
 private extension Cornucopia.Core {
 
     /// Abstract
-    private class _AbstractItemProvider<ConcreteType>: _CornucopiaCoreItemProvider {
+    private class _AbstractItemProvider<ConcreteType>: ItemProvider {
 
         @available(*, unavailable)
 
@@ -53,7 +54,7 @@ private extension Cornucopia.Core {
     }
 
     /// Wrapper
-    private class _AnyItemProviderBox<ImplementingType: _CornucopiaCoreItemProvider>: _AbstractItemProvider<ImplementingType.ELEMENT_TYPE> {
+    private class _AnyItemProviderBox<ImplementingType: ItemProvider>: _AbstractItemProvider<ImplementingType.ELEMENT_TYPE> {
 
         private let wrappedInstance: ImplementingType
 
@@ -74,12 +75,12 @@ private extension Cornucopia.Core {
 public extension Cornucopia.Core {
 
     /// Type-Erased
-    final class AnyItemProvider<ConcreteType>: _CornucopiaCoreItemProvider {
+    final class AnyItemProvider<ConcreteType>: ItemProvider {
 
         public typealias ELEMENT_TYPE = ConcreteType
         private let box: _AbstractItemProvider<ConcreteType>
 
-        public init<ImplementingType: _CornucopiaCoreItemProvider>(_ dataSource: ImplementingType) where ImplementingType.ELEMENT_TYPE == ConcreteType {
+        public init<ImplementingType: ItemProvider>(_ dataSource: ImplementingType) where ImplementingType.ELEMENT_TYPE == ConcreteType {
             self.box = _AnyItemProviderBox(dataSource)
         }
 

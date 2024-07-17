@@ -5,12 +5,6 @@
 
 import Foundation
 
-public protocol _CornucopiaDefaultValueProvider {
-    associatedtype Value: Equatable & Codable
-
-    static var `default`: Value { get }
-}
-
 public extension Cornucopia.Core {
 
     /// Default value providers allow for a more relaxed formulation of codable items.
@@ -25,7 +19,10 @@ public extension Cornucopia.Core {
     ///     var sometimesEmptyValue: Int
     ///     ...
     /// }
-    typealias DefaultValueProvider = _CornucopiaDefaultValueProvider
+    protocol DefaultValueProvider {
+        associatedtype Value: Equatable & Codable
+        static var `default`: Value { get }
+    }
 
     /// `default: Bool = false`
     enum False: DefaultValueProvider {

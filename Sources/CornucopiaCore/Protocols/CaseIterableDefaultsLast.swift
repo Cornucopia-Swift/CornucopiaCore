@@ -1,13 +1,11 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
-import Foundation
+public extension Cornucopia.Core {
 
-/// The protocol for our case iterable enum with default value at last position
-public protocol _CornucopiaCoreCaseIterableDefaultsLast: Decodable & CaseIterable & RawRepresentable where RawValue: Decodable, AllCases: BidirectionalCollection { }
-
-/// Namespace
-public extension Cornucopia.Core { typealias CaseIterableDefaultsLast = _CornucopiaCoreCaseIterableDefaultsLast }
+    /// The protocol for our case iterable enum with default value at last position
+    protocol CaseIterableDefaultsLast: Decodable & CaseIterable & RawRepresentable where RawValue: Decodable, AllCases: BidirectionalCollection { }
+}
 
 /// The default implementation for our case iterable enum
 public extension Cornucopia.Core.CaseIterableDefaultsLast {

@@ -1,12 +1,10 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
+public extension Cornucopia.Core {
 
-/// Abstracts 'model object' behaviour, TBD…
-public protocol _CornucopiaCoreModelObject {
-
-    
-
+    /// Abstracts 'model object' behaviour
+    protocol ModelObject {
+        //FIXME: TBD...
+    }
 }
-
-public extension Cornucopia.Core { typealias ModelObject = _CornucopiaCoreModelObject }

@@ -44,7 +44,7 @@ public extension Cornucopia.Core {
 
     /// Same as ``HexEncoded``, but with an optional value.
     @propertyWrapper
-    struct HexEncodedOptional<T: FixedWidthInteger & UnsignedInteger>: Codable, Equatable, _CornucopiaCoreOptionalCodingWrapper {
+    struct HexEncodedOptional<T: FixedWidthInteger & UnsignedInteger>: Codable, Equatable, Cornucopia.Core.OptionalCodingWrapper {
 
         public let wrappedValue: T?
 
@@ -242,7 +242,7 @@ public extension Cornucopia.Core {
 
     /// Allows an optional array of a `FixedWidthInteger` type to be described by an array of hexadecimal-encoded strings.
     @propertyWrapper
-    struct HexEncodedOptionalArray<T: FixedWidthInteger>: _CornucopiaCoreOptionalCodingWrapper, Codable, Equatable {
+    struct HexEncodedOptionalArray<T: FixedWidthInteger>: Cornucopia.Core.OptionalCodingWrapper, Codable, Equatable {
 
         public let wrappedValue: [T]?
 

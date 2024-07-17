@@ -3,18 +3,18 @@
 //
 import Foundation
 
-/// A sink for log output.
-public protocol _CornucopiaCoreLogSink {
-
-    /// Create with the specified URL.
-    init(url: URL)
-
-    /// Log the specified entry.
-    func log(_ entry: Cornucopia.Core.LogEntry)
-}
-
 extension Cornucopia.Core {
-    
+
+    /// A sink for log output.
+    public protocol LogSink {
+
+        /// Create with the specified URL.
+        init(url: URL)
+
+        /// Log the specified entry.
+        func log(_ entry: Cornucopia.Core.LogEntry)
+    }
+
     /// The log level.
     public enum LogLevel: Codable {
         case trace
@@ -59,7 +59,4 @@ extension Cornucopia.Core {
 
         public var oneliner: String { "\(subsystem).\(category) [\(thread)] \(message)" }
     }
-    
-    /// The protocol
-    public typealias LogSink = _CornucopiaCoreLogSink
 }

@@ -3,32 +3,20 @@
 //
 import Foundation
 
-// MARK: - Encoding
-public protocol _CornucopiaCoreAnyEncoder {
-    /// Returns encoded `value` as binary data.
-    func encode<T: Encodable>(_ value: T) throws -> Data
-}
-
 public extension Cornucopia.Core {
 
-    typealias AnyEncoder = _CornucopiaCoreAnyEncoder
+    /// Encoding
+    protocol AnyEncoder {
+        /// Returns encoded `value` as binary data.
+        func encode<T: Encodable>(_ value: T) throws -> Data
+    }
 
+    /// Decoding
+    protocol AnyDecoder {
+        /// Returns an instance of `T` created by decoding binary data.
+        func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T
+    }
 }
 
 extension Foundation.JSONEncoder: Cornucopia.Core.AnyEncoder {}
-
-
-// MARK: - Decoding
-public protocol _CornucopiaCoreAnyDecoder {
-    /// Returns an instance of `T` created by decoding binary data.
-    func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T
-}
-
-public extension Cornucopia.Core {
-
-    typealias AnyDecoder = _CornucopiaCoreAnyDecoder
-
-}
-
 extension Foundation.JSONDecoder: Cornucopia.Core.AnyDecoder {}
-

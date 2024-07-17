@@ -7,14 +7,14 @@
 /// The workaround is to override the `KeyedDecodingContainer` and `KeyedEncodingContainer` to be
 /// more graceful with missing keys. In order to limit the scope of this change, we require property wrappers
 /// to opt-in by adopting `Cornucopia.Core.OptionalCodingWrapper`.
-public protocol _CornucopiaCoreOptionalCodingWrapper {
-    associatedtype WrappedType: ExpressibleByNilLiteral
-    var wrappedValue: WrappedType { get }
-    init(wrappedValue: WrappedType)
-}
+public extension Cornucopia.Core {
 
-/// Namespace
-public extension Cornucopia.Core { typealias OptionalCodingWrapper = _CornucopiaCoreOptionalCodingWrapper }
+    protocol OptionalCodingWrapper {
+        associatedtype WrappedType: ExpressibleByNilLiteral
+        var wrappedValue: WrappedType { get }
+        init(wrappedValue: WrappedType)
+    }
+}
 
 extension KeyedDecodingContainer {
     // Override the default decoding behavior for OptionalCodingWrapper to avoid a missing key error.
