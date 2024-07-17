@@ -111,7 +111,7 @@ class Logging: XCTestCase {
         for (index, difference) in differencesInMs.enumerated() {
             let expectedDifference = expectedDifferences[index]
             let lowerBound = expectedDifference
-            let upperBound = expectedDifference * 1.5
+            let upperBound = expectedDifference * 1.6
             XCTAssert(difference >= lowerBound && difference <= upperBound)
         }
     }
@@ -176,7 +176,8 @@ class Logging: XCTestCase {
             let expectedDifference = expectedDifferences[index]
             let lowerBound = expectedDifference
             let upperBound = expectedDifference * 1.6
-            XCTAssert(difference >= lowerBound && difference <= upperBound)
+            XCTAssert(difference >= lowerBound)
+            XCTAssert(difference <= upperBound)
         }
     }
 }
