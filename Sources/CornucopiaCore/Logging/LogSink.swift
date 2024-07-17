@@ -26,12 +26,12 @@ extension Cornucopia.Core {
 
         public var character: String {
             switch self {
-                case .trace:   return "T"
-                case .debug:   return "D"
-                case .info:    return "I"
-                case .notice:  return "N"
-                case .error:   return "E"
-                case .fault:   return "F"
+                case .trace:  "T"
+                case .debug:  "D"
+                case .info:   "I"
+                case .notice: "N"
+                case .error:  "E"
+                case .fault:  "F"
             }
         }
     }

@@ -8,12 +8,12 @@ extension CLAuthorizationStatus: CustomStringConvertible {
 
     public var description: String {
         switch self {
-        case .authorizedAlways:    return ".authorizedAlways"
-        case .authorizedWhenInUse: return ".authorizedWhenInUse"
-        case .denied:              return ".denied"
-        case .notDetermined:       return ".notDetermined"
-        case .restricted:          return ".restricted"
-        @unknown default:          return ".\(rawValue)"
+            case .authorizedAlways:    ".authorizedAlways"
+            case .authorizedWhenInUse: ".authorizedWhenInUse"
+            case .denied:              ".denied"
+            case .notDetermined:       ".notDetermined"
+            case .restricted:          ".restricted"
+            @unknown default:          ".\(rawValue)"
         }
     }
 }

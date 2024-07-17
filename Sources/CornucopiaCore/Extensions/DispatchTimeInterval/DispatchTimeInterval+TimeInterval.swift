@@ -9,18 +9,12 @@ public extension DispatchTimeInterval {
     var CC_timeInterval: TimeInterval {
 
         switch self {
-            case .seconds(let value):
-                return Double(value)
-            case .milliseconds(let value):
-                return Double(value) / 1_000
-            case .microseconds(let value):
-                return Double(value) / 1_000_000
-            case .nanoseconds(let value):
-                return Double(value) / 1_000_000_000
-            case .never:
-                return Double.greatestFiniteMagnitude
-            @unknown default:
-                fatalError("not yet implemented")
+            case .seconds(let value):      Double(value)
+            case .milliseconds(let value): Double(value) / 1_000
+            case .microseconds(let value): Double(value) / 1_000_000
+            case .nanoseconds(let value):  Double(value) / 1_000_000_000
+            case .never:                   Double.greatestFiniteMagnitude
+            @unknown default:              fatalError("not yet implemented")
         }
     }
 }

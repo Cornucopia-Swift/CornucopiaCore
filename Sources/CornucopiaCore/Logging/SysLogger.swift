@@ -66,22 +66,14 @@ extension Cornucopia.Core {
 
         public func log(_ entry: LogEntry) {
 
-            let severity: Cornucopia.Core.SysLogEntry.Severity = {
-                switch entry.level {
-                    case .trace:
-                        return .debug
-                    case .debug:
-                        return .debug
-                    case .info:
-                        return .informational
-                    case .notice:
-                        return .warning
-                    case .error:
-                        return .error
-                    case .fault:
-                        return .error
-                }
-            }()
+            let severity: Cornucopia.Core.SysLogEntry.Severity = switch entry.level {
+                case .trace:  .debug
+                case .debug:  .debug
+                case .info:   .informational
+                case .notice: .warning
+                case .error:  .error
+                case .fault:  .error
+            }
 
             let sysLogEntry = SysLogEntry(facility: .local0, severity: severity, hostname: self.hostname, appname: self.appname, procid: "\(entry.thread)", msgid: entry.category, msg: entry.message)
             let formatted = self.udp ? sysLogEntry.formatted : sysLogEntry.frame

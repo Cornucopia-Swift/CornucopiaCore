@@ -41,13 +41,13 @@ public extension Cornucopia.Core {
 
         public var anyValue: Any {
             switch self {
-                case .string(let string): return string
-                case .bool(let bool): return bool
-                case .int(let int): return int
-                case .double(let double): return double
-                case .dictionary(let dict): return dict.CC_mappedValues { $0.anyValue }
-                case .array(let array): return array.map { $0.anyValue }
-                case .null: return NSNull()
+                case .string(let string):   string
+                case .bool(let bool):       bool
+                case .int(let int):         int
+                case .double(let double):   double
+                case .dictionary(let dict): dict.CC_mappedValues { $0.anyValue }
+                case .array(let array):     array.map { $0.anyValue }
+                case .null:                 NSNull()
             }
         }
 

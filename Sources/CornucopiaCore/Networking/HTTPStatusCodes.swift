@@ -101,13 +101,13 @@ public enum HTTPStatusCode: Int, Error {
     public var responseType: ResponseType {
         get {
             switch self.rawValue {
-            case ..<0: return .Internal
-            case 100..<200: return .Informational
-            case 200..<300: return .Success
-            case 300..<400: return .Redirection
-            case 400..<500: return .ClientError
-            case 500..<600: return .ServerError
-            default: return .Undefined
+                case ..<0:      .Internal
+                case 100..<200: .Informational
+                case 200..<300: .Success
+                case 300..<400: .Redirection
+                case 400..<500: .ClientError
+                case 500..<600: .ServerError
+                default:        .Undefined
             }
         }
     }

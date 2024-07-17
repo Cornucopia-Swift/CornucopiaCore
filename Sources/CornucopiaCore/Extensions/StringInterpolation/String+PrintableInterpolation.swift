@@ -47,14 +47,10 @@ public extension String.StringInterpolation {
         let substitutedElements: [String] = elements.map {
 
             switch $0 {
-                case Character("\r"):
-                    return "\\r"
-                case Character("\n"):
-                    return "\\n"
-                case Character("\t"):
-                    return "\\t"
-                default:
-                    return String($0)
+                case Character("\r"): "\\r"
+                case Character("\n"): "\\n"
+                case Character("\t"): "\\t"
+                default:              String($0)
             }
         }
         appendInterpolation(substitutedElements.joined())
@@ -68,11 +64,11 @@ public extension String.StringInterpolation {
         let substitutedElements: [String] = elements.map {
 
             let uint8 = UInt8($0)
-            switch uint8 {
-                case 0x09: return "\\t"
-                case 0x0A: return "\\n"
-                case 0x0D: return "\\r"
-                default: return String(UnicodeScalar(uint8))
+            return switch uint8 {
+                case 0x09: "\\t"
+                case 0x0A: "\\n"
+                case 0x0D: "\\r"
+                default:   String(UnicodeScalar(uint8))
             }
         }
         appendInterpolation(substitutedElements.joined())

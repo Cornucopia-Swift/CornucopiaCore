@@ -10,18 +10,12 @@ public extension DispatchTimeInterval {
     var CC_duration: Duration {
 
         switch self {
-            case .seconds(let value):
-                return Duration.seconds(value)
-            case .milliseconds(let value):
-                return Duration.milliseconds(value)
-            case .microseconds(let value):
-                return Duration.microseconds(value)
-            case .nanoseconds(let value):
-                return Duration.nanoseconds(value)
-            case .never:
-                return Duration.zero
-            @unknown default:
-                fatalError("not yet implemented")
+            case .seconds(let value):      Duration.seconds(value)
+            case .milliseconds(let value): Duration.milliseconds(value)
+            case .microseconds(let value): Duration.microseconds(value)
+            case .nanoseconds(let value):  Duration.nanoseconds(value)
+            case .never:                   Duration.zero
+            @unknown default:              fatalError("not yet implemented")
         }
     }
 }

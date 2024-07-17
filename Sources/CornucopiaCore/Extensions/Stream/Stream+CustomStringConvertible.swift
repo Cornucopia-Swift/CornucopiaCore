@@ -7,17 +7,17 @@ extension Stream.Status: CustomStringConvertible {
 
     @inlinable public var description: String {
         switch self {
-            case .notOpen: return "not open"
-            case .opening: return "opening"
-            case .open:    return "open"
-            case .reading: return "reading"
-            case .writing: return "writing"
-            case .atEnd:   return "eof"
-            case .closed:  return "closed"
-            case .error:   return "error"
+            case .notOpen: "not open"
+            case .opening: "opening"
+            case .open:    "open"
+            case .reading: "reading"
+            case .writing: "writing"
+            case .atEnd:   "eof"
+            case .closed:  "closed"
+            case .error:   "error"
             // Conditionally to fix an "unreachable" warning on Linux.
             #if canImport(ObjectiveC)
-            @unknown default: return "unknown"
+            @unknown default: "unknown"
             #endif
         }
     }
