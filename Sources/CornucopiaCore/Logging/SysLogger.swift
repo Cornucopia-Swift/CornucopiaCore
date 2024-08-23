@@ -6,7 +6,7 @@ import Foundation
 extension Cornucopia.Core {
 
     /// A `LogSink` that sends all logs in syslog (via RFC5424) to a given IPv4 host.
-    final class SysLogger: LogSink {
+    public final class SysLogger: LogSink {
 
         var sockFd: Int32 = -1
         var udp: Bool
@@ -15,7 +15,7 @@ extension Cornucopia.Core {
         lazy var hostname = Device.current.uuid.uuidString
         lazy var appname = "\(Bundle.main.CC_cfBundleName)/\(Bundle.main.CC_cfBundleShortVersion).\(Bundle.main.CC_cfBundleVersion)"
 
-        init(url: URL) {
+        public init(url: URL) {
 
             signal(SIGPIPE, SIG_IGN) // Ignore SIGPIPE
 

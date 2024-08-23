@@ -8,11 +8,11 @@ import OSLog
 extension Cornucopia.Core {
 
     /// A `LogSink` that sends all logs to the Apple `OSLog`.
-    struct OSLogger: LogSink {
+    public struct OSLogger: LogSink {
 
         private var loggers: [String: os.Logger] = [:]
 
-        init(url: URL = "os://") { }
+        public init(url: URL = "os://") { }
 
         public static let timeFormatter: DateFormatter = {
             let formatter = DateFormatter()
@@ -20,7 +20,7 @@ extension Cornucopia.Core {
             return formatter
         }()
 
-        func log(_ entry: LogEntry) {
+        public func log(_ entry: LogEntry) {
 
             let subsystemAndCategory = "\(entry.subsystem)+\(entry.category)"
             let logger = self.loggers[subsystemAndCategory, default: .init(subsystem: entry.subsystem, category: entry.category)]
