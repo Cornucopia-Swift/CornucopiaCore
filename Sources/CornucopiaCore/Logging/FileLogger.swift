@@ -6,11 +6,11 @@ import Foundation
 extension Cornucopia.Core {
 
     /// A `LogSink` that prints all logs to a file.
-    struct FileLogger: LogSink {
+    public struct FileLogger: LogSink {
 
         private let fileHandle: FileHandle?
 
-        init(url: URL = "file://") {
+        public init(url: URL = "file://") {
             let fileUrl: URL = .init(fileURLWithPath: url.path)
             let directoryName = url.path.CC_dirname
             if !FileManager.default.fileExists(atPath: directoryName) {
@@ -26,7 +26,7 @@ extension Cornucopia.Core {
             return formatter
         }()
 
-        func log(_ entry: LogEntry) {
+        public func log(_ entry: LogEntry) {
             guard let fileHandle = self.fileHandle else { return }
             let timestamp = Self.timeFormatter.string(from: entry.timestamp)
             let string = "\(timestamp) [\(entry.subsystem):\(entry.category)] <\(entry.thread)> (\(entry.level.character)) \(entry.message)\n"
