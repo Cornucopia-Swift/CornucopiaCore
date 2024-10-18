@@ -1,0 +1,69 @@
+//
+//  Cornucopia – (C) Dr. Lauer Information Technology
+//
+import Foundation
+import Dispatch
+
+private let logger = Cornucopia.Core.Logger()
+
+public extension Cornucopia.Core {
+
+    /// Base class for threads that operate a ``RunLoop``.
+    open class RunLoopThread: Thread {
+
+        private var loop: RunLoop!
+        private let semaphore: DispatchSemaphore = .init(value: 0)
+        private var timer: Timer!
+
+        /// Construction blocks until the thread and the RunLoop is actually running.
+        public override init() {
+            super.init()
+            self.start()
+            self.semaphore.wait()
+        }
+
+        public override func main() {
+
+            assert(!Self.isMainThread)
+            assert(self == Thread.current)
+            self.loop = RunLoop.current
+            assert(self.loop != RunLoop.main)
+
+            self.timer = .init(timeInterval: 10.0, target: self, selector: #selector(self.onTimerFired), userInfo: nil, repeats: true)
+            self.loop.add(self.timer, forMode: RunLoop.Mode.common)
+
+            logger.trace("Entering runloop")
+            self.semaphore.signal()
+            CFRunLoopRun()
+            logger.trace("Exiting runloop")
+            self.semaphore.signal()
+        }
+
+        /// Perform a `block` of work in the context of this thread.
+        public func perform(_ block: @escaping () -> Void) {
+            self.loop.perform(block)
+        }
+
+        /// Shutdown the RunLoop.
+        open func shutdown() {
+            self.timer.invalidate(); self.timer = nil
+            self.loop.perform {
+                CFRunLoopStop(self.loop.getCFRunLoop())
+            }
+            CFRunLoopWakeUp(self.loop.getCFRunLoop())
+            self.semaphore.wait()
+            logger.trace("Shutdown OK. Runloop exited")
+        }
+
+        deinit {
+            logger.trace("Destroyed")
+        }
+    }
+}
+
+extension Cornucopia.Core.RunLoopThread {
+
+    @objc private func onTimerFired() {
+        logger.trace("Thread still healthy")
+    }
+}
