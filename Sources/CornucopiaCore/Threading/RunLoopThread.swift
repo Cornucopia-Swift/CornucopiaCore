@@ -11,7 +11,7 @@ public extension Cornucopia.Core {
     /// Base class for threads that operate a ``RunLoop``.
     open class RunLoopThread: Thread {
 
-        private var loop: RunLoop!
+        public private(set) var loop: RunLoop!
         private let semaphore: DispatchSemaphore = .init(value: 0)
         private var timer: Timer!
 
