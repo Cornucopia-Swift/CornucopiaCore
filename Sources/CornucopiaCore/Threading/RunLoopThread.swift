@@ -28,8 +28,8 @@ public extension Cornucopia.Core {
             assert(self == Thread.current)
             self.loop = RunLoop.current
             assert(self.loop != RunLoop.main)
-
-            self.timer = .init(timeInterval: 10.0, target: self, selector: #selector(self.onTimerFired), userInfo: nil, repeats: true)
+            // We're scheduling a timer that will never fire, since runloops without at least a single source immediately return from `CFRunLoopRun()`
+            self.timer = .init(timeInterval: 864000, target: self, selector: #selector(self.onTimerFired), userInfo: nil, repeats: false)
             self.loop.add(self.timer, forMode: RunLoop.Mode.common)
 
             logger.trace("Entering runloop")
