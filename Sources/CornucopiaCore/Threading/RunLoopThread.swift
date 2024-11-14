@@ -6,7 +6,7 @@ import Dispatch
 
 private let logger = Cornucopia.Core.Logger()
 
-public extension Cornucopia.Core {
+extension Cornucopia.Core {
 
     /// Base class for threads that operate a ``RunLoop``.
     open class RunLoopThread: Thread {
@@ -18,12 +18,13 @@ public extension Cornucopia.Core {
         /// Construction blocks until the thread and the RunLoop is actually running.
         public override init() {
             super.init()
+            self.name = "\(type(of: self))"
             self.start()
             self.semaphore.wait()
         }
 
         public override func main() {
-
+            // A bunch of sanity checks
             assert(!Self.isMainThread)
             assert(self == Thread.current)
             self.loop = RunLoop.current
