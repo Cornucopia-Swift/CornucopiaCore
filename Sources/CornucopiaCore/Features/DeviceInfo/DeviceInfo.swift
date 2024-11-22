@@ -47,8 +47,8 @@ public extension Cornucopia.Core {
             let ver = WKInterfaceDevice.current().systemVersion
     #endif
     #if os(macOS)
-            let os = ProcessInfo.processInfo.operatingSystemName
-            let ver = ProcessInfo.processInfo.operatingSystemVersion
+            let os = "macOS"
+            let ver = ProcessInfo.processInfo.operatingSystemVersionString
     #endif
 
             self.info = DeviceInfo(machine: machine, model: model, operatingSystem: os, operatingSystemVersion: ver)
