@@ -3,7 +3,7 @@
 //
 import Foundation
 
-extension Stream.Status: CustomStringConvertible {
+extension Stream.Status: @retroactive CustomStringConvertible {
 
     @inlinable public var description: String {
         switch self {
@@ -23,7 +23,7 @@ extension Stream.Status: CustomStringConvertible {
     }
 }
 
-extension Stream.Event: CustomStringConvertible {
+extension Stream.Event: @retroactive CustomStringConvertible {
 
     @inlinable public var description: String {
         var events: [String] = []

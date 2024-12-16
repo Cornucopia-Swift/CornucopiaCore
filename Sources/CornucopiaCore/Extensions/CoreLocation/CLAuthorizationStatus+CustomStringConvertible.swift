@@ -4,7 +4,7 @@
 #if canImport(CoreLocation)
 import CoreLocation
 
-extension CLAuthorizationStatus: CustomStringConvertible {
+extension CLAuthorizationStatus: @retroactive CustomStringConvertible {
 
     public var description: String {
         switch self {

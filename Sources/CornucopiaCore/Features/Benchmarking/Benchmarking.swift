@@ -13,7 +13,6 @@ extension Cornucopia.Core {
         print("\(title):: Time: \(timeElapsed)")
     }
 
-#if compiler(>=5.5) && canImport(_Concurrency)
     public static func CC_measureBlock(_ title: String = "", body: @escaping @Sendable () async -> Void) async {
 
         let startTime = CFAbsoluteTimeGetCurrent()
@@ -21,5 +20,4 @@ extension Cornucopia.Core {
         let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
         print("\(title):: Time: \(timeElapsed)")
     }
-#endif
 }

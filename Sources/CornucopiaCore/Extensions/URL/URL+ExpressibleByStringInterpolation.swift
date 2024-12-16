@@ -3,7 +3,7 @@
 //
 import Foundation
 
-extension URL: ExpressibleByStringInterpolation {
+extension URL: @retroactive ExpressibleByStringInterpolation {
 
     /// Initialize from string literal.
     public init(stringLiteral value: StringLiteralType) {

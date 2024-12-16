@@ -3,7 +3,7 @@
 //
 import Foundation
 
-extension DispatchTimeInterval: Comparable {
+extension DispatchTimeInterval: @retroactive Comparable {
 
     var CC_nanoseconds: UInt64 {
         switch self {

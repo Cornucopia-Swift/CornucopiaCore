@@ -3,13 +3,10 @@
 //
 import Foundation
 
-#if compiler(>=5.5) && canImport(_Concurrency)
 extension Date: @unchecked Sendable {}
 
-@available(iOS 15, tvOS 15, watchOS 8, macOS 12, *)
 extension Cornucopia.Core { public struct AsyncWithTimeoutError: Error, Equatable {} }
 
-@available(iOS 15, tvOS 15, watchOS 8, macOS 12, *)
 /// Performs the work in `body`, but cancels the task if it takes longer than the specified amount of `seconds`.
 public func CC_asyncWithTimeout<ResultType: Sendable>(seconds: TimeInterval, body: @escaping @Sendable () async throws -> ResultType) async throws -> ResultType {
 
@@ -34,4 +31,3 @@ public func CC_asyncWithTimeout<ResultType: Sendable>(seconds: TimeInterval, bod
         return result
     }
 }
-#endif

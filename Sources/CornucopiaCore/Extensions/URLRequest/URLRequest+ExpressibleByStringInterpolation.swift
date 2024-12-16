@@ -7,7 +7,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
-extension URLRequest: ExpressibleByStringInterpolation {
+extension URLRequest: @retroactive ExpressibleByStringInterpolation {
 
     /// Initialize from string literal.
     public init(stringLiteral value: StringLiteralType) {

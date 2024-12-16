@@ -3,9 +3,6 @@
 //
 import Dispatch
 
-#if compiler(>=5.5) && canImport(_Concurrency)
-
-@available(iOS 15, tvOS 15, watchOS 8, macOS 12, *)
 extension Task where Success == Never, Failure == Never {
 
     /// Sleeps for the specified number of `milliseconds`.
@@ -25,5 +22,3 @@ extension Task where Success == Never, Failure == Never {
         try await Self.sleep(nanoseconds: UInt64(1_000_000_000 * interval.CC_timeInterval))
     }
 }
-
-#endif

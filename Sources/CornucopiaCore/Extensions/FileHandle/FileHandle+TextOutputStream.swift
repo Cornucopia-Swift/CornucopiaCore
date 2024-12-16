@@ -3,7 +3,7 @@
 //
 import Foundation
 
-extension FileHandle: TextOutputStream {
+extension FileHandle: @retroactive TextOutputStream {
 
     public func write(_ string: String) {
         let data = Data(string.utf8)
