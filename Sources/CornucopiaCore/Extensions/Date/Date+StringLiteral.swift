@@ -3,7 +3,7 @@
 //
 import Foundation
 
-extension Date: @retroactive ExpressibleByStringLiteral {
+extension Date: ExpressibleByStringLiteral {
 
     /// Allows initializing via string in the format `yyyy.MM.dd`.
     public init(stringLiteral value: String) {

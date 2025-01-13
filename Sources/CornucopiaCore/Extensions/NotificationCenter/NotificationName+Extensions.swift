@@ -3,7 +3,7 @@
 //
 import Foundation
 
-extension Notification.Name: @retroactive ExpressibleByStringLiteral {
+extension Notification.Name: ExpressibleByStringLiteral {
 
     /// Initialize using a string literal:
     /// ```swift

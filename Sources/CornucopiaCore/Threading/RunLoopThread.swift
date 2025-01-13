@@ -1,6 +1,7 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
+#if canImport(ObjectiveC)
 import Foundation
 import Dispatch
 
@@ -68,3 +69,4 @@ extension Cornucopia.Core.RunLoopThread {
         logger.trace("Thread still healthy")
     }
 }
+#endif

@@ -71,7 +71,7 @@ public extension Cornucopia.Core {
 #else
                 let machine = "unknown"
 #endif
-            self.info = DeviceInfo(machine: machine, model: model)
+            self.info = DeviceInfo(machine: machine, model: model, operatingSystem: "linux", operatingSystemVersion: "1.0")
             let urlToUUID = URL(fileURLWithPath: "/tmp/.cornucopia.core.uuid")
             if let string = try? String(contentsOf: urlToUUID), let uuid = UUID(uuidString: string) {
                 self.uuid = uuid
