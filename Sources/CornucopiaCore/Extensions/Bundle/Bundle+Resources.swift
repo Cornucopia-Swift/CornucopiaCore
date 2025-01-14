@@ -23,12 +23,13 @@ public extension Bundle {
             #else
             let ext = "resources"
             #endif
-            let searchPath = "\(searchDirectory)/\(name)_\(name).\(ext)"
+            let searchPath = "\(searchDirectory)/\(name).\(ext)"
+            //print("XXX: Searching for resource bundle in \(searchPath)")
             if let bundle = Bundle(path: searchPath) {
                 Self.BundleResourcesPathsByModuleName[name] = bundle
                 return bundle
             }
         }
-        fatalError("Couldn't load resources.")
+        fatalError("Couldn't load resources bundle")
     }
 }
