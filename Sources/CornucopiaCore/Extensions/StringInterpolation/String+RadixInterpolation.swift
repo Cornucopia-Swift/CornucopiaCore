@@ -2,9 +2,10 @@
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
 //  Inspired by Erica Sadun, https://ericasadun.com/2018/12/14/more-fun-with-swift-5-string-interpolation-radix-formatting/
+//  Example: `"\(0xdeadbeef, radix: .hex, prefix: true, toWidth = 4)"`
 public extension String.StringInterpolation {
 
-    /// The desired base. Example: "\(0xdeadbeef, radix: .hex, .prefix: true, .toWidth = 4)"
+    /// The desired base
     @frozen enum Radix: Int {
         case binary = 2
         case octal = 8
