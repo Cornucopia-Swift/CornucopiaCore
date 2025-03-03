@@ -12,26 +12,26 @@ import WatchKit
 public extension Cornucopia.Core {
 
     /// Represents information about a device.
-    struct DeviceInfo {
+    struct DeviceInfo: Sendable {
 
         public let machine: String
         public let model: String
         public let operatingSystem: String
         public let operatingSystemVersion: String
-        /// A prepoluated user agent string that could be used in HTTP requests.
+        /// A prepopulated user agent string that could be used in HTTP requests.
         public var userAgent: String {
             "\(Bundle.main.CC_cfBundleIdentifier)/\(Bundle.main.CC_cfBundleShortVersion).\(Bundle.main.CC_cfBundleVersion) \(self.operatingSystem)/\(self.operatingSystemVersion) @ \(self.model) (\(self.machine))"
         }
     }
 
     /// Gathers information about this device.
-    class Device {
+    final class Device: Sendable {
 
         static private let uuidKeychainKey = "uuid"
 
-        public static var current = Device()
-        public var info: DeviceInfo
-        public var uuid: UUID
+        public static let current = Device()
+        public let info: DeviceInfo
+        public let uuid: UUID
 
         private init() {
 

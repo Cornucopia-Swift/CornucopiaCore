@@ -7,7 +7,7 @@ public extension Cornucopia.Core {
 
     /// Convenience subclass of Foundation.JSONDecoder,
     /// automatically configured for extended ISO8601 date decoding
-    class JSONDecoder: Foundation.JSONDecoder {
+    class JSONDecoder: Foundation.JSONDecoder, @unchecked Sendable {
 
         public override init() {
             super.init()

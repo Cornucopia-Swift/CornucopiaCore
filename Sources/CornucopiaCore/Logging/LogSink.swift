@@ -6,7 +6,7 @@ import Foundation
 extension Cornucopia.Core {
 
     /// A sink for log output.
-    public protocol LogSink {
+    public protocol LogSink: Sendable {
 
         /// Create with the specified URL.
         init(url: URL)
@@ -16,7 +16,7 @@ extension Cornucopia.Core {
     }
 
     /// The log level.
-    public enum LogLevel: Codable {
+    public enum LogLevel: Codable, Sendable {
         case trace
         case debug
         case info
@@ -37,7 +37,7 @@ extension Cornucopia.Core {
     }
 
     /// A log entry.
-    public struct LogEntry: Codable, Equatable, Hashable {
+    public struct LogEntry: Codable, Equatable, Hashable, Sendable {
 
         public let timestamp: Date
         public let level: LogLevel

@@ -19,7 +19,7 @@ public extension Cornucopia.Core {
         public typealias ItemKey = String
 
         public let service: String
-        public static var standard = Keychain(for: Bundle.main.CC_cfBundleIdentifier)
+        public static let standard = Keychain(for: Bundle.main.CC_cfBundleIdentifier)
 
         public init(for service: String) {
             self.service = service

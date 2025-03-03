@@ -10,6 +10,6 @@ public enum Cornucopia {
     /// Core Subsystem
     public enum Core {
         static let Subsystem = "de.vanille.Cornucopia.Core"
-        public static var stderr = FileHandle.standardError
+        public static let stderr = FileHandle.standardError
     }
 }

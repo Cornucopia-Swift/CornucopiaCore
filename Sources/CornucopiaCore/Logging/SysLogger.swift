@@ -6,10 +6,10 @@ import Foundation
 extension Cornucopia.Core {
 
     /// A `LogSink` that sends all logs in syslog (via RFC5424) to a given IPv4 host.
-    public final class SysLogger: LogSink {
+    public final class SysLogger: LogSink, @unchecked Sendable {
 
-        var sockFd: Int32 = -1
-        var udp: Bool
+        let sockFd: Int32
+        let udp: Bool
         var addr: sockaddr_in
         var len: socklen_t
         lazy var hostname = Device.current.uuid.uuidString

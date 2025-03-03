@@ -20,7 +20,7 @@ public extension Cornucopia.Core {
     /// - The default LOGSINK is `print://`.
     /// If this is a release build:
     /// - The default LOGSINK is empty, i.e. nothing will be emitted.
-    struct Logger {
+    struct Logger: Sendable {
 
         static let LogLevel: String = "LOGLEVEL"
         static let LogSink: String = "LOGSINK"
@@ -28,8 +28,8 @@ public extension Cornucopia.Core {
         static let LogLevelTrace: String = "TRACE"
         static let DotSwift: String = ".swift"
 
-        fileprivate static var overrideSink: LogSink? = nil
-        fileprivate static var overrideLevel: String? = nil
+        fileprivate static nonisolated(unsafe) var overrideSink: LogSink? = nil
+        fileprivate static nonisolated(unsafe) var overrideLevel: String? = nil
 
         public static let dispatchQueue: DispatchQueue = .init(label: "dev.cornucopia.Logger", qos: .background)
         public static let includeDebug: Bool = {
