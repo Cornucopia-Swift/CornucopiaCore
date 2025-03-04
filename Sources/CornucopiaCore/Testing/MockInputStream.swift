@@ -8,7 +8,7 @@ private var logger = Cornucopia.Core.Logger()
 public extension Cornucopia.Core {
 
     /// An `InputStream` subclass designed for unit testing.
-    final class MockInputStream: InputStream {
+    final class MockInputStream: InputStream, @unchecked Sendable {
 
         private var openCloseLatency: DispatchTimeInterval = .milliseconds(10)
         private var hasBytesLatency: DispatchTimeInterval = .milliseconds(0)
