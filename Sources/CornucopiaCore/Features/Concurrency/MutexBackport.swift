@@ -2,6 +2,7 @@
 // Lightweight version of https://github.com/swhitty/swift-mutex
 // Feel free to use any part of this gist.
 // Note: ~Copyable are not supported
+#if canImport(ObjectiveC)
 import os
 
 #if compiler(>=6)
@@ -82,4 +83,5 @@ public struct Mutex<Value>: @unchecked Sendable {
     }
 }
 
+#endif
 #endif

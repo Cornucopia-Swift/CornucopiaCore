@@ -1,5 +1,5 @@
 {
-  "originHash" : "cdffebc5a7a42aeb63d1a9ded50e4d1e10248614b8dce4d0d920a761cc3dca5b",
+  "originHash" : "eec76d5d448b88a485cbae1073501a44a871d6bd6c14fec312577bbbda824866",
   "pins" : [
     {
       "identity" : "anycodable",
@@ -17,6 +17,15 @@
       "state" : {
         "revision" : "cdcdc5177ad536cfb11b95c620f926a81014b7fe",
         "version" : "2.0.4"
+      }
+    },
+    {
+      "identity" : "foundationbandaid",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mickeyl/FoundationBandAid",
+      "state" : {
+        "branch" : "master",
+        "revision" : "163e98760ce824d9c880684ec1014228795ef8c3"
       }
     },
     {
