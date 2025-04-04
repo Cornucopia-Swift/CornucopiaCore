@@ -17,7 +17,11 @@ public final class LocalNetworkAuthorization: NSObject {
         case granted
     }
 
-    public private(set) var state: State = .notDetermined {
+    public override init() {
+        super.init()
+    }
+
+    private var state: State = .notDetermined {
         didSet {
             logger.trace("LNA status now \(self.state)")
             guard self.state != .notDetermined else { return }
