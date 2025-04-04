@@ -7,6 +7,7 @@ import Network
 
 private let logger = Cornucopia.Core.Logger()
 
+/// Triggers & observes the local network authorization status.
 public final class LocalNetworkAuthorization: NSObject {
 
     @frozen public enum State {
@@ -16,22 +17,22 @@ public final class LocalNetworkAuthorization: NSObject {
         case granted
     }
 
-
     public private(set) var state: State = .notDetermined {
         didSet {
             logger.trace("LNA status now \(self.state)")
-            switch self.state {
-                case .granted:
-                    self.shutdown()
-                default:
-                    break
-            }
-            self.continuations.forEach { $0.resume(returning: self.state) }
-            self.continuations = []
+            guard self.state != .notDetermined else { return }
+            self.continuation?.resume(returning: self.state)
+            self.shutdown()
         }
     }
     private var browser: NWBrowser? = nil
-    private var continuations: [CheckedContinuation<State, Never>] = []
+    private var continuation: CheckedContinuation<State, Never>? = nil {
+        didSet {
+            if self.continuation != nil {
+                self.startBrowsing()
+            }
+        }
+    }
 
     private func createBrowser() -> NWBrowser {
         let parameters = NWParameters()
@@ -43,13 +44,6 @@ public final class LocalNetworkAuthorization: NSObject {
             switch state {
                 case .waiting(_):
                     self.state = .denied
-                    // NOTE: At this point of time we could launch another browser in a couple of seconds to find out whether use
-                    // user changed his mind in the meantime.
-                    #if false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                        self.startBrowsing()
-                    }
-                    #endif
                 default:
                     break
             }
@@ -62,11 +56,6 @@ public final class LocalNetworkAuthorization: NSObject {
         return browser
     }
 
-    private override init() {
-        super.init()
-        self.startBrowsing()
-    }
-
     private func startBrowsing() {
         self.browser = self.createBrowser()
         self.browser?.start(queue: .main)
@@ -75,22 +64,36 @@ public final class LocalNetworkAuthorization: NSObject {
     private func shutdown() {
         self.browser?.cancel()
         self.browser = nil
+        self.continuation = nil
+    }
+
+    deinit {
+        self.shutdown()
     }
 }
 
 //MARK: Public API
 extension LocalNetworkAuthorization {
 
-    public static let shared = LocalNetworkAuthorization()
-
-    /// Request authorization to use local network services. Returns the current state if already determined.
+    /// Returns whether the user granted or denied access to a local network authorization request.
+    /// Does *not necessarily* trigger the dialogue every time, since this depends on the other code paths.
+    /// iOS usually shows this dialogue only once per app.
     public func request() async -> State {
 
         guard self.state == .notDetermined else { return self.state }
         return await withCheckedContinuation { continuation in
-            self.continuations.append(continuation)
+            self.continuation = continuation
+        }
+    }
+
+    /// Waits for the user to grant access to a local network authorization request.
+    public static func waitForAuthorization(pollingEvery: TimeInterval = 5) async {
+        var state = State.notDetermined
+        while true && !Task.isCancelled {
+            state = await LocalNetworkAuthorization().request()
+            guard state != .granted else { return }
+            try? await Task.sleep(for: .seconds(pollingEvery))
         }
     }
 }
-
 #endif
