@@ -110,6 +110,7 @@ public extension Cornucopia.Core {
 
         /// Log a trace message. Trace messages are only processed, if the environment variable LOGLEVEL is TRACE
         @inlinable
+        @inline(__always)
         public func trace(_ message: @autoclosure ()->String ) {
             guard let sink = Self.destination, Self.includeTrace else { return }
             log(message(), level: .trace, sink: sink)
@@ -117,6 +118,7 @@ public extension Cornucopia.Core {
 
         /// Log a debug message. Debug messages are only processed, if the environment variable LOGLEVEL is DEBUG or TRACE
         @inlinable
+        @inline(__always)
         public func debug(_ message: @autoclosure ()->String) {
             guard let sink = Self.destination, Self.includeDebug else { return }
             log(message(), level: .debug, sink: sink)
@@ -124,6 +126,7 @@ public extension Cornucopia.Core {
 
         /// Log an info message.
         @inlinable
+        @inline(__always)
         public func info(_ message: @autoclosure ()->String) {
             guard let sink = Self.destination else { return }
             log(message(), level: .info, sink: sink)
@@ -131,6 +134,7 @@ public extension Cornucopia.Core {
 
         /// Log a notice (warning) message.
         @inlinable
+        @inline(__always)
         public func notice(_ message: @autoclosure ()->String) {
             guard let sink = Self.destination else { return }
             log(message(), level: .notice, sink: sink)
@@ -138,6 +142,7 @@ public extension Cornucopia.Core {
 
         /// Log an error message.
         @inlinable
+        @inline(__always)
         public func error(_ message: @autoclosure ()->String) {
             guard let sink = Self.destination else { return }
             log(message(), level: .error, sink: sink)
