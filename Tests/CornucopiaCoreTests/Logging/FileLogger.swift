@@ -10,18 +10,22 @@ class FileLogger: XCTestCase {
         let helloWorld = "Hello World!"
 
         try? FileManager.default.removeItem(at: logFileURL) // might fail, if not present…
+        let logFile = Cornucopia.Core.FileLogger(url: logFileURL)
 
-        ProcessInfo.processInfo.CC_setEnvironmentKey("LOGSINK", to: logFileURL.absoluteString)
-        ProcessInfo.processInfo.CC_setEnvironmentKey("LOGLEVEL", to: "TRACE")
-        let logger = Cornucopia.Core.Logger()
-        logger.trace(helloWorld)
-        logger.flush()
+        let entry = Cornucopia.Core.LogEntry(
+            level: .info,
+            app: "CornucopiaCoreTests",
+            subsystem: "Test",
+            category: "FileLogger",
+            thread: 1,
+            message: helloWorld
+        )
+        logFile.log(entry)
 
         let data = try! Data(contentsOf: logFileURL)
         let string = data.CC_string
-        XCTAssertTrue(string.contains("CornucopiaCoreTests"))
-        XCTAssertTrue(string.contains("FileLogger"))
-        XCTAssertFalse(string.contains("FileLogger.swift"))
+        XCTAssertTrue(string.contains("Test:FileLogger"))
+        XCTAssertTrue(string.contains("1"))
         XCTAssertTrue(string.contains(helloWorld))
     }
 }
