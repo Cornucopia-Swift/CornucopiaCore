@@ -19,6 +19,7 @@ public extension Bundle {
         case cfBundleVersion = "CFBundleVersion"
         case ioKitPersonalities = "IOKitPersonalities"
         case lsMinimumSystemVersion = "LSMinimumSystemVersion"
+        case nsBonjourServices = "NSBonjourServices"
         case nsHumanReadableCopyright = "NSHumanReadableCopyright"
         case osBundleRequired = "OSBundleRequired"
     }
@@ -31,4 +32,5 @@ public extension Bundle {
     var CC_cfBundleName: String { self.CC_object(forInfoDictionaryKey: .cfBundleName) as? String ?? "unknown" }
     var CC_cfBundleShortVersion: String { self.CC_object(forInfoDictionaryKey: .cfBundleShortVersionString) as? String ?? "unknown" }
     var CC_cfBundleVersion: String { self.CC_object(forInfoDictionaryKey: .cfBundleVersion) as? String ?? "unknown" }
+    var CC_nsBonjourServices: [String] { self.CC_object(forInfoDictionaryKey: .nsBonjourServices) as? [String] ?? [] }
 }
