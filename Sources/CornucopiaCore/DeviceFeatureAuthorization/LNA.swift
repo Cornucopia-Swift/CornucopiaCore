@@ -11,7 +11,6 @@ private let logger = Cornucopia.Core.Logger()
 public final class LocalNetworkAuthorization: NSObject {
 
     @frozen public enum State {
-
         case notDetermined
         case denied
         case granted
@@ -29,7 +28,16 @@ public final class LocalNetworkAuthorization: NSObject {
             self.shutdown()
         }
     }
+
+    private let serviceType: String = {
+        let firstRegisteredBonjourServiceType = Bundle.main.CC_nsBonjourServices.first ?? "unknown"
+        precondition(firstRegisteredBonjourServiceType != "unknown", "No bonjour service registered in plist. Add the key `NSBonjourServices` to your app's Info.plist file and register a service, e.g. `_lna_check._tcp`.")
+        logger.trace("LNA service type is \(firstRegisteredBonjourServiceType)")
+        return firstRegisteredBonjourServiceType
+    }()
+
     private var browser: NWBrowser? = nil
+    private var listener: NWListener? = nil
     private var continuation: CheckedContinuation<State, Never>? = nil {
         didSet {
             if self.continuation != nil {
@@ -38,10 +46,17 @@ public final class LocalNetworkAuthorization: NSObject {
         }
     }
 
+    private func createListener() -> NWListener {
+        let listener = try! NWListener(using: NWParameters(tls: .none, tcp: NWProtocolTCP.Options()))
+        listener.service = NWListener.Service(name: UUID().uuidString, type: self.serviceType)
+        listener.newConnectionHandler = { _ in } // Must be set or else the listener will error with POSIX error 22
+        return listener
+    }
+
     private func createBrowser() -> NWBrowser {
         let parameters = NWParameters()
         parameters.includePeerToPeer = true
-        let browser = NWBrowser(for: .bonjour(type: "_remotepairing._tcp", domain: nil), using: parameters)
+        let browser = NWBrowser(for: .bonjour(type: self.serviceType, domain: nil), using: parameters)
         browser.stateUpdateHandler = { [weak self] state in
             logger.trace("LNA browser status update: \(state)")
             guard let self else { return }
@@ -61,6 +76,8 @@ public final class LocalNetworkAuthorization: NSObject {
     }
 
     private func startBrowsing() {
+        self.listener = self.createListener()
+        self.listener?.start(queue: .main)
         self.browser = self.createBrowser()
         self.browser?.start(queue: .main)
     }
@@ -68,6 +85,8 @@ public final class LocalNetworkAuthorization: NSObject {
     private func shutdown() {
         self.browser?.cancel()
         self.browser = nil
+        self.listener?.cancel()
+        self.listener = nil
         self.continuation = nil
     }
 
