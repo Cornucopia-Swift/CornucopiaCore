@@ -6,7 +6,7 @@ import Foundation
 public extension String {
 
     /// A simplified check if this and another string are in the same IPv4 subnet.
-    func CC_isInSameIPv4SubnetAs(other: String) -> Bool {
+    func CC_isInSameIPv4SubnetAs(_ other: String) -> Bool {
 
         if self.hasPrefix("169.254.") && other.hasPrefix("169.254.") {
             // Link-local uses /16
