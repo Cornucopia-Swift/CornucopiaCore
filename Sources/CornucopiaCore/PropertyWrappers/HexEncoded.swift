@@ -1,6 +1,8 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
+private let logger = Cornucopia.Core.Logger()
+
 public extension Cornucopia.Core {
 
     private static let Prefix = "0x"
@@ -101,6 +103,7 @@ public extension Cornucopia.Core {
                     throw DecodingError.dataCorruptedError(in: container, debugDescription: "@HexEncodedBytes STRING contains an invalid character")
                 }
                 if string.count % 2 == 1 {
+                    logger.notice("HexEncodedBytes STRING \(string) has an odd length, inserting leading zero. This will be hard ERROR in future versions")
                     string.insert("0", at: string.startIndex)
                 }
                 let chars = Array(string.utf8)
@@ -126,6 +129,7 @@ public extension Cornucopia.Core {
                         throw DecodingError.dataCorruptedError(in: container, debugDescription: "@HexEncodedBytes STRING contains an invalid character")
                     }
                     if string.count % 2 == 1 {
+                        logger.notice("HexEncodedBytes STRING \(string) has an odd length, inserting leading zero. This will be hard ERROR in future versions")
                         string.insert("0", at: string.startIndex)
                     }
                     let chars = Array(string.utf8)
@@ -179,6 +183,7 @@ public extension Cornucopia.Core {
                     throw DecodingError.dataCorruptedError(in: container, debugDescription: "@HexEncodedBytes STRING contains an invalid character")
                 }
                 if string.count % 2 == 1 {
+                    logger.notice("HexEncodedBytes STRING \(string) has an odd length, inserting leading zero. This will be hard ERROR in future versions")
                     string.insert("0", at: string.startIndex)
                 }
                 let uint32 = UInt32(string, radix: 16) ?? 0
@@ -221,6 +226,7 @@ public extension Cornucopia.Core {
                     throw DecodingError.dataCorruptedError(in: container, debugDescription: "@HexEncodedBytes STRING contains an invalid character")
                 }
                 if string.count % 2 == 1 {
+                    logger.notice("HexEncodedBytes STRING \(string) has an odd length, inserting leading zero. This will be hard ERROR in future versions")
                     string.insert("0", at: string.startIndex)
                 }
                 let value = T(string, radix: 16) ?? 0
@@ -264,6 +270,7 @@ public extension Cornucopia.Core {
                     throw DecodingError.dataCorruptedError(in: container, debugDescription: "@HexEncodedBytes STRING contains an invalid character")
                 }
                 if string.count % 2 == 1 {
+                    logger.notice("HexEncodedBytes STRING \(string) has an odd length, inserting leading zero. This will be hard ERROR in future versions")
                     string.insert("0", at: string.startIndex)
                 }
                 let value = T(string, radix: 16) ?? 0
