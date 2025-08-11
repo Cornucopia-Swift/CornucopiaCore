@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(swift test)",
-      "Bash(swift test:*)"
+      "Bash(swift test:*)",
+      "Bash(grep:*)",
+      "Bash(swift:*)",
+      "Bash(rm:*)",
+      "Bash(for i in {1..3})",
+      "Bash(do echo \"=== Run $i ===\")",
+      "Bash(done)"
     ],
     "deny": []
   }
