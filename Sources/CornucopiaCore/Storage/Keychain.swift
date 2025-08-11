@@ -104,7 +104,12 @@ public extension Cornucopia.Core {
 
         public func query<T: Decodable>(for key: ItemKey) -> T? {
             guard let data = self.load(key: key) else { return nil }
-            return try! JSONDecoder().decode(T.self, from: data)
+            do {
+                return try JSONDecoder().decode(T.self, from: data)
+            } catch {
+                logger.debug("Failed to decode data for key '\(key)': \(error)")
+                return nil
+            }
         }
 
         public var description: String {
