@@ -1,6 +1,10 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
+import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 import XCTest
 @testable import CornucopiaCore
 
