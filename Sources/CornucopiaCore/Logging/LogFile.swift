@@ -59,16 +59,26 @@ extension Cornucopia.Core {
 
         /// Wait until all pending log operations have been carried out, then close the file.
         public func shutdown() {
-            guard self.giveUp else { return }
-            self.q.waitUntilAllOperationsAreFinished()
-            guard let fileHandle = self.fileHandle else { return }
-            do {
-                try fileHandle.close()
-            } catch {
-                logger.notice("Can't close log file at \(self.path): \(error)")
-            }
-            self.fileHandle = nil
+            guard !self.giveUp else { return }
+            
+            // Set giveUp immediately to prevent new operations from being added
             self.giveUp = true
+            
+            // Add the file close operation to the queue to ensure it happens after all writes
+            // This also acts as a barrier - all operations before this will complete
+            self.q.addOperation { [weak self] in
+                guard let self = self else { return }
+                guard let fileHandle = self.fileHandle else { return }
+                do {
+                    try fileHandle.close()
+                } catch {
+                    logger.notice("Can't close log file at \(self.path): \(error)")
+                }
+                self.fileHandle = nil
+            }
+            
+            // Wait for all operations including the close to complete
+            self.q.waitUntilAllOperationsAreFinished()
         }
 
         deinit {
@@ -92,8 +102,13 @@ private extension Cornucopia.Core.LogFile {
     }
 
     func writeToFile(_ message: String) {
-
+        
+        // Don't check giveUp here - if the operation is already queued, let it proceed
+        // This allows operations queued before shutdown to complete
+        
         if self.fileHandle == nil {
+            // But DO check giveUp before creating a new file
+            guard !self.giveUp else { return }
             self.createFile()
         }
         guard let fileHandle = self.fileHandle else { return }
