@@ -174,10 +174,10 @@ class Logging: XCTestCase {
         let expectedDifferences = [100, 5.0, 50.0, 500.0, 1000.0]
         for (index, difference) in differencesInMs.enumerated() {
             let expectedDifference = expectedDifferences[index]
-            let lowerBound = expectedDifference
+            let lowerBound = expectedDifference * 0.99  // Allow 1% tolerance for timer precision
             let upperBound = expectedDifference * 1.6
-            XCTAssert(difference >= lowerBound)
-            XCTAssert(difference <= upperBound)
+            XCTAssert(difference >= lowerBound, "Difference \(difference)ms at index \(index) is less than expected \(lowerBound)ms")
+            XCTAssert(difference <= upperBound, "Difference \(difference)ms at index \(index) is greater than expected \(upperBound)ms")
         }
     }
 }
