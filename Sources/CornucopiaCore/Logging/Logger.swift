@@ -143,7 +143,7 @@ public extension Cornucopia.Core {
         /// Log a warning (notice) message.
         @inlinable
         @inline(__always)
-        public func notice(_ message: @autoclosure ()->String) {
+        public func warning(_ message: @autoclosure ()->String) {
             guard let sink = Self.destination else { return }
             log(message(), level: .notice, sink: sink)
         }
