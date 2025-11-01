@@ -38,7 +38,7 @@ public extension Cornucopia.Core {
 #if canImport(ObjectiveC)
             let machine = SysCtl.byName("hw.machine")
             let model = SysCtl.byName("hw.model")
-    #if os(iOS)
+    #if os(iOS) || os(tvOS)
             let os = UIDevice.current.systemName
             let ver = UIDevice.current.systemVersion
     #endif
