@@ -5,7 +5,7 @@ import Foundation
 
 extension Date: @unchecked Sendable {}
 
-extension Cornucopia.Core { public struct AsyncWithTimeoutError: Error, Equatable {} }
+extension Cornucopia.Core { @frozen public struct AsyncWithTimeoutError: Error, Equatable {} }
 
 /// Performs the work in `body`, but cancels the task if it takes longer than the specified amount of `seconds`.
 public func CC_asyncWithTimeout<ResultType: Sendable>(seconds: TimeInterval, body: @escaping @Sendable () async throws -> ResultType) async throws -> ResultType {

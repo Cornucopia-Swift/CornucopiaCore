@@ -9,7 +9,7 @@ public extension Cornucopia.Core {
 
     struct PKCS12 {
 
-        public enum Error: Swift.Error {
+        @frozen public enum Error: Swift.Error {
             case authorizationFailed
             case importFailed
             case noIdentity

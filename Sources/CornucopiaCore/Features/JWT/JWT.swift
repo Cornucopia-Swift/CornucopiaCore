@@ -7,7 +7,7 @@ private var logger = Cornucopia.Core.Logger(category: "JWT")
 
 public extension Cornucopia.Core {
 
-    enum JWT: Int {
+    @frozen enum JWT: Int {
 
         case header
         case payload

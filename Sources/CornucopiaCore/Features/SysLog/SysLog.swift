@@ -7,9 +7,9 @@ public extension Cornucopia.Core {
 
     // <165>1 2003-10-11T22:14:15.003Z mymachine.example.com evntslog - ID47 [exampleSDID@32473 iut="3" eventSource="Application" eventID="1011"] BOMAn application event log entry...
 
-    struct SysLogEntry {
+    @frozen struct SysLogEntry {
 
-        enum Facility: UInt8, RawRepresentable {
+        @frozen public enum Facility: UInt8, RawRepresentable {
             case kernel
             case user
             case mail
@@ -36,7 +36,7 @@ public extension Cornucopia.Core {
             case local7
         }
 
-        enum Severity: UInt8, RawRepresentable {
+        @frozen public enum Severity: UInt8, RawRepresentable {
             case emergency
             case alert
             case critical

@@ -16,7 +16,7 @@ extension Cornucopia.Core {
     }
 
     /// The log level.
-    public enum LogLevel: Codable, Sendable {
+    @frozen public enum LogLevel: Codable, Sendable {
         case trace
         case debug
         case info
@@ -37,7 +37,7 @@ extension Cornucopia.Core {
     }
 
     /// A log entry.
-    public struct LogEntry: Codable, Equatable, Hashable, Sendable {
+    @frozen public struct LogEntry: Codable, Equatable, Hashable, Sendable {
 
         public let timestamp: Date
         public let level: LogLevel

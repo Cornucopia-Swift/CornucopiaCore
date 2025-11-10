@@ -4,7 +4,7 @@
 
 extension Cornucopia.Core {
 
-public enum HTTPStatusCode: Int, Error {
+@frozen public enum HTTPStatusCode: Int, Error {
 
     // -0xx Internal
     case MalformedUrl = -1
@@ -88,7 +88,7 @@ public enum HTTPStatusCode: Int, Error {
     case Unknown = 999
 
     // Grouping
-    public enum ResponseType {
+    @frozen public enum ResponseType {
         case Internal
         case Informational
         case Success

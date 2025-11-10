@@ -5,7 +5,7 @@ import Foundation
 
 extension OutputStream {
 
-    public enum Exception: Swift.Error {
+    @frozen public enum Exception: Swift.Error {
         case unknown
         case eof
     }

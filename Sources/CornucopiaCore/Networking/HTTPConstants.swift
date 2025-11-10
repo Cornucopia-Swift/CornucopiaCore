@@ -4,7 +4,7 @@
 public extension Cornucopia.Core {
 
     /// Well known HTTP methods
-    enum HTTPMethod: String {
+    @frozen enum HTTPMethod: String {
         case CONNECT
         case DELETE
         case GET
@@ -16,7 +16,7 @@ public extension Cornucopia.Core {
         case TRACE
 
         /// HTTP Methods used with the WebDAV protocol
-        public enum WebDAV: String {
+        @frozen public enum WebDAV: String {
             case COPY
             case LOCK
             case MKCOL
@@ -26,7 +26,7 @@ public extension Cornucopia.Core {
         }
 
         /// HTTP Methods used with the RTS protocol
-        public enum RTSP: String {
+        @frozen public enum RTSP: String {
             case ANNOUNCE
             case DESCRIBE
             case GET_PARAMETER
@@ -41,7 +41,7 @@ public extension Cornucopia.Core {
     }
 
     /// An HTTP response for a request sent to gather a `Decodable` payload
-    enum HTTPResponse<T: Decodable> {
+    @frozen enum HTTPResponse<T: Decodable> {
         /// The request has been cancelled
         case cancellation
         /// There has been a generic failure before the HTTP request could be completed
@@ -53,7 +53,7 @@ public extension Cornucopia.Core {
     }
 
     /// An HTTP response for a request sent to gather a `Decodable` payload – depending on the status code
-    enum HTTPRequestResponse<EXPECTED: Decodable, ERROR: Decodable> {
+    @frozen enum HTTPRequestResponse<EXPECTED: Decodable, ERROR: Decodable> {
         /// The request has been cancelled
         case cancelled
         /// There has been a generic failure before the HTTP request could be completed
@@ -67,7 +67,7 @@ public extension Cornucopia.Core {
     }
 
     /// Well known HTTP header fields
-    enum HTTPHeaderField: String {
+    @frozen enum HTTPHeaderField: String {
         case authorization = "Authorization"
         case contentLength = "Content-Length"
         case contentType = "Content-Type"
@@ -75,7 +75,7 @@ public extension Cornucopia.Core {
     }
 
     /// Well known HTTP content types
-    enum HTTPContentType: String {
+    @frozen enum HTTPContentType: String {
         case applicationJSON = "application/json"
         case imageJPEG = "image/jpeg"
         case imageHEIC = "image/heic"

@@ -7,7 +7,7 @@ import Foundation
 
 public extension Cornucopia.Core {
 
-    enum AnyValue: Equatable {
+    @frozen enum AnyValue: Equatable {
         case string(String)
         case bool(Bool)
         case int(Int)
@@ -51,7 +51,7 @@ public extension Cornucopia.Core {
             }
         }
 
-        public enum Error: Swift.Error {
+        @frozen public enum Error: Swift.Error {
             case typeMismatch(info: String)
             case outOfBounds(info: String)
         }

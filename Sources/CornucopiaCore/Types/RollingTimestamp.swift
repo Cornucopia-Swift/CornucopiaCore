@@ -7,9 +7,9 @@ import Foundation
 extension Cornucopia.Core {
 
     /// A rolling timestamp, either in `.absolute` or `.relative` mode.
-    public struct RollingTimestamp: CustomStringConvertible {
+    @frozen public struct RollingTimestamp: CustomStringConvertible {
 
-        public enum Mode {
+        @frozen public enum Mode {
             case absolute
             case relative
         }

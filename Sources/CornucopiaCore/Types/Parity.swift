@@ -4,7 +4,7 @@
 public extension Cornucopia.Core {
 
     /// The mathematical concept of parity.
-    enum Parity {
+    @frozen enum Parity {
         case even
         case odd
     }

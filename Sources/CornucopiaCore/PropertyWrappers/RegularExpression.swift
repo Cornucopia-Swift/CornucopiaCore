@@ -6,7 +6,7 @@ import Foundation
 public extension Cornucopia.Core {
 
     @propertyWrapper
-    struct RegularExpression: Codable, Equatable {
+    @frozen struct RegularExpression: Codable, Equatable {
 
         public let wrappedValue: NSRegularExpression
 

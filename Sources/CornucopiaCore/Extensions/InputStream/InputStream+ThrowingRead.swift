@@ -5,7 +5,7 @@ import Foundation
 
 extension InputStream {
 
-    public enum Exception: Error {
+    @frozen public enum Exception: Error {
         case unknown
         case eof
     }

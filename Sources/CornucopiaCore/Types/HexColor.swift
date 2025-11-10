@@ -9,7 +9,7 @@ public extension Cornucopia.Core {
     /// - `#FFFFFF` corresponds to white
     /// - `#00000080` corresponds to black with an alpha value of 50%
     /// `HexColor` comes with `Codable` support and is especially suitable for the use with JSON serialization
-    struct HexColor {
+    @frozen struct HexColor {
         public let value: String
 
         enum CodingKeys: String, CodingKey {
