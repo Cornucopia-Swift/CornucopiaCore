@@ -118,11 +118,15 @@ class Logging: XCTestCase {
 
     func testRollingTimestamp2() throws {
 
-        func sleep(forTimeInterval t: TimeInterval) {
+        @Sendable func sleep(forTimeInterval t: TimeInterval) {
+            #if os(Linux)
+            Thread.sleep(forTimeInterval: t)
+            #else
             let sema = DispatchSemaphore(value: 0)
             let t = Timer(timeInterval: t, repeats: false) { _ in sema.signal() }
             RunLoop.main.add(t, forMode: .common)
             sema.wait()
+            #endif
         }
 
         let path = "/tmp/logging-test/timestamps2.txt"

@@ -20,7 +20,12 @@ extension OutputStream {
         guard nWritten > 0 else {
             switch nWritten {
                 case 0: throw Exception.eof
-                default: throw self.streamError ?? Exception.unknown
+                default:
+                    #if os(Linux)
+                    throw Exception.unknown
+                    #else
+                    throw self.streamError ?? Exception.unknown
+                    #endif
             }
         }
         return nWritten

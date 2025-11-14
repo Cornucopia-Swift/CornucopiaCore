@@ -21,7 +21,12 @@ extension InputStream {
         guard nRead > 0 else {
             switch nRead {
                 case 0: throw Exception.eof
-                default: throw self.streamError ?? Exception.unknown
+                default:
+                    #if os(Linux)
+                    throw Exception.unknown
+                    #else
+                    throw self.streamError ?? Exception.unknown
+                    #endif
             }
         }
         return nRead
