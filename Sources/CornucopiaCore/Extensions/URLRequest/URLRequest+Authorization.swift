@@ -9,6 +9,7 @@ import FoundationNetworking
 
 fileprivate let AuthorizationBasicToken = "Basic "
 fileprivate let AuthorizationBearerToken = "Bearer "
+fileprivate let AuthorizationHeaderField = "Authorization"
 
 public extension URLRequest {
 
@@ -19,16 +20,16 @@ public extension URLRequest {
             return
         }
         let base64 = data.base64EncodedString()
-        setValue(AuthorizationBasicToken + base64, forHTTPHeaderField: Cornucopia.Core.HTTPHeaderField.authorization.rawValue)
+        setValue(AuthorizationBasicToken + base64, forHTTPHeaderField: AuthorizationHeaderField)
     }
 
     /// Add HTTP Bearer authorization header. `base64` MUST be a base64-encoded string.
     mutating func CC_setBearerAuthorizationHeader(base64: String) {
-        setValue(AuthorizationBearerToken + base64, forHTTPHeaderField: Cornucopia.Core.HTTPHeaderField.authorization.rawValue)
+        setValue(AuthorizationBearerToken + base64, forHTTPHeaderField: AuthorizationHeaderField)
     }
 
     /// Add JWT authorization token.
     mutating func CC_setBearerAuthorizationHeader(token: Cornucopia.Core.JWT.Token<Cornucopia.Core.JWT.Payload>) {
-        setValue(AuthorizationBearerToken + token.base64, forHTTPHeaderField: Cornucopia.Core.HTTPHeaderField.authorization.rawValue)
+        setValue(AuthorizationBearerToken + token.base64, forHTTPHeaderField: AuthorizationHeaderField)
     }
 }

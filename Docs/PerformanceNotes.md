@@ -3,14 +3,13 @@
 Summary of November 2024 audit focusing on Swift’s resilience and ownership features.
 
 ### Current Status
-- `LogLevel`, `LogEntry`, `HTTPStatusCode`, `HTTPMethod` (+ nested enums), `HTTPResponse`, `HTTPRequestResponse`, `HTTPHeaderField`, `HTTPContentType`, `AnyValue` (+ `Error`), `RollingTimestamp` (+ `Mode`), `Parity`, `SysLogEntry` (+ nested enums), `JWT`, `AsyncWithTimeoutError`, `Environment`, `HexColor`, `RegularExpression`, and the stream `Exception` enums are now annotated `@frozen`. This removes the resilience cost when they’re consumed outside the defining module.
+- `LogLevel`, `LogEntry`, `AnyValue` (+ `Error`), `RollingTimestamp` (+ `Mode`), `Parity`, `SysLogEntry` (+ nested enums), `JWT`, `AsyncWithTimeoutError`, `Environment`, `HexColor`, `RegularExpression`, and the stream `Exception` enums are now annotated `@frozen`. This removes the resilience cost when they’re consumed outside the defining module.
 
 ### `@frozen` Candidates
 - `Sources/CornucopiaCore/Logging/LogSink.swift:19` – `LogLevel` exposes a closed set of cases that map to syslog levels. Freezing lets downstream code exhaustively switch without runtime thunks; `LogEntry` (line 40) benefits similarly thanks to its immutable payload.
 - `Sources/CornucopiaCore/Extensions/OutputStream/OutputStream+ThrowingWrite.swift:8` and `Extensions/InputStream/InputStream+ThrowingRead.swift:8` – `Exception` enums cover the entire error surface (`unknown`/`eof`). Marking them frozen removes existential overhead when catching or comparing errors.
 - `Sources/CornucopiaCore/Types/RollingTimestamp.swift:12` – `RollingTimestamp.Mode` is a simple two-case enum (`absolute`/`relative`); freezing eliminates resilient-switch indirection.
 - `Sources/CornucopiaCore/Types/AnyValue.swift:54` – `AnyValue.Error` has fixed cases (`typeMismatch`, `outOfBounds`). Freezing enables better inlining for heavy generic call sites.
-- `Sources/CornucopiaCore/Networking/HTTPStatusCodes.swift:7` – `HTTPStatusCode` and nested `ResponseType` mirror the IANA registry and already enumerate all supported codes. `Networking/HTTPConstants.swift:19/29` (`HTTPMethod.WebDAV` / `.RTSP`) fall in the same bucket.
 - `Sources/CornucopiaCore/Features/PKCS12/PKCS12.swift:12` – the `Error` enum encapsulates every exit path from `SecPKCS12Import`. Freezing ensures exhaustive pattern matching stays ABI-stable.
 
 Before tagging additional structs (e.g., the various loggers or JWT records), double-check whether you might need to add stored properties later; freezing locks their layout.

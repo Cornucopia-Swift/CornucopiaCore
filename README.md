@@ -18,7 +18,6 @@ Powerful extensions to Foundation and platform types:
 - **Array & Collection**: Dictionary conversion, hex operations, chunked sequences
 - **Date & Time**: Pretty printing, past/present/future checks, ISO8601 formatting
 - **FileManager**: Compression, path utilities, extended attributes
-- **Networking**: HTTP utilities, URL request enhancements, status codes
 - **And many more**: All extensions use the `CC_` prefix to avoid naming conflicts
 
 ### 📊 Data Structures
@@ -60,12 +59,8 @@ Modern async/await utilities and performance tools:
 - **AsyncWithTimeout**: Timeout support for async operations
 - **Benchmarking**: Performance measurement utilities
 - **Task**: Sleep utilities for async contexts
-
-### 🌐 Networking
-HTTP utilities and networking helpers:
-- **HTTPConstants**: Standard status codes and headers
-- **URL extensions**: String interpolation, path utilities
-- **URLRequest**: Authorization headers, range requests
+  
+For higher-level HTTP networking, use the dedicated sibling package [CornucopiaHTTP](../CornucopiaHTTP).
 
 ## Installation
 
@@ -214,7 +209,6 @@ print("Operation took: \(duration) seconds")
 
 CornucopiaCore has minimal external dependencies:
 - [swift-crypto](https://github.com/apple/swift-crypto): Apple's cryptographic library
-- [SWCompression](https://github.com/tsolomko/SWCompression): Compression utilities
 - [AnyCodable](https://github.com/mickeyl/AnyCodable): Type-erased Codable support
 
 ## Architecture
@@ -226,7 +220,6 @@ All public APIs are organized under the `Cornucopia.Core` namespace to avoid nam
 - **Logging/**: Flexible logging system
 - **PropertyWrappers/**: Utility property wrappers
 - **Storage/**: Data persistence abstractions
-- **Networking/**: HTTP utilities and helpers
 
 ## Contributing
 

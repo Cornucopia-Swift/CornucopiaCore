@@ -18,9 +18,8 @@ The project targets Swift 5.10+ and has continuous integration via GitHub Action
 
 ## Dependencies
 
-The project has three external dependencies:
+The project has two external dependencies:
 - `swift-crypto` (3.0.0+): Apple's cryptographic library
-- `SWCompression` (4.8.5+): Compression utilities  
 - `AnyCodable` (0.6.6+): Type-erased Codable support (re-exported at module level)
 
 ## Code Architecture
@@ -61,10 +60,6 @@ All public APIs are nested under `Cornucopia.Core` namespace. The main entry poi
    - `Keychain`: Secure storage interface
    - `ExtendedFileAttributes`: File metadata handling
    - Storage backend protocol for pluggable backends
-
-6. **Networking** (`Networking/`): HTTP utilities
-   - HTTP constants and status codes
-   - Networking helper functions
 
 ### Naming Conventions
 

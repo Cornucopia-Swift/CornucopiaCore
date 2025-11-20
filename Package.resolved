@@ -11,30 +11,12 @@
       }
     },
     {
-      "identity" : "bitbytedata",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/tsolomko/BitByteData",
-      "state" : {
-        "revision" : "cdcdc5177ad536cfb11b95c620f926a81014b7fe",
-        "version" : "2.0.4"
-      }
-    },
-    {
       "identity" : "foundationbandaid",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mickeyl/FoundationBandAid",
       "state" : {
         "branch" : "master",
         "revision" : "163e98760ce824d9c880684ec1014228795ef8c3"
-      }
-    },
-    {
-      "identity" : "swcompression",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/tsolomko/SWCompression",
-      "state" : {
-        "revision" : "390e0b0af8dd19a600005a242a89e570ff482e09",
-        "version" : "4.8.6"
       }
     },
     {
