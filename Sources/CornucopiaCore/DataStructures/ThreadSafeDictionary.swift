@@ -45,12 +45,12 @@ extension Cornucopia.Core {
         }
 
         func setValue(value: ValueType?, forKey key: KeyType) {
-            self.queue.async(flags: .barrier) { self.dictionary[key] = value }
+            self.queue.sync(flags: .barrier) { self.dictionary[key] = value }
         }
 
         func removeValueForKey(key: KeyType) -> ValueType? {
-            var oldValue : ValueType? = nil
-            self.queue.async(flags: .barrier) { oldValue = self.dictionary.removeValue(forKey: key) }
+            var oldValue : ValueType?
+            self.queue.sync(flags: .barrier) { oldValue = self.dictionary.removeValue(forKey: key) }
             return oldValue
         }
 

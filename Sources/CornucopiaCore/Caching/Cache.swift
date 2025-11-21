@@ -24,7 +24,7 @@ public extension Cornucopia.Core {
         var memoryCache = ThreadSafeDictionary<String, Data>()
         let name: String
         let path: String
-        let urlSession: URLSession = URLSession(configuration: URLSessionConfiguration.ephemeral)
+        let urlSession: URLSession
 
         /// Loads the data for the specified `URL` and calls the completion handler with the data unless all cache levels fail.
         /// NOTE: The completion handler will be called in a background thread context.
@@ -68,7 +68,11 @@ public extension Cornucopia.Core {
                         then(nil)
                         return
                     }
-                    let httpUrlResponse = urlResponse as! HTTPURLResponse
+                    guard let httpUrlResponse = urlResponse as? HTTPURLResponse else {
+                        logger.notice("Network MISS for \(url): non-HTTP response")
+                        then(nil)
+                        return
+                    }
                     guard 199...299 ~= httpUrlResponse.statusCode else {
                         logger.notice("Network MISS for \(url): \(httpUrlResponse.statusCode)")
                         then(nil)
@@ -92,8 +96,9 @@ public extension Cornucopia.Core {
             }
         }
 
-        public init(name: String) {
+        public init(name: String, urlSession: URLSession = URLSession(configuration: URLSessionConfiguration.ephemeral)) {
             self.name = name
+            self.urlSession = urlSession
             self.path = FileManager.CC_pathInCachesDirectory(suffix: "Cornucopia.Core.Cache/\(name)/")
             do {
                 try FileManager.default.createDirectory(atPath: self.path, withIntermediateDirectories: true)

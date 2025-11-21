@@ -2,36 +2,51 @@
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
 extension Cornucopia.Core {
-    
+
     /// Chunks a sequence into slices of a given size, optionally padding the last chunk.
-    @frozen public struct ReverseChunkedSequence<T: Collection>: Sequence, IteratorProtocol {
-        
-        private var baseIterator: T.Iterator
+    @frozen public struct ReverseChunkedSequence<T: Collection>: Sequence {
+
+        private let storage: [T.Element]
         private let size: Int
         private let pad: T.Element?
-        
+
         init(over collection: T, chunkSize size: Int, pad: T.Element? = nil) {
-            self.baseIterator = collection.reversed().lazy.makeIterator() as! T.Iterator
+            self.storage = Array(collection)
             self.size = size
             self.pad = pad
         }
-        
-        mutating public func next() -> [T.Element]? {
-            var chunk: [T.Element] = []
-            
-            var remaining = size
-            while remaining > 0, let nextElement = self.baseIterator.next() {
-                chunk.insert(nextElement, at: 0)
-                remaining -= 1
+
+        public func makeIterator() -> Iterator {
+            Iterator(storage: self.storage, size: self.size, pad: self.pad)
+        }
+
+        @frozen public struct Iterator: IteratorProtocol {
+
+            private let storage: [T.Element]
+            private let size: Int
+            private let pad: T.Element?
+            private var currentIndex: Int
+
+            init(storage: [T.Element], size: Int, pad: T.Element?) {
+                self.storage = storage
+                self.size = size
+                self.pad = pad
+                self.currentIndex = storage.count
             }
-            guard !chunk.isEmpty else { return nil }
-            if remaining > 0, let pad = pad {
-                while remaining > 0 {
-                    chunk.insert(pad, at: 0)
-                    remaining -= 1
+
+            public mutating func next() -> [T.Element]? {
+                guard self.currentIndex > 0 else { return nil }
+
+                let newIndex = Swift.max(0, currentIndex - size)
+                var chunk = Array(storage[newIndex..<currentIndex])
+                if chunk.count < size, let pad = pad {
+                    chunk.insert(contentsOf: repeatElement(pad, count: size - chunk.count), at: 0)
                 }
+                self.currentIndex = newIndex
+                return chunk
             }
-            return chunk
+
+            public var underestimatedCount: Int { self.storage.count / self.size }
         }
     }
 }

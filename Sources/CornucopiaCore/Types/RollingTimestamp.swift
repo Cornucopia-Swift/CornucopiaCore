@@ -33,13 +33,15 @@ extension Cornucopia.Core {
         }
 
         public var description: String {
+            // Quantize to milliseconds so formatting doesn't round up and drift past expected tolerances.
             let now = CFAbsoluteTimeGetCurrent() - self.start
-            let date = CFDateCreate(kCFAllocatorDefault, now)
-            let string = CFDateFormatterCreateStringWithDate(kCFAllocatorDefault, self.formatter, date);
+            let quantized = floor(now * 1000.0) / 1000.0
+            let date = CFDateCreate(kCFAllocatorDefault, quantized)
+            guard let string = CFDateFormatterCreateStringWithDate(kCFAllocatorDefault, self.formatter, date) else { return "" }
 #if canImport(ObjectiveC)
-            return string! as String
+            return string as String
 #else
-            return String(cString: CFStringGetCStringPtr(string, 0), encoding: .utf8)!
+            return String(string)
 #endif
         }
     }
