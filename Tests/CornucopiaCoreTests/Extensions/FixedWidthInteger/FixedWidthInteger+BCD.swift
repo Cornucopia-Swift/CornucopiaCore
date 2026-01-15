@@ -22,16 +22,16 @@ class FixedWidthInteger_BCD_Tests: XCTestCase {
 
     func testEncodeValid() {
 
-        XCTAssertEqual(UInt8(45).CC_toBCD(), 0x45)
-        XCTAssertEqual(UInt16(90).CC_toBCD(), 0x90)
-        XCTAssertEqual(Int(99).CC_toBCD(), 0x99)
+        XCTAssertEqual(UInt8(45).CC_toBCD, 0x45)
+        XCTAssertEqual(UInt16(90).CC_toBCD, 0x90)
+        XCTAssertEqual(Int(99).CC_toBCD, 0x99)
     }
 
     func testEncodeInvalid() {
 
-        XCTAssertNil(Int(-1).CC_toBCD())
-        XCTAssertNil(Int(100).CC_toBCD())
-        XCTAssertNil(UInt16(120).CC_toBCD())
-        XCTAssertNil(Int8(80).CC_toBCD())
+        XCTAssertNil(Int(-1).CC_toBCD)
+        XCTAssertNil(Int(100).CC_toBCD)
+        XCTAssertNil(UInt16(120).CC_toBCD)
+        XCTAssertNil(Int8(80).CC_toBCD)
     }
 }

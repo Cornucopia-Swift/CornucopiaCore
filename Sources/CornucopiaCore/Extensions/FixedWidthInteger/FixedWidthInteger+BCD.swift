@@ -16,7 +16,7 @@ public extension FixedWidthInteger {
     }
 
     /// Returns the BCD-encoded byte for a decimal value (00...99), or `nil` if out of range.
-    func CC_toBCD() -> Self? {
+    var CC_toBCD: Self? {
         guard self >= 0 && self <= 99 else { return nil }
         let value = UInt8(truncatingIfNeeded: self)
         let highNibble = (value / 10) << 4
