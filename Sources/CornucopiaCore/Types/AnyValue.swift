@@ -63,6 +63,9 @@ public extension Cornucopia.Core {
                 case is String.Type:
                     guard case let .string(string) = self else { throw Error.typeMismatch(info: "Expected \(T.self), got \(self) instead") }
                     return string as! T
+                case is Bool.Type:
+                    guard case let .bool(bool) = self else { throw Error.typeMismatch(info: "Expected \(T.self), got \(self) instead") }
+                    return bool as! T
                 case is Int.Type:
                     guard case let .int(int) = self else { throw Error.typeMismatch(info: "Expected \(T.self), got \(self) instead") }
                     return int as! T
