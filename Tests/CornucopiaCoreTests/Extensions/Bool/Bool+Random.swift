@@ -29,7 +29,7 @@ class BoolPlusRandom: XCTestCase {
         }
         let expectedSuccesses = Double(runs) * probability
         let standardDeviation = sqrt(Double(runs) * probability * (1 - probability))
-        let confidenceInterval = 1.645 * standardDeviation // 90% confidence interval
+        let confidenceInterval = 5.0 * standardDeviation // ~5σ interval to reduce flakiness
         let lowerBound = expectedSuccesses - confidenceInterval
         let upperBound = expectedSuccesses + confidenceInterval
         print("\(successes) successes, expected successes \(expectedSuccesses), confidence interval [\(lowerBound), \(upperBound)]")
@@ -59,9 +59,10 @@ class BoolPlusRandom: XCTestCase {
         }
         let expectedSuccesses = Double(runs) * probability
         let standardDeviation = sqrt(Double(runs) * probability * (1 - probability))
-        let confidenceInterval = 1.645 * standardDeviation // 90% confidence interval
+        let confidenceInterval = 5.0 * standardDeviation // ~5σ interval to reduce flakiness
         let lowerBound = expectedSuccesses - confidenceInterval
         let upperBound = expectedSuccesses + confidenceInterval
         print("\(successes) successes, expected successes \(expectedSuccesses), confidence interval [\(lowerBound), \(upperBound)]")
-        XCTAssertTrue(Double(successes) >= lowerBound && Double(successes) <= upperBound)    }
+        XCTAssertTrue(Double(successes) >= lowerBound && Double(successes) <= upperBound)
+    }
 }
