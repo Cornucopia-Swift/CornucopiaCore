@@ -75,10 +75,15 @@ final class CacheTests: XCTestCase {
     
     func testMemoryCacheOperations() {
         let expectation = XCTestExpectation(description: "Memory cache operation")
+        let expectedData = testData!
+        StubURLProtocol.handler = { request in
+            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)
+            return (expectedData, response, nil)
+        }
         
         // Test memory cache miss
         cache.loadDataFor(url: testURL) { data in
-            XCTAssertNotNil(data ?? nil, "Callback should be invoked")
+            XCTAssertEqual(data, expectedData, "Callback should be invoked with data")
             expectation.fulfill()
         }
         
@@ -87,11 +92,16 @@ final class CacheTests: XCTestCase {
     
     func testURLRequestConversion() {
         let expectation = XCTestExpectation(description: "URLRequest conversion")
+        let expectedData = testData!
+        StubURLProtocol.handler = { request in
+            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)
+            return (expectedData, response, nil)
+        }
         
         let urlRequest = URLRequest(url: testURL)
         cache.loadDataFor(urlRequest: urlRequest) { data in
             // Should be a consistent callback regardless of network behavior
-            XCTAssertNotNil(data ?? nil)
+            XCTAssertEqual(data, expectedData)
             expectation.fulfill()
         }
         
@@ -103,12 +113,17 @@ final class CacheTests: XCTestCase {
     func testConcurrentCacheAccess() {
         let expectation = XCTestExpectation(description: "Concurrent cache access")
         expectation.expectedFulfillmentCount = 20
+        let expectedData = testData!
+        StubURLProtocol.handler = { request in
+            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)
+            return (expectedData, response, nil)
+        }
         
         // Simulate concurrent access to the same URL
         for _ in 0..<20 {
             DispatchQueue.global().async {
                 self.cache.loadDataFor(url: self.testURL) { data in
-                    XCTAssertNotNil(data ?? nil) // ensure callback executes
+                    XCTAssertEqual(data, expectedData) // ensure callback executes
                     expectation.fulfill()
                 }
             }
