@@ -41,7 +41,7 @@ extension Cornucopia.Core {
 #if canImport(ObjectiveC)
             return string as String
 #else
-            return String(string)
+            return String(describing: string)
 #endif
         }
     }

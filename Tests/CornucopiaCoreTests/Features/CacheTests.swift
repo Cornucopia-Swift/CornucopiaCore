@@ -2,6 +2,9 @@
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
 import XCTest
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 @testable import CornucopiaCore
 
 final class CacheTests: XCTestCase {
@@ -329,7 +332,18 @@ final class CacheTests: XCTestCase {
     func testCacheWithSpecialCharacters() {
         let expectation = XCTestExpectation(description: "Special characters in URL")
         
-        let specialCharsURL = URL(string: "https://example.com/path with spaces/special?param=value&other=123")!
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "example.com"
+        components.path = "/path with spaces/special"
+        components.queryItems = [
+            URLQueryItem(name: "param", value: "value"),
+            URLQueryItem(name: "other", value: "123"),
+        ]
+        guard let specialCharsURL = components.url else {
+            XCTFail("Failed to build URL with special characters")
+            return
+        }
         cache.loadDataFor(url: specialCharsURL) { data in
             XCTAssertNil(data)
             expectation.fulfill()
@@ -342,11 +356,12 @@ final class CacheTests: XCTestCase {
     
     func testMemoryLeaks() {
         weak var weakCache: Cornucopia.Core.Cache?
-        
+
+#if canImport(ObjectiveC)
         autoreleasepool {
             let tempCache = Cornucopia.Core.Cache(name: "TempCache")
             weakCache = tempCache
-            
+
             // Use the cache
             let expectation = XCTestExpectation(description: "Memory leak test")
             tempCache.loadDataFor(url: testURL) { _ in
@@ -354,6 +369,19 @@ final class CacheTests: XCTestCase {
             }
             wait(for: [expectation], timeout: 5.0)
         }
+#else
+        do {
+            let tempCache = Cornucopia.Core.Cache(name: "TempCache")
+            weakCache = tempCache
+
+            // Use the cache
+            let expectation = XCTestExpectation(description: "Memory leak test")
+            tempCache.loadDataFor(url: testURL) { _ in
+                expectation.fulfill()
+            }
+            wait(for: [expectation], timeout: 5.0)
+        }
+#endif
         
         // Cache should be deallocated
         XCTAssertNil(weakCache, "Cache should be deallocated")

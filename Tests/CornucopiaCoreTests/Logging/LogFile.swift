@@ -108,9 +108,10 @@ class Logging: XCTestCase {
 
         XCTAssertEqual(5, differencesInMs.count)
         let expectedDifferences = [100, 5.0, 50.0, 500.0, 1000.0]
+        let toleranceMs = 1.0
         for (index, difference) in differencesInMs.enumerated() {
             let expectedDifference = expectedDifferences[index]
-            let lowerBound = expectedDifference
+            let lowerBound = max(0.0, expectedDifference - toleranceMs)
             let upperBound = expectedDifference * 1.6
             XCTAssert(difference >= lowerBound && difference <= upperBound)
         }

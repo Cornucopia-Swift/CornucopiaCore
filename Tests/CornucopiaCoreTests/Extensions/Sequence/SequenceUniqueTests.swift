@@ -2,6 +2,9 @@
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
 import XCTest
+#if canImport(Darwin)
+import Darwin
+#endif
 @testable import CornucopiaCore
 
 final class SequenceUniqueTests: XCTestCase {
@@ -262,10 +265,9 @@ final class SequenceUniqueTests: XCTestCase {
     // MARK: - Helper Methods
     
     private func getMemoryUsage() -> Int {
+#if canImport(Darwin)
         var info = mach_task_basic_info()
-        var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size)/4
-        
-        #if canImport(ObjectiveC)
+        var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size) / 4
         let kerr: kern_return_t = withUnsafeMutablePointer(to: &info) {
             $0.withMemoryRebound(to: integer_t.self, capacity: 1) {
                 task_info(mach_task_self_,
@@ -274,15 +276,11 @@ final class SequenceUniqueTests: XCTestCase {
                          &count)
             }
         }
-        
-        if kerr == KERN_SUCCESS {
-            return Int(info.resident_size)
-        } else {
-            return 0
-        }
-        #else
+
+        return kerr == KERN_SUCCESS ? Int(info.resident_size) : 0
+#else
         return 0
-        #endif
+#endif
     }
     
     static var allTests = [
