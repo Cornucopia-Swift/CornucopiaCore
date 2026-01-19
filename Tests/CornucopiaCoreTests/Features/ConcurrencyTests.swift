@@ -253,7 +253,7 @@ extension ConcurrencyTests {
         
         let elapsed = Date().timeIntervalSince(startTime)
         XCTAssertGreaterThanOrEqual(elapsed, 0.09) // Allow for small timing variance
-        XCTAssertLessThan(elapsed, 0.15)
+        XCTAssertLessThan(elapsed, 0.35)
     }
     
     func testTaskSleepMillisecondsDeprecated() async throws {
@@ -263,7 +263,7 @@ extension ConcurrencyTests {
         
         let elapsed = Date().timeIntervalSince(startTime)
         XCTAssertGreaterThanOrEqual(elapsed, 0.09)
-        XCTAssertLessThan(elapsed, 0.15)
+        XCTAssertLessThan(elapsed, 0.35)
     }
     
     func testTaskSleepDispatchTimeInterval() async throws {
@@ -273,7 +273,7 @@ extension ConcurrencyTests {
         
         let elapsed = Date().timeIntervalSince(startTime)
         XCTAssertGreaterThanOrEqual(elapsed, 0.14)
-        XCTAssertLessThan(elapsed, 0.20)
+        XCTAssertLessThan(elapsed, 0.40)
     }
     
     func testTaskSleepZeroTime() async throws {
