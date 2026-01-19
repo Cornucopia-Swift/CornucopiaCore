@@ -359,7 +359,7 @@ final class CacheTests: XCTestCase {
 
 #if canImport(ObjectiveC)
         autoreleasepool {
-            let tempCache = Cornucopia.Core.Cache(name: "TempCache")
+            let tempCache = Cornucopia.Core.Cache(name: "TempCache", urlSession: urlSession)
             weakCache = tempCache
 
             // Use the cache
@@ -371,7 +371,7 @@ final class CacheTests: XCTestCase {
         }
 #else
         do {
-            let tempCache = Cornucopia.Core.Cache(name: "TempCache")
+            let tempCache = Cornucopia.Core.Cache(name: "TempCache", urlSession: urlSession)
             weakCache = tempCache
 
             // Use the cache
