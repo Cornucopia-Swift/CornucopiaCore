@@ -1,6 +1,7 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
+#if canImport(ObjectiveC)
 import Foundation
 
 extension Foundation.NSUbiquitousKeyValueStore: Cornucopia.Core.StorageBackend {
@@ -13,3 +14,4 @@ extension Foundation.NSUbiquitousKeyValueStore: Cornucopia.Core.StorageBackend {
         self.set(value, forKey: key)
     }
 }
+#endif
