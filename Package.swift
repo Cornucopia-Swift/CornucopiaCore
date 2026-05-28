@@ -1,10 +1,10 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.0
 import PackageDescription
 
 let package = Package(
     name: "CornucopiaCore",
     platforms: [
-        .iOS(.v16),
+        .iOS(.v18),
         .macOS(.v13),
         .macCatalyst(.v13),
         .tvOS(.v16),
@@ -36,5 +36,6 @@ let package = Package(
             name: "CornucopiaCoreTests",
             dependencies: ["CornucopiaCore"]
             ),
-    ]
+    ],
+    swiftLanguageModes: [.v5]
 )
