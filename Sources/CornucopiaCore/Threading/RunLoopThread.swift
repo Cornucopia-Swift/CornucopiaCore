@@ -44,6 +44,7 @@ extension Cornucopia.Core {
         /// Perform a `block` of work in the context of this thread.
         public func perform(_ block: @escaping () -> Void) {
             self.loop.perform(block)
+            CFRunLoopWakeUp(self.loop.getCFRunLoop())
         }
 
         /// Shutdown the RunLoop.
