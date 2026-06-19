@@ -18,7 +18,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/mickeyl/FoundationBandAid", branch: "master"),
-        .package(url: "https://github.com/apple/swift-crypto", .upToNextMajor(from: "3.11.0")),
+        .package(url: "https://github.com/apple/swift-crypto", .upToNextMajor(from: "3.15.0")),
         // NOTE: When upgrading to Swift 6, move to zmian's fork @ https://github.com/zmian/AnyCodable
         .package(url: "https://github.com/mickeyl/AnyCodable", .upToNextMajor(from: "0.6.6")),
         
