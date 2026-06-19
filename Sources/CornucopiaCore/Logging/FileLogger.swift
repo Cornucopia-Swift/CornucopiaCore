@@ -17,7 +17,9 @@ extension Cornucopia.Core {
                 try? FileManager.default.createDirectory(atPath: directoryName, withIntermediateDirectories: true, attributes: nil)
             }
             FileManager.default.createFile(atPath: url.path, contents: nil)
-            self.fileHandle = try! FileHandle(forWritingTo: fileUrl)                
+            // Ein nicht beschreibbares Ziel (etwa ein Pfad außerhalb des App-Sandbox) darf nie
+            // die App crashen – dann eben ein No-Op-Sink, log() guarded ohnehin den nil-Handle.
+            self.fileHandle = try? FileHandle(forWritingTo: fileUrl)
         }
 
         public static let timeFormatter: DateFormatter = {
