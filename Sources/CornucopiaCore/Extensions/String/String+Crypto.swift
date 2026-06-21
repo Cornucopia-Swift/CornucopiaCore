@@ -1,7 +1,11 @@
 //
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
+#if canImport(CryptoKit)
+import CryptoKit
+#else
 import Crypto
+#endif
 import Foundation
 
 public extension String {

@@ -28,7 +28,9 @@ let package = Package(
             name: "CornucopiaCore",
             dependencies: [
                 .product(name: "FoundationBandAid", package: "FoundationBandAid", condition: .when(platforms: [.linux])),
-                .product(name: "Crypto", package: "swift-crypto"),
+                // Apple platforms get MD5 from the system CryptoKit; swift-crypto is only
+                // needed where CryptoKit is unavailable (keeps it out of the Apple build).
+                .product(name: "Crypto", package: "swift-crypto", condition: .when(platforms: [.linux, .android, .windows, .wasi])),
                 "AnyCodable",
                 ]
             ),
