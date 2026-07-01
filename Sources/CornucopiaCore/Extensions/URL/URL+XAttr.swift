@@ -8,6 +8,17 @@ import Android
 import CAndroidPosixShims
 #endif
 
+#if os(Android)
+// Unlike Darwin, ext4 (and hence Android) rejects xattr names that aren't prefixed with a
+// recognized namespace (`user.`, `trusted.`, `security.`, `system.`) with ENOTSUP. Since the
+// CC_*ExtendedAttribute API predates Android support and callers pass arbitrary names, transparently
+// fall back to the `user.` namespace so existing call sites keep working unmodified.
+private let CC_xattrNamespaces = ["user.", "trusted.", "security.", "system."]
+private func CC_xattrQualifiedName(_ name: String) -> String {
+    CC_xattrNamespaces.contains(where: { name.hasPrefix($0) }) ? name : "user.\(name)"
+}
+#endif
+
 // based on https://stackoverflow.com/a/38343753/415982
 extension URL {
 
@@ -20,7 +31,7 @@ extension URL {
             #if os(Android)
             // Bionic's fileSystemPath is optional and removexattr(3) has no `options` parameter.
             guard let fileSystemPath else { throw errno.CC_posixError }
-            let result = removexattr(fileSystemPath, name)
+            let result = removexattr(fileSystemPath, CC_xattrQualifiedName(name))
             #else
             let result = removexattr(fileSystemPath, name, 0)
             #endif
@@ -50,12 +61,19 @@ extension URL {
             guard result >= 0 else { throw errno.CC_posixError }
 
             // Extract attribute names:
-            let list = namebuf.split(separator: 0).compactMap {
-                $0.withUnsafeBufferPointer {
+            let list = namebuf.split(separator: 0).compactMap { chars -> String? in
+                let name = chars.withUnsafeBufferPointer {
                     $0.withMemoryRebound(to: UInt8.self) {
                         String(bytes: $0, encoding: .utf8)
                     }
                 }
+                #if os(Android)
+                // Only strip the `user.` prefix we transparently add ourselves; leave names set by
+                // other namespaces (e.g. the `security.selinux` label Android sets on every file) as-is.
+                return name?.hasPrefix("user.") == true ? String(name!.dropFirst("user.".count)) : name
+                #else
+                return name
+                #endif
             }
             return list
         }
@@ -72,12 +90,13 @@ extension URL {
             #if os(Android)
             // Bionic's fileSystemPath is optional and getxattr(3) has no `position`/`options` parameters.
             guard let fileSystemPath else { throw errno.CC_posixError }
-            let length = getxattr(fileSystemPath, name, nil, 0)
+            let qualifiedName = CC_xattrQualifiedName(name)
+            let length = getxattr(fileSystemPath, qualifiedName, nil, 0)
             guard length >= 0 else { throw errno.CC_posixError }
 
             var data = Data(count: length)
             let result = data.withUnsafeMutableBytes { [count = data.count] in
-                getxattr(fileSystemPath, name, $0.baseAddress, count)
+                getxattr(fileSystemPath, qualifiedName, $0.baseAddress, count)
             }
             #else
             let length = getxattr(fileSystemPath, name, nil, 0, 0, 0)
@@ -102,7 +121,7 @@ extension URL {
             // Bionic's fileSystemPath is optional and setxattr(3) takes `flags` instead of `position`/`options`.
             guard let fileSystemPath else { throw errno.CC_posixError }
             let result = data.withUnsafeBytes {
-                setxattr(fileSystemPath, name, $0.baseAddress, data.count, 0)
+                setxattr(fileSystemPath, CC_xattrQualifiedName(name), $0.baseAddress, data.count, 0)
             }
             #else
             let result = data.withUnsafeBytes {

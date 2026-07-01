@@ -70,7 +70,7 @@ public extension Cornucopia.Core {
             let release = withUnsafeBytes(of: &utsnameInfo.release) { String(cString: $0.bindMemory(to: CChar.self).baseAddress!) }
 
             self.info = DeviceInfo(machine: machine, model: "android-device", operatingSystem: "Android", operatingSystemVersion: release)
-            let urlToUUID = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(".cornucopia.core.uuid")
+            let urlToUUID = FileManager.CC_urlInTempDirectory(suffix: ".cornucopia.core.uuid")
             if let string = try? String(contentsOf: urlToUUID), let uuid = UUID(uuidString: string) {
                 self.uuid = uuid
             } else {
