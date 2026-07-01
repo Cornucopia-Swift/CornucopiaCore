@@ -8,6 +8,9 @@ import UIKit
 #if canImport(WatchKit)
 import WatchKit
 #endif
+#if os(Android)
+import CAndroidPosixShims
+#endif
 
 public extension Cornucopia.Core {
 
@@ -57,6 +60,22 @@ public extension Cornucopia.Core {
             } else {
                 self.uuid = .init()
                 Keychain.standard.save(data: self.uuid.uuidString.data(using: .utf8)!, for: Self.uuidKeychainKey)
+            }
+#elseif os(Android)
+            // Lightweight replacement for the Apple branch above: no Keychain (Security isn't
+            // available), no UIDevice/WKInterfaceDevice — just uname(3), which Bionic implements.
+            var utsnameInfo = utsname()
+            uname(&utsnameInfo)
+            let machine = withUnsafeBytes(of: &utsnameInfo.machine) { String(cString: $0.bindMemory(to: CChar.self).baseAddress!) }
+            let release = withUnsafeBytes(of: &utsnameInfo.release) { String(cString: $0.bindMemory(to: CChar.self).baseAddress!) }
+
+            self.info = DeviceInfo(machine: machine, model: "android-device", operatingSystem: "Android", operatingSystemVersion: release)
+            let urlToUUID = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(".cornucopia.core.uuid")
+            if let string = try? String(contentsOf: urlToUUID), let uuid = UUID(uuidString: string) {
+                self.uuid = uuid
+            } else {
+                self.uuid = .init()
+                try? self.uuid.uuidString.write(to: urlToUUID, atomically: true, encoding: .utf8)
             }
 #else
                 let model = "non-apple-device"

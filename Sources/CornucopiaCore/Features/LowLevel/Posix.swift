@@ -2,6 +2,10 @@
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
 import Foundation
+#if os(Android)
+import Android
+import CAndroidPosixShims
+#endif
 
 public extension Cornucopia.Core {
 
@@ -24,9 +28,14 @@ public extension Cornucopia.Core {
                 memcpy(&addr.s_addr, host.pointee.h_addr_list[index]!, Int(host.pointee.h_length))
                 #endif
 
+                #if os(Android)
+                // Bionic declares inet_ntoa(3) as returning a non-optional pointer.
+                let remoteIPAsC = inet_ntoa(addr)
+                #else
                 guard let remoteIPAsC = inet_ntoa(addr) else {
                     return ipList
                 }
+                #endif
 
                 ipList.append(String.init(cString: remoteIPAsC))
                 index += 1

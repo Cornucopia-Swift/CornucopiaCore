@@ -2,6 +2,9 @@
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
 import Foundation
+#if os(Android)
+import Android
+#endif
 
 public extension Cornucopia.Core {
 

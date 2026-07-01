@@ -2,6 +2,9 @@
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
 import Foundation
+#if os(Android)
+import CAndroidPosixShims
+#endif
 
 public extension String {
 

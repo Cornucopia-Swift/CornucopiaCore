@@ -3,6 +3,10 @@
 //
 #if !os(Linux) && !os(Windows)
 import Foundation
+#if os(Android)
+import Android
+import CAndroidPosixShims
+#endif
 
 // based on https://stackoverflow.com/a/38343753/415982
 extension URL {
@@ -13,7 +17,13 @@ extension URL {
     func CC_removeExtendedAttribute(forName name: ItemKey) throws {
 
         try self.withUnsafeFileSystemRepresentation { fileSystemPath in
+            #if os(Android)
+            // Bionic's fileSystemPath is optional and removexattr(3) has no `options` parameter.
+            guard let fileSystemPath else { throw errno.CC_posixError }
+            let result = removexattr(fileSystemPath, name)
+            #else
             let result = removexattr(fileSystemPath, name, 0)
+            #endif
             guard result >= 0 else { throw errno.CC_posixError }
         }
     }
@@ -22,11 +32,21 @@ extension URL {
     func CC_extendedAttributes() throws -> [ItemKey] {
 
         let list = try self.withUnsafeFileSystemRepresentation { fileSystemPath -> [String] in
+            #if os(Android)
+            // Bionic's fileSystemPath is optional and listxattr(3) has no `options` parameter.
+            guard let fileSystemPath else { throw errno.CC_posixError }
+            let length = listxattr(fileSystemPath, nil, 0)
+            guard length >= 0 else { throw errno.CC_posixError }
+
+            var namebuf = Array<CChar>(repeating: 0, count: length)
+            let result = listxattr(fileSystemPath, &namebuf, namebuf.count)
+            #else
             let length = listxattr(fileSystemPath, nil, 0, 0)
             guard length >= 0 else { throw errno.CC_posixError }
 
             var namebuf = Array<CChar>(repeating: 0, count: length)
             let result = listxattr(fileSystemPath, &namebuf, namebuf.count, 0)
+            #endif
             guard result >= 0 else { throw errno.CC_posixError }
 
             // Extract attribute names:
@@ -49,6 +69,17 @@ extension URL {
 
         let data = try self.withUnsafeFileSystemRepresentation { fileSystemPath -> Data in
 
+            #if os(Android)
+            // Bionic's fileSystemPath is optional and getxattr(3) has no `position`/`options` parameters.
+            guard let fileSystemPath else { throw errno.CC_posixError }
+            let length = getxattr(fileSystemPath, name, nil, 0)
+            guard length >= 0 else { throw errno.CC_posixError }
+
+            var data = Data(count: length)
+            let result = data.withUnsafeMutableBytes { [count = data.count] in
+                getxattr(fileSystemPath, name, $0.baseAddress, count)
+            }
+            #else
             let length = getxattr(fileSystemPath, name, nil, 0, 0, 0)
             guard length >= 0 else { throw errno.CC_posixError }
 
@@ -56,6 +87,7 @@ extension URL {
             let result = data.withUnsafeMutableBytes { [count = data.count] in
                 getxattr(fileSystemPath, name, $0.baseAddress, count, 0, 0)
             }
+            #endif
             guard result >= 0 else { throw errno.CC_posixError }
             return data
         }
@@ -66,9 +98,17 @@ extension URL {
     func CC_setExtendedAttribute(data: Data, forName name: ItemKey) throws {
 
         try self.withUnsafeFileSystemRepresentation { fileSystemPath in
+            #if os(Android)
+            // Bionic's fileSystemPath is optional and setxattr(3) takes `flags` instead of `position`/`options`.
+            guard let fileSystemPath else { throw errno.CC_posixError }
+            let result = data.withUnsafeBytes {
+                setxattr(fileSystemPath, name, $0.baseAddress, data.count, 0)
+            }
+            #else
             let result = data.withUnsafeBytes {
                 setxattr(fileSystemPath, name, $0.baseAddress, data.count, 0, 0)
             }
+            #endif
             guard result >= 0 else { throw errno.CC_posixError }
         }
     }

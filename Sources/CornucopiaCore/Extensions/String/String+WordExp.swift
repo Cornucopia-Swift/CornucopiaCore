@@ -7,7 +7,8 @@ public extension String {
 
     /// Returns the receiver after applying wordexp(3).
     var CC_shellExpanded: String {
-#if os(iOS) || os(watchOS) || os(tvOS)
+#if os(iOS) || os(watchOS) || os(tvOS) || os(Android)
+        // Bionic (Android's libc) does not implement wordexp(3).
         self
 #else
         var wexp: wordexp_t = .init()

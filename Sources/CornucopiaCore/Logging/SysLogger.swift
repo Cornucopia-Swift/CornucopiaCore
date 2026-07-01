@@ -2,6 +2,10 @@
 //  Cornucopia – (C) Dr. Lauer Information Technology
 //
 import Foundation
+#if os(Android)
+import Android
+import CAndroidPosixShims
+#endif
 
 extension Cornucopia.Core {
 
@@ -30,7 +34,7 @@ extension Cornucopia.Core {
             // Prepare socket address
             self.addr = sockaddr_in()
             let addr_len = UInt8(MemoryLayout.size(ofValue: self.addr))
-            #if !os(Linux)
+            #if !os(Linux) && !os(Android)
             self.addr.sin_len = addr_len
             #endif
             self.addr.sin_port = in_port_t(UInt16(port).bigEndian)
@@ -52,9 +56,9 @@ extension Cornucopia.Core {
             }
 #else
             if self.udp {
-                fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)
+                fd = socket(PF_INET, SOCK_DGRAM, Int32(IPPROTO_UDP))
             } else {
-                fd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)
+                fd = socket(PF_INET, SOCK_STREAM, Int32(IPPROTO_TCP))
                 withUnsafePointer(to: &self.addr) { sockaddrInPtr in
                     let sockaddrPtr = UnsafeRawPointer(sockaddrInPtr).assumingMemoryBound(to: sockaddr.self)
                     connect(fd, sockaddrPtr, UInt32(MemoryLayout<sockaddr_in>.stride))
@@ -82,7 +86,12 @@ extension Cornucopia.Core {
             _ = withUnsafePointer(to: &self.addr) { addrPointer in
                 addrPointer.withMemoryRebound(to: sockaddr.self, capacity: 1) { sockAddrPointer in
                     data.withUnsafeBytes { dataPointer in
+                        #if os(Android)
+                        // Bionic declares sendto(2)'s buffer parameter as non-optional.
+                        sendto(self.sockFd, dataPointer.baseAddress!, data.count, 0, sockAddrPointer, self.len)
+                        #else
                         sendto(self.sockFd, dataPointer.baseAddress, data.count, 0, sockAddrPointer, self.len)
+                        #endif
                     }
                 }
             }

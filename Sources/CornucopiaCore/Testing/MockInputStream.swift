@@ -126,7 +126,8 @@ extension Cornucopia.Core.MockInputStream {
 
         let runloop = self.runloop ?? RunLoop.main
         runloop.perform {
-#if os(Linux)
+#if os(Linux) || os(Android)
+            // StreamDelegate.stream(_:handle:) is only `@objc optional` where the Objective-C runtime exists.
             self.delegate?.stream(self, handle: event)
 #else
             self.delegate?.stream?(self, handle: event)

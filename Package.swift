@@ -27,13 +27,15 @@ let package = Package(
         .target(
             name: "CornucopiaCore",
             dependencies: [
-                .product(name: "FoundationBandAid", package: "FoundationBandAid", condition: .when(platforms: [.linux])),
+                .product(name: "FoundationBandAid", package: "FoundationBandAid", condition: .when(platforms: [.linux, .android])),
                 // Apple platforms get MD5 from the system CryptoKit; swift-crypto is only
                 // needed where CryptoKit is unavailable (keeps it out of the Apple build).
                 .product(name: "Crypto", package: "swift-crypto", condition: .when(platforms: [.linux, .android, .windows, .wasi])),
                 "AnyCodable",
+                .target(name: "CAndroidPosixShims", condition: .when(platforms: [.android])),
                 ]
             ),
+        .systemLibrary(name: "CAndroidPosixShims"),
         .testTarget(
             name: "CornucopiaCoreTests",
             dependencies: ["CornucopiaCore"]

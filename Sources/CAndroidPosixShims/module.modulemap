@@ -1,0 +1,4 @@
+module CAndroidPosixShims [system] {
+    header "shim.h"
+    export *
+}

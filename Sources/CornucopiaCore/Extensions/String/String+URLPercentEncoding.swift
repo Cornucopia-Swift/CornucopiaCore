@@ -12,7 +12,11 @@ public extension String {
     /// With added URL percent escapes.
     var CC_addingUrlPercentEscapes: String { self.addingPercentEncoding(withAllowedCharacters: Self.urlSafeCharacterSet) ?? "<invalid string for adding percent encodings>" }
 
-    #if !os(Linux)
+    #if os(Android)
+    // CFString <-> String toll-free bridging requires the Objective-C runtime, which Android lacks.
+    /// With removed URL percent escapes.
+    var CC_removingUrlPercentEscapes: String { self.removingPercentEncoding ?? self }
+    #elseif !os(Linux)
     /// With removed URL percent escapes.
     var CC_removingUrlPercentEscapes: String { CFURLCreateStringByReplacingPercentEscapes(kCFAllocatorDefault, self as CFString, "" as CFString) as String }
     #endif
