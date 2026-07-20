@@ -27,7 +27,11 @@ let package = Package(
         .target(
             name: "CornucopiaCore",
             dependencies: [
-                .product(name: "FoundationBandAid", package: "FoundationBandAid", condition: .when(platforms: [.linux, .android])),
+                // Android only needs FoundationBandAid's RunLoop.CC_cfRunLoop shim, implemented locally
+                // instead (see RunLoop+CFRunLoopSource.swift) to avoid pulling in FoundationBandAid's
+                // other extensions (e.g. its URLSession polyfills), which collide with declarations
+                // FoundationNetworking already provides natively on Android.
+                .product(name: "FoundationBandAid", package: "FoundationBandAid", condition: .when(platforms: [.linux])),
                 // Apple platforms get MD5 from the system CryptoKit; swift-crypto is only
                 // needed where CryptoKit is unavailable (keeps it out of the Apple build).
                 .product(name: "Crypto", package: "swift-crypto", condition: .when(platforms: [.linux, .android, .windows, .wasi])),

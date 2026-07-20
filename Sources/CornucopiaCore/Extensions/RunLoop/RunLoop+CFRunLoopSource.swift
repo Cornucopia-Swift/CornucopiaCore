@@ -7,6 +7,14 @@ import CoreFoundation
 import FoundationBandAid
 #endif
 
+#if os(Android)
+extension RunLoop {
+    // Same trick FoundationBandAid uses on Linux, inlined here to avoid pulling in the whole
+    // package (and its unrelated URLSession polyfills, which collide with FoundationNetworking
+    // on Android) just for this one shim.
+    var CC_cfRunLoop: CFRunLoop { unsafeBitCast(self, to: CFRunLoop.self) }
+}
+#endif
 
 public extension RunLoop {
 
