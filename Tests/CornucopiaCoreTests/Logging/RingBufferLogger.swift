@@ -152,6 +152,20 @@ class RingBufferLogger: XCTestCase {
         XCTAssertNil(ring.target)
     }
 
+    func testURLConfigurationAcceptsUnencodedTargetURL() {
+        // ':' and '/' are legal in a query per RFC 3986 – consumers rely on being able
+        // to write LOGSINK='ring://?target=file:///tmp/app.log' without percent-encoding.
+        let path = "/tmp/ringbufferlogger-test-\(UUID().uuidString).log"
+        defer { try? FileManager.default.removeItem(atPath: path) }
+        let url = URL(string: "ring://?keep=30&target=file://\(path)&autodump=error&signal=USR1")!
+        let ring = Cornucopia.Core.RingBufferLogger(url: url)
+        ring.waitUntilDumped()
+        XCTAssertEqual(ring.keep, 30)
+        XCTAssertEqual(ring.autoDumpLevel, .error)
+        XCTAssertTrue(ring.target is Cornucopia.Core.FileLogger)
+        XCTAssertEqual(ring.installedTriggerSignals, [SIGUSR1])
+    }
+
     func testURLConfigurationInstallsSignalTrigger() {
         let ring = Cornucopia.Core.RingBufferLogger(url: URL(string: "ring://?signal=USR2")!)
         ring.waitUntilDumped()
