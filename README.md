@@ -53,6 +53,7 @@ Flexible, configurable logging with multiple output targets:
 - **Environment configuration**: Control via `LOGLEVEL` and `LOGSINK` variables
 - **Thread-safe**: Background dispatch queue processing
 - **Level filtering**: Trace, debug, info, notice, error, fault
+- **Ring buffer ("flight recorder")**: `ring://` sink buffers logs in RAM only and flushes the recent past on demand – for timing-sensitive builds where regular logging would perturb or hide the bug
 
 ### ⚡ Concurrency & Performance
 Modern async/await utilities and performance tools:
@@ -94,6 +95,31 @@ logger.error("Something went wrong")
 // Configure via environment variables
 // LOGLEVEL=DEBUG LOGSINK=print:// ./your-app
 ```
+
+### Flight-Recorder Logging (Ring Buffer)
+
+For timing-sensitive scenarios where regular logging perturbs (or hides) the bug:
+log to RAM only, then flush the recent past on demand.
+
+```swift
+// Configure via environment (note: the target URL is percent-encoded):
+// LOGLEVEL=TRACE LOGSINK='ring://?keep=30&target=file%3A%2F%2F%2Ftmp%2Fapp.log' ./your-app
+//
+// Parameters: capacity (entries, default 65536) · keep (seconds to include in a dump,
+// default: everything) · target (sink URL; default: timestamped file in Caches) ·
+// autodump=error|fault (flush automatically when such an entry is logged)
+
+// Trigger a dump from code (debug menu, shake gesture, …):
+Cornucopia.Core.Logger.ringBuffer?.dump()          // last `keep` seconds
+Cornucopia.Core.Logger.ringBuffer?.dump(last: 30)  // explicit window
+
+// …or from outside via UNIX signal:
+Cornucopia.Core.Logger.ringBuffer?.installTrigger(signal: SIGUSR1)
+// then: kill -USR1 <pid>
+```
+
+Buffered entries are replayed to the target sink with their original timestamps.
+By default a dump clears the buffer, so consecutive dumps never repeat entries.
 
 ### Property Wrappers
 

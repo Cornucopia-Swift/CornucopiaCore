@@ -46,9 +46,20 @@ All public APIs are nested under `Cornucopia.Core` namespace. The main entry poi
 
 3. **Logging** (`Logging/`): Flexible logging system
    - `Logger`: Main logging interface with configurable sinks
-   - Supports multiple output targets (print, syslog, file, OSLog)
+   - Supports multiple output targets (print, syslog, file, OSLog, ring buffer)
    - Environment/UserDefaults configurable via `LOGLEVEL` and `LOGSINK`
-   - Thread-safe with background dispatch queue
+   - Thread-safe with background dispatch queue (`Logger.dispatchQueue`); all sink
+     calls arrive serially on that queue — sinks can rely on this for confinement
+   - `RingBufferLogger` ("flight recorder"): buffers entries in RAM only and replays
+     them to a target sink on demand. Use it when logging I/O would perturb or hide
+     timing-sensitive bugs, or in release builds to retrieve the recent past after a
+     problem was observed. Configure via
+     `LOGSINK=ring://?capacity=65536&keep=30&target=<percent-encoded sink url>&autodump=error`
+     (plus `LOGLEVEL=TRACE` so entries reach the buffer). Triggers:
+     `Logger.ringBuffer?.dump(last:)` from code, `installTrigger(signal: SIGUSR1)` +
+     `kill -USR1 <pid>` from outside, or `autodump=error|fault` for automatic flushing.
+     Without a `target`, dumps go to a timestamped `logdump-*.log` in Caches.
+     In tests, synchronize with `waitUntilDumped()` — never with sleeps
 
 4. **PropertyWrappers** (`PropertyWrappers/`): Utility property wrappers
    - `@Default`: Codable with default values
@@ -83,6 +94,18 @@ Tests mirror the source structure under `Tests/CornucopiaCoreTests/` and cover:
 - Property wrapper behavior
 - Core features like logging and device info
 - Cross-platform compatibility
+
+Reliability rules for logging tests (output-based tests have proven flaky here):
+- Never assert on captured stdout/stderr — feed entries into an in-memory recording
+  sink and assert on its collected `LogEntry` values instead
+- Never synchronize with sleeps — feed entries via `Logger.dispatchQueue.sync` (the
+  production path) and use `RingBufferLogger.waitUntilDumped()` after dumps
+- Avoid the global `Logger.destination`/`overrideSink` static state in tests;
+  instantiate sinks directly so tests stay order-independent
+- When testing signal delivery, use process-directed `kill(getpid(), SIG…)`, not
+  `raise()` — the latter targets the calling thread, which may block the signal
+  under XCTest; also keep re-sending in a poll loop, since dispatch signal sources
+  register asynchronously and an early one-shot signal can get lost
 
 ## Development Practices
 

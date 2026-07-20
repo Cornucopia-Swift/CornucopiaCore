@@ -20,6 +20,10 @@ public extension Cornucopia.Core {
     /// - The default LOGSINK is `print://`.
     /// If this is a release build:
     /// - The default LOGSINK is empty, i.e. nothing will be emitted.
+    ///
+    /// Supported LOGSINK schemes: `print://`, `file://<path>`, `os://` (Apple only),
+    /// `syslog-udp://host:port`, `syslog-tcp://host:port`, and `ring://` – an in-RAM
+    /// ring buffer ("flight recorder") that only emits when explicitly dumped, see ``RingBufferLogger``.
     struct Logger: Sendable {
 
         static let LogLevel: String = "LOGLEVEL"
@@ -47,34 +51,46 @@ public extension Cornucopia.Core {
             if let overrideSink = Self.overrideSink { return overrideSink }
 
 #if DEBUG
-            var sink: LogSink? = PrintLogger()
+            let fallback: LogSink? = PrintLogger()
 #else
-            var sink: LogSink? = nil
+            let fallback: LogSink? = nil
 #endif
 
 #if os(watchOS) // no BSD sockets on WatchOS
             return PrintLogger()
 #endif
             guard let logsink = UserDefaults.standard.string(forKey: Self.LogSink) ?? ProcessInfo.processInfo.environment[Self.LogSink],
-                  let sinkurl = URL(string: logsink),
-                  let scheme = sinkurl.scheme else { return sink }
-            switch scheme {
-                case "syslog-udp", "syslog-tcp":
-                    guard sinkurl.host != nil else { return sink }
-                    sink = SysLogger(url: sinkurl)
-                case "print":
-                    sink = PrintLogger()
-#if canImport(OSLog)
-                case "os":
-                    sink = OSLogger()
-#endif
-                case "file":
-                    sink = FileLogger(url: sinkurl)
-                default:
-                    print("Can't parse LOGSINK url: \(logsink). Using default logger.")
+                  let sinkurl = URL(string: logsink) else { return fallback }
+            guard let sink = Self.sink(for: sinkurl) else {
+                print("Can't parse LOGSINK url: \(logsink). Using default logger.")
+                return fallback
             }
             return sink
         }()
+
+        /// Creates a sink for the given URL, if the scheme is supported.
+        public static func sink(for url: URL) -> LogSink? {
+            switch url.scheme {
+                case "syslog-udp", "syslog-tcp":
+                    guard url.host != nil else { return nil }
+                    return SysLogger(url: url)
+                case "print":
+                    return PrintLogger()
+#if canImport(OSLog)
+                case "os":
+                    return OSLogger()
+#endif
+                case "file":
+                    return FileLogger(url: url)
+                case "ring":
+                    return RingBufferLogger(url: url)
+                default:
+                    return nil
+            }
+        }
+
+        /// The installed ring buffer ("flight recorder") sink, if the active destination is one.
+        public static var ringBuffer: RingBufferLogger? { Self.destination as? RingBufferLogger }
 
         public typealias Level = Cornucopia.Core.LogLevel
         public let app: String

@@ -15,8 +15,8 @@ extension Cornucopia.Core {
         func log(_ entry: Cornucopia.Core.LogEntry)
     }
 
-    /// The log level.
-    @frozen public enum LogLevel: Codable, Sendable {
+    /// The log level. Cases are ordered by ascending severity.
+    @frozen public enum LogLevel: Codable, Sendable, Comparable {
         case trace
         case debug
         case info
