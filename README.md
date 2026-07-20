@@ -107,13 +107,14 @@ log to RAM only, then flush the recent past on demand.
 //
 // Parameters: capacity (entries, default 65536) · keep (seconds to include in a dump,
 // default: everything) · target (sink URL; default: timestamped file in Caches) ·
-// autodump=error|fault (flush automatically when such an entry is logged)
+// autodump=error|fault (flush automatically when such an entry is logged) ·
+// signal=USR1|USR2|HUP (install the kill-trigger below without any app code)
 
 // Trigger a dump from code (debug menu, shake gesture, …):
 Cornucopia.Core.Logger.ringBuffer?.dump()          // last `keep` seconds
 Cornucopia.Core.Logger.ringBuffer?.dump(last: 30)  // explicit window
 
-// …or from outside via UNIX signal:
+// …or from outside via UNIX signal (or use signal=USR1 in the URL instead):
 Cornucopia.Core.Logger.ringBuffer?.installTrigger(signal: SIGUSR1)
 // then: kill -USR1 <pid>
 ```

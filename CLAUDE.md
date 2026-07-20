@@ -54,10 +54,11 @@ All public APIs are nested under `Cornucopia.Core` namespace. The main entry poi
      them to a target sink on demand. Use it when logging I/O would perturb or hide
      timing-sensitive bugs, or in release builds to retrieve the recent past after a
      problem was observed. Configure via
-     `LOGSINK=ring://?capacity=65536&keep=30&target=<percent-encoded sink url>&autodump=error`
+     `LOGSINK=ring://?capacity=65536&keep=30&target=<percent-encoded sink url>&autodump=error&signal=USR1`
      (plus `LOGLEVEL=TRACE` so entries reach the buffer). Triggers:
-     `Logger.ringBuffer?.dump(last:)` from code, `installTrigger(signal: SIGUSR1)` +
-     `kill -USR1 <pid>` from outside, or `autodump=error|fault` for automatic flushing.
+     `Logger.ringBuffer?.dump(last:)` from code, `signal=USR1` in the URL (or
+     `installTrigger(signal:)` from code) + `kill -USR1 <pid>` from outside, or
+     `autodump=error|fault` for automatic flushing.
      Without a `target`, dumps go to a timestamped `logdump-*.log` in Caches.
      In tests, synchronize with `waitUntilDumped()` — never with sleeps
 

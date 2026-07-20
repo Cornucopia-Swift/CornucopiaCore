@@ -152,6 +152,28 @@ class RingBufferLogger: XCTestCase {
         XCTAssertNil(ring.target)
     }
 
+    func testURLConfigurationInstallsSignalTrigger() {
+        let ring = Cornucopia.Core.RingBufferLogger(url: URL(string: "ring://?signal=USR2")!)
+        ring.waitUntilDumped()
+        XCTAssertEqual(ring.installedTriggerSignals, [SIGUSR2])
+    }
+
+    func testURLConfigurationAcceptsSignalNameVariants() {
+        for variant in ["USR2", "SIGUSR2", "usr2", "sigusr2"] {
+            let ring = Cornucopia.Core.RingBufferLogger(url: URL(string: "ring://?signal=\(variant)")!)
+            ring.waitUntilDumped()
+            XCTAssertEqual(ring.installedTriggerSignals, [SIGUSR2], "variant: \(variant)")
+        }
+    }
+
+    func testURLConfigurationIgnoresInvalidSignal() {
+        for invalid in ["BOGUS", "-3", "0", ""] {
+            let ring = Cornucopia.Core.RingBufferLogger(url: URL(string: "ring://?signal=\(invalid)")!)
+            ring.waitUntilDumped()
+            XCTAssertTrue(ring.installedTriggerSignals.isEmpty, "invalid: \(invalid)")
+        }
+    }
+
     func testURLConfigurationRefusesRingTarget() {
         let ring = Cornucopia.Core.RingBufferLogger(url: URL(string: "ring://?target=ring%3A%2F%2F")!)
         XCTAssertNil(ring.target)

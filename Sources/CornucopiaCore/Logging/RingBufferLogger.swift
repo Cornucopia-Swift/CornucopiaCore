@@ -12,13 +12,16 @@ extension Cornucopia.Core {
     /// suitable for timing-sensitive (release) builds. Only when ``dump(last:clear:)`` is called are the
     /// buffered entries replayed – with their original timestamps – to the target sink.
     ///
-    /// Configuration via `LOGSINK=ring://?capacity=65536&keep=30&target=<url>&autodump=error`:
+    /// Configuration via `LOGSINK=ring://?capacity=65536&keep=30&target=<url>&autodump=error&signal=USR1`:
     /// - `capacity`: maximum number of buffered entries, rounded up to a power of two. Defaults to 65536.
     /// - `keep`: default number of seconds a dump includes. Defaults to everything in the buffer.
     /// - `target`: percent-encoded URL of the sink that dumps are replayed to. Without a target,
     ///   every dump goes to a timestamped `logdump-*.log` file in the caches directory.
     /// - `autodump`: `error` or `fault` – automatically dump whenever an entry of that (or a more
     ///   severe) level is logged.
+    /// - `signal`: `USR1`, `USR2`, `HUP` (with or without `SIG` prefix), or a raw signal number –
+    ///   installs the corresponding dump trigger via ``installTrigger(signal:)``, so no app code
+    ///   is needed to enable `kill -USR1 <pid>`-style flushing.
     ///
     /// Dump triggers:
     /// - Programmatically via `Logger.ringBuffer?.dump()`, e.g. from a debug menu or shake gesture.
@@ -40,6 +43,7 @@ extension Cornucopia.Core {
         private var buffer: ContiguousArray<LogEntry?>
         private var writeIndex: Int = 0
         private var signalSources: [DispatchSourceSignal] = []
+        private var triggerSignals: [Int32] = []
         private let capacityMask: Int
 
         // Replaying happens on a separate queue, so that a slow target sink (e.g. syslog over
@@ -62,6 +66,7 @@ extension Cornucopia.Core {
             var keep: TimeInterval? = nil
             var target: LogSink? = nil
             var autoDumpLevel: LogLevel? = nil
+            var trigger: Int32? = nil
             if let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems {
                 for item in items {
                     switch item.name {
@@ -81,12 +86,15 @@ extension Cornucopia.Core {
                                 case "fault": autoDumpLevel = .fault
                                 default: break
                             }
+                        case "signal":
+                            trigger = item.value.flatMap(Self.signalNumber(for:))
                         default:
                             break
                     }
                 }
             }
             self.init(capacity: capacity, keep: keep, target: target, autoDumpLevel: autoDumpLevel)
+            if let trigger = trigger { self.installTrigger(signal: trigger) }
         }
 
         public func log(_ entry: LogEntry) {
@@ -114,7 +122,28 @@ extension Cornucopia.Core {
                 self.replay(last: self.keep, clear: true)
             }
             source.resume()
-            Logger.dispatchQueue.async { self.signalSources.append(source) }
+            Logger.dispatchQueue.async {
+                self.signalSources.append(source)
+                self.triggerSignals.append(signalNumber)
+            }
+        }
+
+        /// The signals for which a dump trigger has been installed.
+        /// Like all buffer state, updated on the logger queue – synchronize via ``waitUntilDumped()`` before reading.
+        public var installedTriggerSignals: [Int32] { self.triggerSignals }
+
+        /// Maps a signal name (`USR1`, `SIGUSR2`, `HUP`, …) or a raw number to a signal, if supported.
+        static func signalNumber(for name: String) -> Int32? {
+            var normalized = name.uppercased()
+            if normalized.hasPrefix("SIG") { normalized = String(normalized.dropFirst(3)) }
+            switch normalized {
+                case "USR1": return SIGUSR1
+                case "USR2": return SIGUSR2
+                case "HUP": return SIGHUP
+                default:
+                    guard let number = Int32(normalized), number > 0 else { return nil }
+                    return number
+            }
         }
 
         /// Blocks until all dumps requested so far have been fully replayed to the target sink.
